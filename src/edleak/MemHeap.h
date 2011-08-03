@@ -44,15 +44,16 @@ class MemHeap
    public:
 #define        MEMHEAP_STATUS_RECURSIVE   -2
 
-                           MemHeap(void);
-      virtual              ~MemHeap(void);
+      virtual                    ~MemHeap(void);
+      static   MemHeap*          Instantiate(void);
 
-
-               int32_t     Lock(void);
-               void        Unlock(void);
-               DlList*     GetEntryList(void) { return(&EntryList); };
+               int32_t           Lock(void);
+               void              Unlock(void);
+               DlList*           GetEntryList(void) { return(&EntryList); };
 
    private:
+                                 MemHeap(void);
+
                pthread_mutex_t   Locker;
                uint32_t          RCounter;
                DlList            EntryList;

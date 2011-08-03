@@ -41,10 +41,7 @@ class MemProbe : Probe
                MemProbe(void);
       virtual  ~MemProbe(void);
 
-               MemHeap* GetHeap(void) { return(&Heap); };
-
-   private:
-      static   MemHeap  Heap;
+               MemHeap* GetHeap(void) { return(MemHeap::Instantiate()); };
 };
 
 #endif

@@ -65,6 +65,24 @@ MemHeap::~MemHeap(void)
 
 
 /**
+* @date     2011/08/03
+* 
+*  Instantiation of the heap singleton. The object is static inside the method
+*  so that it is initialized during the first call. Putting as a global static
+*  cannot ensure that it will be initialized before being used if called very
+*  early.
+*
+* @return Pointer to the MemHeap singleton.
+*
+******************************************************************************/
+MemHeap* MemHeap::Instantiate(void)
+{
+   static MemHeap Heap;
+   return(&Heap);
+}
+
+
+/**
 * @date     2011/05/01
 * 
 *  Recursive lock on the heap.
