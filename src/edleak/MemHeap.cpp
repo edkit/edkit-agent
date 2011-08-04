@@ -29,24 +29,34 @@
 * @date     2011/05/01
 * 
 *****************************************************************************/
+#include <new>
 #include "MemHeap.h"
+
 
 /**
 * @date     2011/05/01
 * 
 *  Constructor.
-*
 ******************************************************************************/
 MemHeap::MemHeap(void):
-   RCounter(0),
+   Locker(NULL), RCounter(0),
    EntryList()
 {
+   /* The mutex should be a normal data member of the class but mipsel-uclibc
+    * does not initialize correctly recursive mutext with settype call. Hence it
+    * is statically declared and initialized. */
+
+   static pthread_mutex_t  HeapLocker = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+ 
+   Locker = &HeapLocker;
+   /*
    pthread_mutexattr_t s_Attr;
 
    pthread_mutexattr_init(&s_Attr);
    pthread_mutexattr_settype(&s_Attr, PTHREAD_MUTEX_RECURSIVE);
    pthread_mutex_init(&Locker, &s_Attr);
    pthread_mutexattr_destroy(&s_Attr);
+   */
    return;
 }
 
@@ -59,7 +69,7 @@ MemHeap::MemHeap(void):
 ******************************************************************************/
 MemHeap::~MemHeap(void)
 {
-   pthread_mutex_destroy(&Locker);
+   //pthread_mutex_destroy(Locker);
    return;
 }
 
@@ -67,18 +77,33 @@ MemHeap::~MemHeap(void)
 /**
 * @date     2011/08/03
 * 
-*  Instantiation of the heap singleton. The object is static inside the method
-*  so that it is initialized during the first call. Putting as a global static
-*  cannot ensure that it will be initialized before being used if called very
-*  early.
+*  Instantiation of the heap singleton. 
+*  The object is static so that it is initialized during the first call.
+*  Putting as a global static cannot ensure that it will be initialized before
+*  being used if called very early.
+*  Moreover we cannot allocate memory here since this will be first called
+*  during the instantiation of the first used memory probe (allocating
+*  memory here would leak to infinite recursive calls). So a placement new is
+*  used to store the Heap space.
+*  Note that we cannot directly declare Heap as a static object since some g++
+*  implementations add allocations calls in the static objects init code (in
+*  __cxa_atexit).
 *
 * @return Pointer to the MemHeap singleton.
 *
 ******************************************************************************/
 MemHeap* MemHeap::Instantiate(void)
 {
-   static MemHeap Heap;
-   return(&Heap);
+#define HEAP_DATA_SIZE  512
+   static char    HeapData[HEAP_DATA_SIZE];
+   static MemHeap *Heap = NULL;
+
+   if(Heap == NULL)
+   {
+      if(HEAP_DATA_SIZE >= sizeof(MemHeap))
+         Heap = new(HeapData) MemHeap();
+   }
+   return(Heap);
 }
 
 
@@ -90,7 +115,7 @@ MemHeap* MemHeap::Instantiate(void)
 ******************************************************************************/
 int32_t MemHeap::Lock(void)
 {
-   pthread_mutex_lock(&Locker);
+   pthread_mutex_lock(Locker);
    RCounter++;
    if(RCounter == 1)
       return(0);
@@ -108,6 +133,6 @@ int32_t MemHeap::Lock(void)
 void MemHeap::Unlock(void)
 {
    RCounter--;
-   pthread_mutex_unlock(&Locker);
+   pthread_mutex_unlock(Locker);
 }
 

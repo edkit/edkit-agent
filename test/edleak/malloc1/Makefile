@@ -5,7 +5,7 @@ NAME = malloc1
 BUILD_TYPE = exe
 
 CFLAGS = -g -Wall
-LDFLAGS = 
+LDFLAGS = -export-dynamic
 
 include ../../../build/arch.make
 include ../../../build/makefile.gen

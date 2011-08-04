@@ -54,7 +54,7 @@ class MemHeap
    private:
                                  MemHeap(void);
 
-               pthread_mutex_t   Locker;
+               pthread_mutex_t   *Locker;
                uint32_t          RCounter;
                DlList            EntryList;
 };

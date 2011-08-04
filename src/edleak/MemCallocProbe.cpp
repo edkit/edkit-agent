@@ -76,7 +76,7 @@ void MemCallocProbe::InitCheck(void)
 {
    if(AllocFunc == NULL)
    {
-#ifdef __GLIBC__
+#if defined(__GLIBC__) && !defined(__UCLIBC__) // uclibc also defines glibc.
       /* dlsym calls calloc in GLIBC, so we get its internal name instead of
        * resolving it dynamically */
       AllocFunc = (calloc_t)__libc_calloc;

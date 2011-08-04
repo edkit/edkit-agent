@@ -47,6 +47,9 @@ edKit is a set of tools to help debugging applications in embedded environments.
    - "edkit_fw_file": Set analysis filename (default is edleak.json)
    - "edkit_fw_period": Set slice dump period (default is 30s)
 
+   If the target symbols names are not found by edleak, add "-export-dynamic" to
+   the target linker options.
+
 3- Analysing:
 
    3.1- html clients
