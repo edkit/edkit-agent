@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/02
-* 
+*
 *****************************************************************************/
 #include "MemProbe.h"
 #include "ExeContext.h"
@@ -44,6 +44,7 @@ class MemFreeProbe : MemProbe
       virtual           ~MemFreeProbe(void);
 
                void     InitCheck(const char *sz_FreeFunc = NULL);
+      static   void*    PassThrough(void *Data, const char *sz_FreeFunc = NULL);
                void*    Free(void *Data);
 
    private:

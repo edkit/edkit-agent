@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/01
-* 
+*
 *****************************************************************************/
 #include <new>
 #include "MemHeap.h"
@@ -35,7 +35,7 @@
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Constructor.
 ******************************************************************************/
 MemHeap::MemHeap(void):
@@ -47,7 +47,7 @@ MemHeap::MemHeap(void):
     * is statically declared and initialized. */
 
    static pthread_mutex_t  HeapLocker = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
- 
+
    Locker = &HeapLocker;
    /*
    pthread_mutexattr_t s_Attr;
@@ -63,7 +63,7 @@ MemHeap::MemHeap(void):
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -76,8 +76,8 @@ MemHeap::~MemHeap(void)
 
 /**
 * @date     2011/08/03
-* 
-*  Instantiation of the heap singleton. 
+*
+*  Instantiation of the heap singleton.
 *  The object is static so that it is initialized during the first call.
 *  Putting as a global static cannot ensure that it will be initialized before
 *  being used if called very early.
@@ -109,7 +109,7 @@ MemHeap* MemHeap::Instantiate(void)
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Recursive lock on the heap.
 *
 ******************************************************************************/
@@ -126,7 +126,7 @@ int32_t MemHeap::Lock(void)
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Unlocks the heap.
 *
 ******************************************************************************/

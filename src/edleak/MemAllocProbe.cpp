@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/01
-* 
+*
 *****************************************************************************/
 #include <new>
 #include "MemAllocProbe.h"
@@ -37,7 +37,7 @@
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -51,7 +51,7 @@ MemAllocProbe::MemAllocProbe(void):
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -63,7 +63,7 @@ MemAllocProbe::~MemAllocProbe()
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Probe initialization.
 *
 * @param sz_AllocFunc (in): Name of the allocation function. "malloc" is used if
@@ -83,8 +83,31 @@ void MemAllocProbe::InitCheck(const char *sz_AllocFunc)
 }
 
 /**
+* @date     2012/01/02
+*
+*  Probe Passthrough : The original function is called direclty.
+*
+******************************************************************************/
+void* MemAllocProbe::PassThrough(size_t i_Size, const char *sz_AllocFunc)
+{
+   uint8_t *Data = NULL;
+   malloc_t AllocFunc;
+
+   if(sz_AllocFunc != NULL)
+      AllocFunc = (malloc_t) rtsym_resolve(sz_AllocFunc);
+   else
+      AllocFunc = (malloc_t) rtsym_resolve("malloc");
+
+   if(AllocFunc != NULL)
+   {
+      Data = (uint8_t*)AllocFunc(i_Size);
+   }
+   return(Data);
+}
+
+/**
 * @date     2011/05/01
-* 
+*
 *  Allocates some data by using the internal allocer.
 *
 * @param i_Size (in): Size to allocate.
@@ -112,7 +135,7 @@ void* MemAllocProbe::Alloc(size_t i_Size, void *Eip)
             Data = Data + sizeof(HeapEntry);
          }
       }
-      else  
+      else
       {
          // recursive lock, do not try to monitor it. This can occur in
          // different cases:

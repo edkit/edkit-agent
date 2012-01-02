@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/03
-* 
+*
 *****************************************************************************/
 #include <new>
 #include "MemCallocProbe.h"
@@ -35,14 +35,14 @@
 #include "HeapEntry.h"
 
 #ifdef __GLIBC__
-extern "C" { 
-   void *__libc_calloc(); 
+extern "C" {
+   void *__libc_calloc();
 }
 #endif
 
 /**
 * @date     2011/05/03
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -56,7 +56,7 @@ MemCallocProbe::MemCallocProbe(void):
 
 /**
 * @date     2011/05/03
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -68,7 +68,7 @@ MemCallocProbe::~MemCallocProbe()
 
 /**
 * @date     2011/05/03
-* 
+*
 *  Probe initialization.
 *
 ******************************************************************************/
@@ -89,8 +89,35 @@ void MemCallocProbe::InitCheck(void)
 
 
 /**
+* @date     2012/01/02
+*
+*  Probe Passthrough : The original function is called direclty.
+*
+******************************************************************************/
+void* MemCallocProbe::PassThrough(size_t i_MembCount, size_t i_Size)
+{
+   uint8_t *Data = NULL;
+   calloc_t AllocFunc;
+
+#if defined(__GLIBC__) && !defined(__UCLIBC__) // uclibc also defines glibc.
+   /* dlsym calls calloc in GLIBC, so we get its internal name instead of
+    * resolving it dynamically */
+   AllocFunc = (calloc_t)__libc_calloc;
+#else
+   AllocFunc = (calloc_t)rtsym_resolve("calloc");
+#endif
+
+   if(AllocFunc != NULL)
+   {
+      Data = (uint8_t*)AllocFunc(i_MembCount, i_Size);
+   }
+   return(Data);
+}
+
+
+/**
 * @date     2011/05/03
-* 
+*
 *  Allocates some data by using the internal allocer.
 *
 * @param i_MembCount (in): Number of elements to allocate.

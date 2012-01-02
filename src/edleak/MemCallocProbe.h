@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/03
-* 
+*
 *****************************************************************************/
 #include "MemProbe.h"
 #include "rtsym.h"
@@ -43,6 +43,7 @@ class MemCallocProbe : MemProbe
       virtual           ~MemCallocProbe(void);
 
                void     InitCheck(void);
+      static   void*    PassThrough(size_t i_MembCount, size_t i_Size);
                void*    Calloc(size_t i_MembCount, size_t i_Size, void *Eip);
 
    private:

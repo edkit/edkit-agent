@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/03
-* 
+*
 *****************************************************************************/
 #include <new>
 #include "MemReallocProbe.h"
@@ -36,7 +36,7 @@
 
 /**
 * @date     2011/05/03
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -50,7 +50,7 @@ MemReallocProbe::MemReallocProbe(void):
 
 /**
 * @date     2011/05/03
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -62,7 +62,7 @@ MemReallocProbe::~MemReallocProbe()
 
 /**
 * @date     2011/05/03
-* 
+*
 *  Probe initialization.
 *
 ******************************************************************************/
@@ -75,8 +75,27 @@ void MemReallocProbe::InitCheck(void)
 
 
 /**
+* @date     2012/01/02
+*
+*  Probe Passthrough : The original function is called direclty.
+*
+******************************************************************************/
+void* MemReallocProbe::PassThrough(void *Ptr, size_t i_Size)
+{
+   uint8_t     *Data = NULL;
+   realloc_t   AllocFunc;
+
+   AllocFunc = (realloc_t)rtsym_resolve("realloc");
+   if(AllocFunc != NULL)
+   {
+      Data = (uint8_t*)AllocFunc(Ptr, i_Size);
+   }
+   return(Data);
+}
+
+/**
 * @date     2011/05/03
-* 
+*
 *  Re-allocates some data.
 *
 * @param Ptr (in): Pointer to re-allocate.

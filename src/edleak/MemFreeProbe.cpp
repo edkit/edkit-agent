@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/02
-* 
+*
 *****************************************************************************/
 #include <new>
 #include "MemFreeProbe.h"
@@ -36,7 +36,7 @@
 
 /**
 * @date     2011/05/02
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -50,7 +50,7 @@ MemFreeProbe::MemFreeProbe(void):
 
 /**
 * @date     2011/05/02
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -62,7 +62,7 @@ MemFreeProbe::~MemFreeProbe()
 
 /**
 * @date     2011/05/02
-* 
+*
 *  Probe initialization.
 *
 * @param sz_FreeFunc (in): Name of the deallocation function. "free" is used if
@@ -83,8 +83,31 @@ void MemFreeProbe::InitCheck(const char *sz_FreeFunc)
 
 
 /**
+* @date     2012/01/02
+*
+*  Probe Passthrough : The original function is called direclty.
+*
+******************************************************************************/
+void* MemFreeProbe::PassThrough(void *Data, const char *sz_FreeFunc)
+{
+   free_t FreeFunc;
+
+   if(sz_FreeFunc != NULL)
+      FreeFunc = (free_t) rtsym_resolve(sz_FreeFunc);
+   else
+      FreeFunc = (free_t) rtsym_resolve("free");
+
+   if(FreeFunc != NULL)
+   {
+      FreeFunc(Data);
+   }
+   return(Data);
+}
+
+
+/**
 * @date     2011/05/02
-* 
+*
 *  Frees previously allocated data.
 *
 ******************************************************************************/
@@ -107,7 +130,7 @@ void* MemFreeProbe::Free(void *Data)
             }
          }
       }
-      
+
       FreeFunc(Data);
       GetHeap()->Unlock();
 
