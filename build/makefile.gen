@@ -26,7 +26,8 @@ dynlib: $(OBJS)
 	$(CXX) -shared -Wl,-soname,$(NAME) -o lib$(NAME).so $(OBJS) $(LDFLAGS)
 
 clean:
-	rm -f *.o
+	rm -f $(C_OBJS)
+	rm -f $(CXX_OBJS)
 	rm -f $(TARGET_NAME)
 
 %.o : %.c
