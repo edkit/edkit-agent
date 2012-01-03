@@ -1,13 +1,13 @@
-#ifndef RTSYM_H
-#define RTSYM_H
+#ifndef __MEMALIGNPROBE_H
+#define __MEMALIGNPROBE_H
 
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
-*                          Copyright (c) 2011
+*                     \___/\__,_|_\_\_.__/_|\__/__/
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,37 +29,25 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/05/01
-* 
+* @date     2012/01/03
+*
 *****************************************************************************/
-#include <stdlib.h>
+#include "MemProbe.h"
+#include "rtsym.h"
 
-#ifdef __cplusplus
-extern "C" {
+
+class MemAlignProbe : MemProbe
+{
+   public:
+                        MemAlignProbe(void);
+      virtual           ~MemAlignProbe(void);
+
+               void     InitCheck(void);
+      static   void*    PassThrough(size_t i_Boundary, size_t i_Size);
+               void*    MemAlign(size_t i_Boundary, size_t i_Size, void *Eip);
+
+   private:
+      memalign_t AlignFunc;
+};
+
 #endif
-
-typedef void *(*malloc_t)(size_t);
-typedef void *(*calloc_t)(size_t nmemb, size_t size);
-typedef void *(*realloc_t)(void*, size_t);
-typedef void (*free_t)(void *);
-typedef void *(*memalign_t)(size_t boundary, size_t size);
-
-extern void* rtsym_resolve(const char *sz_symbol);
-
-#ifdef __cplusplus
-}
-#endif
-
-#if __GXX_ABI_VERSION == 1002
-#define CXX_SYM_NEW              _Znwj
-#define CXX_SYM_NEW_NOTHROW      _ZnwjRKSt9nothrow_t
-#define CXX_SYM_DELETE_NOTHROW   _ZdlPvRKSt9nothrow_t
-#define CXX_SYM_DELETE           _ZdlPv
-#else
-#error Unsupported ABI
-#endif
-
-#define SYM_STRING(S) #S
-#define M2STR(S) SYM_STRING(S)
-
-#endif /* RTSYM_H */

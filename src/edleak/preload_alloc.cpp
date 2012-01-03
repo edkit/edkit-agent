@@ -30,6 +30,7 @@
 *
 *****************************************************************************/
 #include "MemAllocProbe.h"
+#include "MemAlignProbe.h"
 #include "MemCallocProbe.h"
 #include "MemReallocProbe.h"
 #include "MemFreeProbe.h"
@@ -37,14 +38,15 @@
 
 extern "C" {
 void *malloc (size_t i_Size) throw();
+void *memalign(size_t i_Boundary, size_t i_Size) throw();
 void *calloc(size_t i_MembCount, size_t i_Size) throw();
 void *realloc(void *Ptr, size_t i_Size) throw();
 void free (void *Ptr) throw();
 
-void *_Znwj(size_t i_Size);
-void *_ZnwjRKSt9nothrow_t(size_t i_Size)  throw();
-void _ZdlPvRKSt9nothrow_t (void *Ptr) throw();
-void _ZdlPv (void *Ptr);
+void *CXX_SYM_NEW(size_t i_Size);
+void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw();
+void CXX_SYM_DELETE_NOTHROW(void *Ptr) throw();
+void CXX_SYM_DELETE(void *Ptr);
 }
 
 enum PreloadState
@@ -80,6 +82,12 @@ static MemAllocProbe& Preload_GetNewNoThrowProbe(void)
 }
 
 
+static MemAlignProbe& Preload_GetMemAlignProbe(void)
+{
+   static   MemAlignProbe  Probe;
+
+   return(Probe);
+}
 static MemCallocProbe& Preload_GetCallocProbe(void)
 {
    static   MemCallocProbe  Probe;
@@ -122,6 +130,7 @@ static enum PreloadState Preload_Init(void)
    {
       State = STATE_STARTING;
       MemAllocProbe     &MallocProbe         = Preload_GetMallocProbe();
+      MemAlignProbe     &MemAlignProbe       = Preload_GetMemAlignProbe();
       MemAllocProbe     &NewProbe            = Preload_GetNewProbe();
       MemAllocProbe     &NewNoThrowProbe     = Preload_GetNewNoThrowProbe();
       MemCallocProbe    &CallocProbe         = Preload_GetCallocProbe();
@@ -131,13 +140,14 @@ static enum PreloadState Preload_Init(void)
       MemFreeProbe      &DeleteNoThrowProbe  = Preload_GetDeleteNoThrowProbe();
 
       MallocProbe.InitCheck();
-      NewProbe.InitCheck("_Znwj");
-      NewNoThrowProbe.InitCheck("_ZnwjRKSt9nothrow_t");
+      MemAlignProbe.InitCheck();
+      NewProbe.InitCheck(M2STR(CXX_SYM_NEW));
+      NewNoThrowProbe.InitCheck(M2STR(CXX_SYM_NEW_NOTHROW));
       CallocProbe.InitCheck();
       ReallocProbe.InitCheck();
       FreeProbe.InitCheck();
-      DeleteProbe.InitCheck("_ZdlPv");
-      DeleteNoThrowProbe.InitCheck("_ZdlPvRKSt9nothrow_t");
+      DeleteProbe.InitCheck(M2STR(CXX_SYM_DELETE));
+      DeleteNoThrowProbe.InitCheck(M2STR(CXX_SYM_DELETE_NOTHROW));
       State = STATE_STARTED;
       ControllersInit();
    }
@@ -161,6 +171,24 @@ void *malloc (size_t i_Size) throw()
 
    return(Data);
 }
+
+void *memalign(size_t i_Boundary, size_t i_Size) throw()
+{
+   void  *Data = NULL;
+
+   if(Preload_Init() == STATE_STARTED)
+   {
+      MemAlignProbe  &Probe = Preload_GetMemAlignProbe();
+      Data = Probe.MemAlign(i_Boundary, i_Size, __builtin_return_address(0));
+   }
+   else
+   {
+      Data = MemAlignProbe::PassThrough(i_Boundary, i_Size);
+   }
+
+   return(Data);
+}
+
 
 
 void *calloc(size_t i_MembCount, size_t i_Size) throw()
@@ -213,7 +241,7 @@ void free (void *Ptr) throw()
 
 
 /* new */
-void *_Znwj(size_t i_Size)
+void *CXX_SYM_NEW(size_t i_Size)
 {
    void  *Data = NULL;
 
@@ -224,7 +252,7 @@ void *_Znwj(size_t i_Size)
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size, "_Znwj");
+      Data = MemAllocProbe::PassThrough(i_Size, M2STR(CXX_SYM_NEW));
    }
 
    return(Data);
@@ -232,7 +260,7 @@ void *_Znwj(size_t i_Size)
 
 
 /* new (std::nothrow) */
-void *_ZnwjRKSt9nothrow_t(size_t i_Size)  throw()
+void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw()
 {
    void  *Data = NULL;
 
@@ -243,7 +271,7 @@ void *_ZnwjRKSt9nothrow_t(size_t i_Size)  throw()
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size, "_ZnwjRKSt9nothrow_t");
+      Data = MemAllocProbe::PassThrough(i_Size, M2STR(CXX_SYM_NEW_NOTHROW));
    }
 
    return(Data);
@@ -251,7 +279,7 @@ void *_ZnwjRKSt9nothrow_t(size_t i_Size)  throw()
 
 
 /* delete (std::nothrow) */
-void _ZdlPvRKSt9nothrow_t (void *Ptr) throw()
+void CXX_SYM_DELETE_NOTHROW(void *Ptr) throw()
 {
    if(Preload_Init() == STATE_STARTED)
    {
@@ -260,13 +288,13 @@ void _ZdlPvRKSt9nothrow_t (void *Ptr) throw()
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr, "_ZdlPvRKSt9nothrow_t");
+      MemFreeProbe::PassThrough(Ptr, M2STR(CXX_SYM_DELETE_NOTHROW));
    }
 }
 
 
 /* delete */
-void _ZdlPv (void *Ptr)
+void CXX_SYM_DELETE(void *Ptr)
 {
    if(Preload_Init() == STATE_STARTED)
    {
@@ -275,7 +303,7 @@ void _ZdlPv (void *Ptr)
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr, "_ZdlPv");
+      MemFreeProbe::PassThrough(Ptr, M2STR(CXX_SYM_DELETE));
    }
 }
 
