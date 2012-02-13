@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/01
-* 
+*
 *****************************************************************************/
 #include <new>
 #include <dlfcn.h>
@@ -35,12 +35,11 @@
 
 #include "ExeContext.h"
 
-static DlList  g_ContextList;
 
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -52,7 +51,7 @@ ExeContext::ExeContext(void): DlListItem()
 
 /**
 * @date     2011/05/01
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -64,7 +63,7 @@ ExeContext::~ExeContext()
 
 /**
 * @date     2011/05/01
-* 
+*
 *  returns the first element of the context list.
 *
 * @return   List of contexts.
@@ -72,13 +71,15 @@ ExeContext::~ExeContext()
 ******************************************************************************/
 DlList* ExeContext::GetList(void)
 {
-   return(&g_ContextList);
+   static DlList ContextList;
+
+   return(&ContextList);
 }
 
 
 /**
 * @date     2011/05/01
-* 
+*
 *  returns an ExeContext object. if a context already exists for the specified
 *  eip, then this context is returned. Otherwise a new context is created and
 *  returned.
@@ -90,7 +91,8 @@ DlList* ExeContext::GetList(void)
 ******************************************************************************/
 ExeContext* ExeContext::Get(void *ContextEip)
 {
-   ExeContext *p_Context = static_cast<ExeContext*>(g_ContextList.GetHead());
+   DlList *p_ContextList = ExeContext::GetList();
+   ExeContext *p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
 
    /* search for an existing allocer */
    while(p_Context != NULL)
@@ -112,7 +114,7 @@ ExeContext* ExeContext::Get(void *ContextEip)
          p_Context->Memory = 0;
          if( (dladdr(ContextEip, &s_info) != 0) && (s_info.dli_sname != NULL) )
          {
-            snprintf(p_Context->Name, ALLOCER_NAME_SIZE, "%p:%s", 
+            snprintf(p_Context->Name, ALLOCER_NAME_SIZE, "%p:%s",
                   ContextEip, s_info.dli_sname);
          }
          else
@@ -120,7 +122,7 @@ ExeContext* ExeContext::Get(void *ContextEip)
             snprintf(p_Context->Name, ALLOCER_NAME_SIZE, "%p", ContextEip);
          }
          p_Context->Name[ALLOCER_NAME_SIZE-1] = '\0';
-         g_ContextList.AppendItem(p_Context);
+         p_ContextList->AppendItem(p_Context);
       }
    }
    return(p_Context);
