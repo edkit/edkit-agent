@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,7 +27,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/08
-* 
+*
 *****************************************************************************/
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -51,7 +51,7 @@
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -79,7 +79,7 @@ FileWriter::FileWriter(void): Thread(),
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -94,7 +94,7 @@ FileWriter::~FileWriter(void)
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -106,7 +106,7 @@ int32_t FileWriter::Start(void)
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -120,7 +120,7 @@ int32_t FileWriter::Stop(void)
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Loop entry of the thread. The ExeContext list is flushed as a json object.
 *
 ******************************************************************************/
@@ -149,7 +149,7 @@ void FileWriter::Loop(void)
       ExeContext  *p_CurContext =
          static_cast<ExeContext*>(ExeContext::GetList()->GetHead());
       b_FirstContext = true;
-      
+
       if(b_FirstSlice == false)
          write(i_File, ",\n", 2);
       else
@@ -163,7 +163,7 @@ void FileWriter::Loop(void)
          else
             b_FirstContext = false;
 
-         snprintf(sz_Line, STRING_SIZE, "{ \"eip\":\"%s\", \"memory\":%lld}", 
+         snprintf(sz_Line, STRING_SIZE, "{ \"eip\":\"%s\", \"memory\":%lld}",
                p_CurContext->Name, p_CurContext->Memory);
          sz_Line[STRING_SIZE-1] = '\0';
          write(i_File, sz_Line, strlen(sz_Line));
@@ -179,7 +179,7 @@ void FileWriter::Loop(void)
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Sleep for PollPeriod. The sleep is done by 100ms steps to be able to
 *  interrupt the long wait if we must quit.
 *
@@ -203,8 +203,8 @@ void FileWriter::Sleep(void)
       if(nanosleep(&s_WaitTime, &s_RemainTime) == -1)
       {
          while( (StopRequested == false) &&
-                (errno == EINTR) && 
-                (nanosleep(&s_RemainTime, &s_RemainTime) == -1) 
+                (errno == EINTR) &&
+                (nanosleep(&s_RemainTime, &s_RemainTime) == -1)
               );
       }
    }

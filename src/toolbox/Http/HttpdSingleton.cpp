@@ -1,12 +1,10 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +26,78 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2012/01/24
 *
 *****************************************************************************/
-#include "String.h"
+#include <new>
+#include <stdlib.h>
+#include <errno.h>
+#include "HttpdSingleton.h"
 
-class HttpdRequest;
-class UrlHandler
+
+/**
+* @date     2011/12/12
+*
+*  Constructor.
+*
+******************************************************************************/
+HttpdSingleton::HttpdSingleton(void):
+   Httpd()
 {
-   public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
+   return;
+}
 
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
 
-   private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
+/**
+* @date     2011/12/12
+*
+*  Destructor.
+*
+******************************************************************************/
+HttpdSingleton::~HttpdSingleton(void)
+{
+   return;
+}
 
-};
 
-#endif /* URLHANDLER_H */
+/**
+* @date     2011/12/12
+*
+*  Destructor.
+*
+******************************************************************************/
+HttpdSingleton* HttpdSingleton::Instantiate(void)
+{
+   static HttpdSingleton *Server = NULL;
+
+   if(Server == NULL)
+   {
+      Server  = new(std::nothrow) HttpdSingleton();
+      if(Server != NULL)
+      {
+         int32_t i_Ret = 0;
+         uint16_t Port = 8080;
+         char *sz_Port = getenv(ENV_PORT);
+         if(sz_Port != NULL)
+         {
+            errno = 0;
+            char *EndPtr;
+            Port = strtol(sz_Port, &EndPtr, 10);
+            if( (errno != 0) || (*EndPtr != '\0') )
+               i_Ret = -1;
+         }
+         if(i_Ret == 0)
+         {
+            i_Ret = Server->Start(Port);
+         }
+         if(i_Ret != 0)
+         {
+            delete Server;
+            Server = NULL;
+         }
+      }
+   }
+   return(Server);
+}
+
+

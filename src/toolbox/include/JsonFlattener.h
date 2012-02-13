@@ -1,12 +1,12 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
+#ifndef JSONFLATTENER_H
+#define JSONFLATTENER_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +28,26 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2012/01/09
 *
 *****************************************************************************/
 #include "String.h"
+#include "DynObject.h"
 
-class HttpdRequest;
-class UrlHandler
+struct json_object;
+class JsonFlattener
 {
    public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
+                              JsonFlattener();
+      virtual                 ~JsonFlattener(void);
 
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
+               int32_t        Flatten(const DynObject *p_Object, String *p_Json);
+               int32_t        UnFlatten(const String *p_Json, DynObject *p_Object);
 
    private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
+               int32_t        UnFlatten(struct json_object *p_JsonObject, DynObject *p_Object);
+               int32_t        Flatten(const DynObject *p_Object, struct json_object *p_JsonObject);
 
 };
 
-#endif /* URLHANDLER_H */
+#endif

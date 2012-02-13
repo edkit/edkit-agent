@@ -1,5 +1,5 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
+#ifndef HTTPDSINGLETON_H
+#define HTTPDSINGLETON_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
@@ -28,27 +28,21 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2012/01/24
 *
 *****************************************************************************/
-#include "String.h"
+#include "Httpd.h"
 
-class HttpdRequest;
-class UrlHandler
+class HttpdSingleton : public Httpd
 {
    public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
+#define ENV_PORT "oaktools_httpd_port"
 
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
+      static   HttpdSingleton*      Instantiate(void);
+      virtual                       ~HttpdSingleton(void);
 
    private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
-
+                                    HttpdSingleton(void);
 };
 
-#endif /* URLHANDLER_H */
+#endif /* HTTPDSINGLETON_H */

@@ -32,14 +32,33 @@
 *
 *****************************************************************************/
 #include "UrlHandler.h"
+#include "AList.h"
 
+class HttpdRequest;
+class WsInterface;
+class DynObject;
 class WsHandler : public UrlHandler
 {
    public:
-                           WsHandler(const String &Url);
-      virtual              ~WsHandler(void);
+                                    WsHandler(const String &Url);
+      virtual                       ~WsHandler(void);
+               int32_t              InitCheck(void) const { return(InitStatus); };
 
-      virtual  int32_t     RequestReceived(HttpdRequest &Request);
+      virtual  int32_t              RequestReceived(const HttpdRequest &Request,
+                                                   HttpdRequest *Answer);
+               int32_t              AddInterface(WsInterface *p_Interface);
+               int32_t              DelInterface(WsInterface *p_Interface);
+
+      private:
+               int32_t              Json2Object(const String &JsonValue,
+                                                DynObject *p_ObjectValue);
+               int32_t              Object2Json(const DynObject ObjectValue,
+                                                String *p_JsonValue);
+               int32_t              HandleCors(const HttpdRequest &Request,
+                                               HttpdRequest *Answer);
+               int32_t              InitStatus;
+               AList<WsInterface*>  InterfaceList;
+
 };
 
 #endif /* WSHANDLER_H */

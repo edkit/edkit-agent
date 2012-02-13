@@ -41,7 +41,7 @@
 *
 ******************************************************************************/
 String::String(void):
-   InitStatus(-1), Area(NULL)
+   InitStatus(0), Area(NULL)
 {
 }
 
@@ -55,7 +55,20 @@ String::String(void):
 String::String(const String &BaseString):
    InitStatus(-1), Area(NULL)
 {
-   InitStatus = SetTo(BaseString.GetString());
+   InitStatus = SetTo(BaseString);
+}
+
+
+/**
+* @date     2012/01/11
+*
+*  Constructor.
+*
+******************************************************************************/
+String::String(const char *BaseString, uint32_t i_Length):
+   InitStatus(-1), Area(NULL)
+{
+   InitStatus = SetTo(BaseString, i_Length);
 }
 
 
@@ -70,19 +83,61 @@ String::~String(void)
    DelArea();
 }
 
+
+/**
+* @date     2012/01/08
+*
+*  Equality operator.
+*
+******************************************************************************/
+bool String::operator==(const String &Rhs) const
+{
+   if(strcmp(GetString(), Rhs.GetString()) == 0)
+      return(true);
+   return(false);
+}
+
+/**
+* @date     2012/01/08
+*
+*  Equality operator.
+*
+******************************************************************************/
+bool String::operator!=(const String &Rhs) const
+{
+   return(!operator==(Rhs));
+}
+
+
+/**
+* @date     2012/01/08
+*
+*  Sets the value of the string.
+*
+******************************************************************************/
+int32_t String::SetTo(const String &Value)
+{
+   return(SetTo(Value.GetString(), 0));
+}
+
+
 /**
 * @date     2011/12/19
 *
 *  Sets the value of the string.
 *
 ******************************************************************************/
-int32_t String::SetTo(const char *Value)
+int32_t String::SetTo(const char *Value, uint32_t i_Length)
 {
    if(Value == NULL)
       return(-1);
 
    DelArea();
-   uint32_t ValueLength = strlen(Value);
+   uint32_t ValueLength;
+   if(i_Length == 0)
+      ValueLength = strlen(Value);
+   else
+      ValueLength = i_Length;
    Area = static_cast<char*>(malloc(ValueLength+1));
    if(Area == NULL)
       return(-1);

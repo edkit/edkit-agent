@@ -1,19 +1,21 @@
+include ../../build/arch.make
+include flags.make
+
 SRCS = Os/rtsym.c
-#SRCS += Http/mongoose/mongoose.c
+SRCS += Http/mongoose/mongoose.c
 
 CXX_SRCS = Preload/DlList.cpp
-CXX_SRCS += DynObject/DynObject.cpp
+CXX_SRCS += DynObject/DynObject.cpp DynObject/JsonFlattener.cpp
 CXX_SRCS += Os/Thread.cpp
-CXX_SRCS += Http/Httpd.cpp Http/UrlHandler.cpp Http/WsMethod.cpp Http/WsHandler.cpp
+CXX_SRCS += Http/Httpd.cpp Http/HttpdSingleton.cpp Http/HttpdRequest.cpp Http/UrlHandler.cpp Http/WsMethod.cpp 
+CXX_SRCS += Http/WsHandler.cpp Http/WsHandlerSingleton.cpp
 CXX_SRCS += Http/WsMethod.cpp Http/WsHandler.cpp Http/WsInterface.cpp
 CXX_SRCS += String.cpp
 
-CPPFLAGS = -I./include
+CPPFLAGS = -I./include -I../thirdparty/json-c
 
 NAME = toolbox
 BUILD_TYPE = staticlib
 
-include ../../build/arch.make
-include flags.make
 include ../../build/makefile.gen
 

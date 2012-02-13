@@ -31,6 +31,7 @@
 * @date     2011/12/19
 *
 *****************************************************************************/
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,7 +40,7 @@ class ListIterator
 {
    public:
                            ListIterator(void) : List(NULL), CurrentIndex(0) {};
-      virtual              ~ListIterator(void);
+      virtual              ~ListIterator(void) {};
 
                int32_t     SetTo(const T *p_List)
                            {

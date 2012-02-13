@@ -68,7 +68,7 @@ UrlHandler::~UrlHandler(void)
 ******************************************************************************/
 bool  UrlHandler::Handles(const String &Url) const
 {
-   if(HandlerUrl.FindFirst(Url) == 0)
+   if(Url.FindFirst(HandlerUrl) == 0)
       return(true);
    return(false);
 }

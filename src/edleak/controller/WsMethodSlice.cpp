@@ -3,8 +3,8 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
-*                          Copyright (c) 2011
+*                     \___/\__,_|_\_\_.__/_|\__/__/
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,28 +26,44 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/05/11
-* 
+* @date     2012/01/25
+*
 *****************************************************************************/
-#include <new>
-#include <stdlib.h>
-#include "Controllers.h"
-#include "FileWriter.h"
+#include "WsMethodSlice.h"
 
-static   FileWriter  *p_FileWriter = NULL;
 
-void ControllersInit(void)
+/**
+* @date     2012/01/25
+*
+*  Constructor.
+*
+******************************************************************************/
+WsMethodSlice::WsMethodSlice():
+   WsMethod("GetSlice")
 {
-   if(p_FileWriter == NULL)
-      p_FileWriter = new(std::nothrow) FileWriter();
-
-   atexit(ControllersEnd);
+   return;
 }
 
 
-void ControllersEnd(void)
+/**
+* @date     2012/01/25
+*
+*  Destructor.
+*
+******************************************************************************/
+WsMethodSlice::~WsMethodSlice(void)
 {
-   if(p_FileWriter != NULL)
-      delete p_FileWriter;
+   return;
+}
 
+
+/**
+* @date     2012/01/25
+*
+*  Slice Method : Returns a new memory slice.
+*
+******************************************************************************/
+int32_t WsMethodSlice::Call(const DynObject &Params, DynObject *p_Answer)
+{
+   return(0);
 }

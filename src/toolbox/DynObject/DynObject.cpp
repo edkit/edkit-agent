@@ -32,7 +32,6 @@
 #include <new>
 #include "String.h"
 #include "ListIterator.h"
-#include "DynEntry.h"
 #include "DynObject.h"
 
 /**
@@ -49,7 +48,7 @@ DynObject::DynObject(void):
 /**
 * @date     2011/12/19
 *
-*  Constructor.
+*  copy Constructor.
 *
 ******************************************************************************/
 DynObject::DynObject(const DynObject &Object):
@@ -60,8 +59,8 @@ DynObject::DynObject(const DynObject &Object):
    bool     b_Handled = false;
    uint32_t i_Index = 0;
    DynEntry<int64_t> *p_IntEntry;
-   DynEntry<String> *p_StringEntry;
-   DynEntry<DynObject> *p_DynObjectEntry;
+   DynEntry<const String> *p_StringEntry;
+   DynEntry<const DynObject> *p_DynObjectEntry;
 
    while(b_End == false)
    {
@@ -81,14 +80,14 @@ DynObject::DynObject(const DynObject &Object):
             b_Handled = true;
          }
 
-         p_StringEntry = dynamic_cast<DynEntry<String>*>(p_EntryBase);
+         p_StringEntry = dynamic_cast<DynEntry<const String>*>(p_EntryBase);
          if(p_StringEntry != NULL)
          {
             AddString(p_StringEntry->GetName(), *(p_StringEntry->GetValuePtr()));
             b_Handled = true;
          }
 
-         p_DynObjectEntry = dynamic_cast<DynEntry<DynObject>*>(p_EntryBase);
+         p_DynObjectEntry = dynamic_cast<DynEntry<const DynObject>*>(p_EntryBase);
          if(p_DynObjectEntry != NULL)
          {
             AddDynObject(p_DynObjectEntry->GetName(), *(p_DynObjectEntry->GetValuePtr()));
@@ -116,6 +115,7 @@ DynObject::DynObject(const DynObject &Object):
 ******************************************************************************/
 DynObject::~DynObject(void)
 {
+   MakeEmpty();
 }
 
 
@@ -136,11 +136,67 @@ DynEntryBase* DynObject::GetEntryAt(uint32_t i_Index) const
 }
 
 
+/**
+* @date     2012/01/05
+*
+*  Tells whether the requested entry exists.
+*
+******************************************************************************/
+bool DynObject::HasEntry(const char *Name) const
+{
+   ListIterator<AList<DynEntryBase*>, DynEntryBase*> Iterator;
+   DynEntryBase *p_Entry;
+
+   Iterator.SetTo(&EntryList);
+   Iterator.First();
+   while(Iterator.IsDone() == false)
+   {
+      if(Iterator.GetItem(&p_Entry) == 0)
+      {
+         if(strcmp(Name, p_Entry->GetName()) == 0)
+            return(true);
+      }
+      Iterator.Next();
+   }
+   return(false);
+}
+
+
+/**
+* @date     2012/01/05
+*
+*  Removes all entries from the object.
+*
+******************************************************************************/
+int32_t DynObject::MakeEmpty(void)
+{
+   DynEntryBase *p_Entry;
+
+   uint32_t i_ItemsCount = EntryList.CountItems();
+   if(i_ItemsCount == 0)
+      return(0);
+
+   int i;
+   for(i=i_ItemsCount-1; i>=0; i--)
+   {
+      if(EntryList.GetItemAt(i, &p_Entry) == 0)
+      {
+         EntryList.DelItemAt(i);
+         delete p_Entry;
+      }
+   }
+   return(0);
+
+}
+
 
 #define DEFINE_ADD_FUNCTION(type, typeName)                                \
 int32_t DynObject::Add##typeName(const char *Name, type Value)             \
 {                                                                          \
    int32_t i_Ret = -1;                                                     \
+                                                                           \
+   if(HasEntry(Name) == true)                                              \
+      return(-1);                                                          \
                                                                            \
    DynEntry<type> *Entry = new(std::nothrow) DynEntry<type>(Name, Value);  \
    if(Entry != NULL)                                                       \
@@ -157,6 +213,9 @@ int32_t DynObject::Add##typeName(const char *Name, type Value)             \
 int32_t DynObject::Add##typeName(const char *Name, type &Value)            \
 {                                                                          \
    int32_t i_Ret = -1;                                                     \
+                                                                           \
+   if(HasEntry(Name) == true)                                              \
+      return(-1);                                                          \
                                                                            \
    DynEntry<type> *Entry = new(std::nothrow) DynEntry<type>(Name, Value);  \
    if(Entry != NULL)                                                       \

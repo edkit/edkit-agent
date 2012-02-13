@@ -5,7 +5,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,26 +29,32 @@
 /**
 * @author   R. Picard
 * @date     2011/12/06
-* 
+*
 *****************************************************************************/
 #include <stdint.h>
 #include "AList.h"
 #include "UrlHandler.h"
 
+struct mg_context;
+
 class Httpd
 {
    public:
-               Httpd(void);
-      virtual  ~Httpd(void);
-      
-               int32_t Start(uint16_t TcpPort);
-               int32_t Stop(void);
+                                    Httpd(void);
+      virtual                       ~Httpd(void);
 
-               int32_t AddUrlHandler(const UrlHandler &Handler);
-               int32_t DelUrlHandler(const UrlHandler &Handler);
+               int32_t              Start(uint16_t TcpPort = 80);
+               int32_t              Stop(void);
+
+               int32_t              AddUrlHandler(UrlHandler *Handler);
+               int32_t              DelUrlHandler(UrlHandler *Handler);
+
+               void                 EventHandler(const HttpdRequest &Request, HttpdRequest *Answer);
 
    private:
-               AList<const UrlHandler*>   HandlerList;
+               AList<UrlHandler*>   HandlerList;
+
+               struct mg_context*   MgHandle;
 };
 
 #endif /* HTTPD_H */

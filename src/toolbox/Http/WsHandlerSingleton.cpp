@@ -4,7 +4,7 @@
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,108 +26,72 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/22
+* @date     2012/01/24
 *
 *****************************************************************************/
-#include "WsInterface.h"
-#include "WsMethod.h"
-#include "ListIterator.h"
+#include <new>
+#include "WsHandlerSingleton.h"
+#include "HttpdSingleton.h"
 
 
 /**
-* @date     2011/12/22
+* @date     2011/12/12
 *
 *  Constructor.
 *
 ******************************************************************************/
-WsInterface::WsInterface(const String &Name):
-   InitStatus(0), InterfaceName(Name)
+WsHandlerSingleton::WsHandlerSingleton(void):
+   WsHandler("/ws")
 {
    return;
 }
 
 
 /**
-* @date     2011/12/22
+* @date     2011/12/12
 *
 *  Destructor.
 *
 ******************************************************************************/
-WsInterface::~WsInterface(void)
+WsHandlerSingleton::~WsHandlerSingleton(void)
 {
    return;
 }
 
 
 /**
-* @date     2011/12/22
+* @date     2011/12/12
 *
-*  Adds a method to this interface.
-*
-******************************************************************************/
-int32_t  WsInterface::AddMethod(WsMethod *p_Method)
-{
-   if(p_Method == NULL)
-      return(-1);
-
-   return(MethodList.AddItem(p_Method));
-}
-
-
-/**
-* @date     2011/12/22
-*
-*  Removes a method to this interface.
+*  Destructor.
 *
 ******************************************************************************/
-int32_t  WsInterface::DelMethod(WsMethod *p_Method)
+WsHandlerSingleton* WsHandlerSingleton::Instantiate(void)
 {
-   if(p_Method == NULL)
-      return(-1);
+   static WsHandlerSingleton *Handler = NULL;
 
-   return(MethodList.DelItem(p_Method));
-}
-
-
-/**
-* @date     2011/12/22
-*
-*  Calls the method provided in Params.
-*  The structure of Params is:
-*  - String field "MethodName" : Method name.
-*  - DynObj field "MethodParams" : Method parameters.
-*
-******************************************************************************/
-int32_t  WsInterface::Call(const DynObject &Params, DynObject *p_Answer)
-{
-   ListIterator<AList<WsMethod*>, WsMethod*>  Iterator;
-   WsMethod *p_Method = NULL;
-   const String *MethodName;
-
-   if( (Params.FindString("MethodName", &MethodName) != 0) ||
-       (MethodName == NULL) )
+   if(Handler == NULL)
    {
-      return(-1);
-   }
-
-   Iterator.SetTo(&MethodList);
-   Iterator.First();
-   while(Iterator.IsDone() == false)
-   {
-      if( (Iterator.GetItem(&p_Method) == 0) && (p_Method != NULL) )
+      HttpdSingleton *Server = HttpdSingleton::Instantiate();
+      if(Server != NULL)
       {
-         if(strcmp(p_Method->GetName().GetString(), MethodName->GetString()) == 0)
+         Handler  = new(std::nothrow) WsHandlerSingleton();
+         if(Handler != NULL)
          {
-            const DynObject *p_Params = NULL;
-
-            if( (Params.FindDynObject("MethodParams", &p_Params) == 0) &&
-                  (p_Params != NULL) )
+            int32_t i_Ret;
+            i_Ret = Server->AddUrlHandler(Handler);
+            if(i_Ret != 0)
             {
-               return(p_Method->Call(*p_Params, p_Answer));
+               delete Handler;
+               Handler = NULL;
             }
          }
+         if(Handler == NULL)
+         {
+            delete Server;
+         }
       }
-      Iterator.Next();
    }
-   return(-1);
+   return(Handler);
 }
+
+

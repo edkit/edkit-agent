@@ -33,8 +33,8 @@
 *****************************************************************************/
 #include "stdint.h"
 #include "AList.h"
+#include "DynEntry.h"
 
-class DynEntryBase;
 class String;
 class DynObject
 {
@@ -53,6 +53,8 @@ class DynObject
                int32_t           FindDynObject(const char *Name, const DynObject **Value) const ;
 
                DynEntryBase*     GetEntryAt(uint32_t i_Index) const;
+               bool              HasEntry(const char *Name) const;
+               int32_t           MakeEmpty(void);
 
    private:
                int32_t                 InitStatus;

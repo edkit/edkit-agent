@@ -1,12 +1,12 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
+#ifndef WSHANDLERSINGLETON_H
+#define WSHANDLERSINGLETON_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +28,19 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2012/01/24
 *
 *****************************************************************************/
-#include "String.h"
+#include "WsHandler.h"
 
-class HttpdRequest;
-class UrlHandler
+class WsHandlerSingleton : public WsHandler
 {
    public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
-
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
+      static   WsHandlerSingleton*  Instantiate(void);
+      virtual                       ~WsHandlerSingleton(void);
 
    private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
-
+                                    WsHandlerSingleton(void);
 };
 
-#endif /* URLHANDLER_H */
+#endif /* WSHANDLERSINGLETON_H */

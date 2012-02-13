@@ -5,7 +5,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,14 +29,21 @@
 /**
 * @author   R. Picard
 * @date     2011/12/19
-* 
+*
 *****************************************************************************/
+#include "String.h"
 
 class DynEntryBase
-{  
+{
    public:
-                           DynEntryBase(void) {};
+                           DynEntryBase(void): Name() {};
       virtual              ~DynEntryBase(void) {};
+
+               const char* GetName(void) const {return(Name.GetString());};
+
+   protected:
+               String      Name;
+
 };
 
 template <class T>
@@ -44,10 +51,10 @@ class DynEntry : public DynEntryBase
 {
    public:
 #define  NAME_SIZE   64
-                           DynEntry(const char *EntryName, T &Value) : 
+                           DynEntry(const char *EntryName, T &Value) :
                               DynEntryBase(),
-                              Name(), Value(Value), InitStatus(-1)
-                           { 
+                              Value(Value), InitStatus(-1)
+                           {
                               if(EntryName != NULL)
                               {
                                  if(Name.SetTo(EntryName) == 0)
@@ -56,20 +63,17 @@ class DynEntry : public DynEntryBase
 
                            };
 
-      virtual              ~DynEntry(void);
-
+      virtual              ~DynEntry(void) {};
                int32_t     InitCheck(void) const { return(InitStatus); };
 
-               const char* GetName(void) const {return(Name.GetString());};
       virtual  T           GetValue(void) const {return(Value);};
       virtual  T*          GetValuePtr(void) {return(&Value);};
 
       private:
-               String      Name;
                T           Value;
                int32_t     InitStatus;
 
-      
+
 };
 
 #endif /* DYNENTRY_H */

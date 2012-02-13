@@ -1,12 +1,10 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,27 +26,54 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2012/01/24
 *
 *****************************************************************************/
-#include "String.h"
+#include <new>
+#include "WebService.h"
+#include "WsInterface.h"
+#include "WsMethodSlice.h"
+#include "WsHandlerSingleton.h"
 
-class HttpdRequest;
-class UrlHandler
+/**
+* @date     2012/01/24
+*
+*  Constructor.
+*
+******************************************************************************/
+WebService::WebService(void):
+   Interface(NULL), SliceMethod(NULL)
 {
-   public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
+   int32_t i_Ret;
 
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
+   WsHandlerSingleton *WsHandler = WsHandlerSingleton::Instantiate();
+   if(WsHandler == NULL)
+      return;
 
-   private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
+   Interface = new(std::nothrow) WsInterface("Edleak");
+   if(Interface == NULL)
+      return;
+   i_Ret = Interface->InitCheck();
+   if(i_Ret == 0)
+   {
+      SliceMethod = new(std::nothrow) WsMethodSlice();
+      if(SliceMethod != NULL)
+         Interface->AddMethod(SliceMethod);
+   }
+   WsHandler->AddInterface(Interface);
+   return;
+}
 
-};
 
-#endif /* URLHANDLER_H */
+/**
+* @date     2012/01/24
+*
+*  Destructor.
+*
+******************************************************************************/
+WebService::~WebService(void)
+{
+   return;
+}
+
+

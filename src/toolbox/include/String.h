@@ -32,17 +32,29 @@
 *
 *****************************************************************************/
 #include "stdint.h"
+#include "stdlib.h"
 
 class String
 {
    public:
                            String(void);
                            String(const String &BaseString);
+                           String(const char*BaseString, uint32_t i_Length = 0);
       virtual              ~String(void);
                int32_t     InitCheck(void) const { return(InitStatus); };
 
-               const char* GetString(void) const { return(Area); };
-               int32_t     SetTo(const char *Value);
+               bool        operator==(const String& Rhs) const;
+               bool        operator!=(const String& Rhs) const;
+
+               const char* GetString(void) const
+                  {
+                     if(Area != NULL)
+                        return(Area);
+                     else
+                        return "";
+                  };
+               int32_t     SetTo(const String &Value);
+               int32_t     SetTo(const char *Value, uint32_t i_Length);
                int32_t     FindFirst(const String &SearchString) const ;
 
       private:

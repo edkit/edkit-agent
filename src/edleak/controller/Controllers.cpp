@@ -1,5 +1,3 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
@@ -28,27 +26,33 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2011/05/11
 *
 *****************************************************************************/
-#include "String.h"
+#include <new>
+#include <stdlib.h>
+#include "Controllers.h"
+#include "FileWriter.h"
+#include "WebService.h"
 
-class HttpdRequest;
-class UrlHandler
+static   FileWriter  *p_FileWriter = NULL;
+static   WebService  *p_WebService = NULL;
+
+void ControllersInit(void)
 {
-   public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
+   if(p_FileWriter == NULL)
+      p_FileWriter = new(std::nothrow) FileWriter();
 
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
+   if(p_WebService == NULL)
+      p_WebService = new(std::nothrow) WebService();
 
-   private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
+   atexit(ControllersEnd);
+}
 
-};
 
-#endif /* URLHANDLER_H */
+void ControllersEnd(void)
+{
+   if(p_FileWriter != NULL)
+      delete p_FileWriter;
+
+}

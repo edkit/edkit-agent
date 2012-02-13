@@ -1,5 +1,5 @@
-#ifndef URLHANDLER_H
-#define URLHANDLER_H
+#ifndef WEBSERVICE_H
+#define WEBSERVICE_H
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
@@ -28,27 +28,21 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/12/06
+* @date     2011/12/22
 *
 *****************************************************************************/
-#include "String.h"
 
-class HttpdRequest;
-class UrlHandler
+class WsInterface;
+class WsMethodSlice;
+class WebService
 {
    public:
-                              UrlHandler(const String &Url);
-      virtual                 ~UrlHandler(void);
-               int32_t        InitCheck(void) const { return(InitStatus); };
-
-               bool           Handles(const String &Url) const;
-      virtual  int32_t        RequestReceived(const HttpdRequest &Request,
-                                                HttpdRequest *Answer) = 0;
+                              WebService(void);
+      virtual                 ~WebService(void);
 
    private:
-               int32_t        InitStatus;
-               const String   HandlerUrl;
-
+               WsInterface    *Interface;
+               WsMethodSlice  *SliceMethod;
 };
 
-#endif /* URLHANDLER_H */
+#endif /* WEBSERVICE_H */

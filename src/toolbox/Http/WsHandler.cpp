@@ -29,7 +29,12 @@
 * @date     2011/12/21
 *
 *****************************************************************************/
+#include "String.h"
 #include "WsHandler.h"
+#include "HttpdRequest.h"
+#include "WsInterface.h"
+#include "ListIterator.h"
+#include "JsonFlattener.h"
 
 
 /**
@@ -39,7 +44,9 @@
 *
 ******************************************************************************/
 WsHandler::WsHandler(const String &Url):
-   UrlHandler(Url)
+   UrlHandler(Url),
+   InitStatus(UrlHandler::InitCheck()),
+   InterfaceList()
 {
    return;
 }
@@ -58,10 +65,116 @@ WsHandler::~WsHandler(void)
 
 
 /**
+* @date     2012/01/08
+*
+*  Adds an interface to this handler.
+*
+******************************************************************************/
+int32_t  WsHandler::AddInterface(WsInterface *p_Interface)
+{
+   if(p_Interface == NULL)
+      return(-1);
+
+   return(InterfaceList.AddItem(p_Interface));
+}
+
+
+/**
+* @date     2012/01/08
+*
+*  Removes an interface to this handler.
+*
+******************************************************************************/
+int32_t  WsHandler::DelInterface(WsInterface *p_Interface)
+{
+   if(p_Interface == NULL)
+      return(-1);
+
+   return(InterfaceList.DelItem(p_Interface));
+}
+
+
+/**
 * @date     2011/12/21
 *
 *  Handler of a request. The WebService request si built from the request, and
 *  forwarded to the correct WsInterface.
 *
 ******************************************************************************/
+int32_t  WsHandler::RequestReceived(const HttpdRequest &Request,
+                                    HttpdRequest *Answer)
+{
+   int32_t i_Ret = -1;
+   ListIterator<AList<WsInterface*>, WsInterface*>  Iterator;
+   WsInterface    *p_Interface = NULL;
+   const String   *RequestInterface;
+
+   if(HandleCors(Request, Answer) == 0)
+      return(0);
+
+   DynObject   Params;
+   DynObject   AnswerObj;
+   const uint8_t *Payload;
+   uint32_t i_Length;
+   i_Ret = Request.GetPayload(&Payload, &i_Length);
+   if(i_Ret == 0)
+   {
+      JsonFlattener Flattener;
+      const String PayloadString((const char*)(Payload), i_Length);
+
+      i_Ret = Flattener.UnFlatten(&PayloadString, &Params);
+      if(i_Ret == 0)
+      {
+         i_Ret = Params.FindString("InterfaceName", &RequestInterface);
+      }
+   }
+   if(i_Ret != 0)
+      return(-1);
+
+   Iterator.SetTo(&InterfaceList);
+   Iterator.First();
+   while(Iterator.IsDone() == false)
+   {
+      if( (Iterator.GetItem(&p_Interface) == 0) && (p_Interface != NULL) )
+      {
+         if(p_Interface->GetName() == *RequestInterface)
+         {
+            i_Ret = p_Interface->Call(Params, &AnswerObj);
+            /// @todo convert obj to request
+            break;
+         }
+      }
+      Iterator.Next();
+   }
+
+   return(i_Ret);
+}
+
+/**
+* @date     2012/01/28
+*
+*  Cors handler (Cross Origin Resource Sharing). All Ws interfaces are
+*  considered allowing cors.
+*
+* @return 0 if the request is Cors and has been served.
+* @return -1 otherwise.
+******************************************************************************/
+int32_t  WsHandler::HandleCors(const HttpdRequest &Request,
+                               HttpdRequest *Answer)
+{
+   if(Answer == NULL)
+      return(-1);
+
+   if(Request.GetMethod() != HttpdRequest::OPTIONS)
+      return(-1);
+
+   String AcrmHeader;
+   if(Request.GetHeader("Access-Control-Request-Method", &AcrmHeader) == 0)
+   {
+      Answer->SetHeader("Access-Control-Allow-Origin", "*");
+      Answer->SetHeader("Access-Control-Allow-Methods", "POST");
+      return(0);
+   }
+   return(-1);
+}
 

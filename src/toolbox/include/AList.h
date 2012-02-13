@@ -31,6 +31,7 @@
 * @date     2011/12/19
 *
 *****************************************************************************/
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -39,15 +40,14 @@ class AList
 {
    public:
                            AList(void) : Array(NULL), ArraySize(0), ItemCount(0) {};
-      virtual              ~AList(void);
+      virtual              ~AList(void) {};
 
                int32_t     AddItem(T Item)
                            {
                               if(ItemCount >= ArraySize)
                               {
                                  uint32_t NewSize = ArraySize != 0 ? ArraySize*2 : 16;
-                                 NewSize *= sizeof(T);
-                                 T* ExtArray = (T*)realloc(Array, NewSize);
+                                 T* ExtArray = (T*)realloc(Array, NewSize*sizeof(T));
                                  if(ExtArray == NULL)
                                     return(-1);
 
@@ -71,13 +71,24 @@ class AList
                                  if(Item == Array[i])
                                  {
                                     if(i<ItemCount-1) // nothing to move on last item
-                                       memmove(&Array[i], &Array[i+1], sizeof(T));
+                                       memmove(&Array[i], &Array[i+1], sizeof(T)*(ItemCount-i-1));
                                     ItemCount -=1 ;
                                     return(0);
                                  }
                               }
                               return(-1);
                            };
+
+               int32_t     DelItemAt(uint32_t i_Index)
+                           {
+                              if(i_Index >= ItemCount)
+                                 return(-1);
+
+                              if(i_Index<ItemCount-1) // nothing to move on last item
+                                 memmove(&Array[i_Index], &Array[i_Index+1], sizeof(T)*(ItemCount-i_Index-1));
+                              ItemCount -=1 ;
+                              return(0);
+                           }
 
                int32_t     GetItemAt(uint32_t i_Index, T *p_Item) const
                            {
