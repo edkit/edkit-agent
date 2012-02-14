@@ -82,7 +82,7 @@ void String1::TestFind()
 
 };
 
-void String1::TestOperator()
+void String1::TestOperator1()
 {
    String AString;
    CPPUNIT_ASSERT(AString.InitCheck() == 0);
@@ -96,4 +96,19 @@ void String1::TestOperator()
    CPPUNIT_ASSERT(BString != AString);
    CPPUNIT_ASSERT(BString.SetTo(STRING1) == 0);
    CPPUNIT_ASSERT(BString == AString);
+}
+
+
+void String1::TestOperator2()
+{
+   String AString(STRING1);
+   AString << STRING2;
+   CPPUNIT_ASSERT(AString == STRING1 STRING2);
+   AString << 938;
+   CPPUNIT_ASSERT(AString == STRING1 STRING2 "938");
+   String BString(STRING2);
+   AString << BString;
+   CPPUNIT_ASSERT(AString == STRING1 STRING2 "938" STRING2);
+   BString << BString;
+   CPPUNIT_ASSERT(BString == STRING2 STRING2);
 }

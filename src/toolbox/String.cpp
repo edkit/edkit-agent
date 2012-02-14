@@ -30,6 +30,7 @@
 *
 *****************************************************************************/
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "String.h"
@@ -41,7 +42,7 @@
 *
 ******************************************************************************/
 String::String(void):
-   InitStatus(0), Area(NULL)
+   InitStatus(0), Area(NULL), AreaSize(0)
 {
 }
 
@@ -53,7 +54,7 @@ String::String(void):
 *
 ******************************************************************************/
 String::String(const String &BaseString):
-   InitStatus(-1), Area(NULL)
+   InitStatus(-1), Area(NULL), AreaSize(0)
 {
    InitStatus = SetTo(BaseString);
 }
@@ -66,7 +67,7 @@ String::String(const String &BaseString):
 *
 ******************************************************************************/
 String::String(const char *BaseString, uint32_t i_Length):
-   InitStatus(-1), Area(NULL)
+   InitStatus(-1), Area(NULL), AreaSize(0)
 {
    InitStatus = SetTo(BaseString, i_Length);
 }
@@ -106,6 +107,48 @@ bool String::operator==(const String &Rhs) const
 bool String::operator!=(const String &Rhs) const
 {
    return(!operator==(Rhs));
+}
+
+
+/**
+* @date     2012/02/14
+*
+*  Append operator.
+*
+******************************************************************************/
+String& String::operator<<(int Rhs)
+{
+   char Num[32];
+   int32_t i_Length = snprintf(Num, sizeof(Num), "%d", Rhs);
+
+   AppendString(Num, i_Length);
+   return(*this);
+}
+
+
+/**
+* @date     2012/02/14
+*
+*  Append operator.
+*
+******************************************************************************/
+String& String::operator<<(const char* Rhs)
+{
+   AppendString(Rhs, strlen(Rhs));
+   return(*this);
+}
+
+
+/**
+* @date     2012/02/14
+*
+*  Append operator.
+*
+******************************************************************************/
+String& String::operator<<(const String &Rhs)
+{
+   AppendString(Rhs.GetString(), Rhs.GetSize());
+   return(*this);
 }
 
 
@@ -189,3 +232,36 @@ void String::DelArea(void)
 }
 
 
+/**
+* @date     2012/02/14
+*
+*  Appends a string.
+* ///@todo : prealloc space to avoid multiple reallocs
+*
+******************************************************************************/
+int32_t String::AppendString(const char* sz_String, uint32_t i_Length)
+{
+   if( (sz_String == NULL) || (i_Length == 0) )
+      return(-1);
+
+   bool     b_Duplicate = sz_String == Area ? true : false;
+   uint32_t i_Offset = 0;
+   if(Area != NULL)
+      i_Offset = strlen(Area);
+
+   uint32_t i_NewSize = strlen(Area)+i_Length+1;
+   if(i_NewSize > AreaSize)
+   {
+      Area = static_cast<char*>(realloc(Area, i_NewSize));
+      if(Area != NULL)
+         AreaSize = i_NewSize;
+   }
+   if(Area == NULL)
+      return(-1);
+   if(b_Duplicate == true)
+      memcpy(Area+i_Offset, Area, i_Length);
+   else
+      memcpy(Area+i_Offset, sz_String, i_Length);
+   Area[i_Offset+i_Length] = '\0';
+   return(0);
+}

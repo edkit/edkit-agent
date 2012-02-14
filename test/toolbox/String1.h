@@ -39,7 +39,8 @@ class String1 : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE( String1 );
   CPPUNIT_TEST( TestBasic );
   CPPUNIT_TEST( TestFind );
-  CPPUNIT_TEST( TestOperator );
+  CPPUNIT_TEST( TestOperator1 );
+  CPPUNIT_TEST( TestOperator2 );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -48,7 +49,8 @@ public:
 
   void TestBasic();
   void TestFind();
-  void TestOperator();
+  void TestOperator1();
+  void TestOperator2();
 };
 
 #endif

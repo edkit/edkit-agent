@@ -33,6 +33,7 @@
 *****************************************************************************/
 #include "stdint.h"
 #include "stdlib.h"
+#include "string.h"
 
 class String
 {
@@ -45,6 +46,9 @@ class String
 
                bool        operator==(const String& Rhs) const;
                bool        operator!=(const String& Rhs) const;
+               String&     operator<<(int Rhs);
+               String&     operator<<(const char* Rhs);
+               String&     operator<<(const String& Rhs);
 
                const char* GetString(void) const
                   {
@@ -53,15 +57,18 @@ class String
                      else
                         return "";
                   };
+               uint32_t    GetSize(void) const { return(strlen(Area));};
                int32_t     SetTo(const String &Value);
                int32_t     SetTo(const char *Value, uint32_t i_Length);
                int32_t     FindFirst(const String &SearchString) const ;
 
       private:
                void        DelArea(void);
+               int32_t     AppendString(const char* sz_String, uint32_t i_Length);
 
                int32_t     InitStatus;
                char*       Area;
+               uint32_t    AreaSize;
 };
 
 #endif /* STRING_H */
