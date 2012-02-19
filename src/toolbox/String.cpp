@@ -184,6 +184,7 @@ int32_t String::SetTo(const char *Value, uint32_t i_Length)
    Area = static_cast<char*>(malloc(ValueLength+1));
    if(Area == NULL)
       return(-1);
+   AreaSize = ValueLength+1;
    memcpy(Area, Value, strlen(Value));
    Area[ValueLength] = '\0';
    return(0);
@@ -228,6 +229,7 @@ void String::DelArea(void)
    {
       free(Area);
       Area = NULL;
+      AreaSize = 0;
    }
 }
 
@@ -249,7 +251,10 @@ int32_t String::AppendString(const char* sz_String, uint32_t i_Length)
    if(Area != NULL)
       i_Offset = strlen(Area);
 
-   uint32_t i_NewSize = strlen(Area)+i_Length+1;
+   uint32_t i_NewSize = i_Length+1;
+   if(Area != NULL)
+      i_NewSize += strlen(Area);
+
    if(i_NewSize > AreaSize)
    {
       Area = static_cast<char*>(realloc(Area, i_NewSize));

@@ -66,6 +66,8 @@ void String1::TestBasic()
    CPPUNIT_ASSERT(CString.InitCheck() == 0);
    CPPUNIT_ASSERT(CString.SetTo(BString) == 0);
    CPPUNIT_ASSERT(strcmp(CString.GetString(), BString.GetString()) == 0);
+
+
 };
 
 
@@ -111,4 +113,12 @@ void String1::TestOperator2()
    CPPUNIT_ASSERT(AString == STRING1 STRING2 "938" STRING2);
    BString << BString;
    CPPUNIT_ASSERT(BString == STRING2 STRING2);
+
+   String CString;
+   CString << "foo";
+   CString << "foo2";
+   CString << "foo3";
+   uint32_t i;
+   for(i=0; i< 4000; i++)
+      CString << "foo4";
 }
