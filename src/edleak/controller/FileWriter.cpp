@@ -41,12 +41,8 @@
 
 #include <new>
 
-
 #include "FileWriter.h"
-#include "ExeContext.h"
-#include "MemProbe.h"
-
-#define STRING_SIZE  128
+#include "ContextUtils.h"
 
 
 /**
@@ -56,13 +52,14 @@
 *
 ******************************************************************************/
 FileWriter::FileWriter(void): Thread(),
-   StopRequested(false), FileName(NULL), PollPeriod(FW_DEFAULT_POLL_PERIOD)
+   StopRequested(false), FileName(), PollPeriod(FW_DEFAULT_POLL_PERIOD)
 {
-   FileName = getenv(ENV_FILENAME);
-   if(FileName == NULL)
-      FileName = strdup(FW_DEFAULT_FILENAME);
+   char *sz_FileName;
+   sz_FileName = getenv(ENV_FILENAME);
+   if(sz_FileName == NULL)
+      FileName << getpid() << "." << FW_DEFAULT_FILENAME ;
    else
-      FileName = strdup(FileName);
+      FileName << getpid() << "." << sz_FileName ;
 
    char *sz_PollPeriod = getenv(ENV_POLL_PERIOD);
    if(sz_PollPeriod != NULL)
@@ -85,8 +82,6 @@ FileWriter::FileWriter(void): Thread(),
 ******************************************************************************/
 FileWriter::~FileWriter(void)
 {
-   if(FileName != NULL)
-      free(FileName);
    Stop();
    return;
 }
@@ -127,18 +122,19 @@ int32_t FileWriter::Stop(void)
 void FileWriter::Loop(void)
 {
    int   i_File;
-   char  sz_Line[STRING_SIZE];
-   bool  b_FirstContext, b_FirstSlice;
-   MemProbe FakeProbe;  // fake probe just to get a Heap reference
+   bool  b_FirstSlice;
+   String JsonSlice, JsonAllocers;
+   String Json;
+   off_t  i_Offset = 0;
 
-   if(FileName == NULL)
-      return;
-
-   i_File = open(FileName, O_RDWR|O_CREAT|O_TRUNC, S_IRWXU);
+   i_File = open(FileName.GetString(), O_RDWR|O_CREAT|O_TRUNC, S_IRWXU|S_IRGRP|S_IROTH);
    if(i_File == -1)
       return;
-   write(i_File, "[\n", 2);
+   Json << "{\n";
+   Json << "\"slice\": [\n";
    b_FirstSlice = true;
+   write(i_File, Json.GetString(), Json.GetSize());
+   i_Offset += Json.GetSize();
 
    while(1)
    {
@@ -146,33 +142,29 @@ void FileWriter::Loop(void)
       if(StopRequested == true)
          break;
 
-      ExeContext  *p_CurContext =
-         static_cast<ExeContext*>(ExeContext::GetList()->GetHead());
-      b_FirstContext = true;
-
-      if(b_FirstSlice == false)
-         write(i_File, ",\n", 2);
-      else
-         b_FirstSlice = false;
-
-      write(i_File, "[\n", 2);
-      while(p_CurContext != NULL)
+      if(CU_GetSlice(&JsonSlice, &JsonAllocers) == 0)
       {
-         if(b_FirstContext == false)
-            write(i_File, ",\n", 2);
+         if(b_FirstSlice == false)
+         {
+            lseek(i_File, i_Offset, SEEK_SET);
+            Json.SetTo(",\n");
+            write(i_File, Json.GetString(), Json.GetSize());
+            i_Offset += Json.GetSize();
+         }
          else
-            b_FirstContext = false;
-
-         snprintf(sz_Line, STRING_SIZE, "{ \"eip\":\"%s\", \"memory\":%lld}",
-               p_CurContext->Name, p_CurContext->Memory);
-         sz_Line[STRING_SIZE-1] = '\0';
-         write(i_File, sz_Line, strlen(sz_Line));
-         p_CurContext = static_cast<ExeContext*>(p_CurContext->Next);
+         {
+            b_FirstSlice = false;
+         }
+         write(i_File, JsonSlice.GetString(), JsonSlice.GetSize());
+         i_Offset += JsonSlice.GetSize();
+         Json.SetTo("\n],\n");
+         write(i_File, Json.GetString(), Json.GetSize());
+         write(i_File, JsonAllocers.GetString(), JsonAllocers.GetSize());
+         Json.SetTo("\n}");
+         write(i_File, Json.GetString(), Json.GetSize());
       }
-      write(i_File, "\n]", 2);
    }
 
-   write(i_File, "\n]", 2);
    close(i_File);
 }
 

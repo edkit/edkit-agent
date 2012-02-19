@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,9 +30,10 @@
 /**
 * @author   R. Picard
 * @date     2011/05/08
-* 
+*
 *****************************************************************************/
 #include "Thread.h"
+#include "String.h"
 
 class FileWriter : Thread
 {
@@ -56,7 +57,7 @@ class FileWriter : Thread
                void     Sleep(void);
 
                bool     StopRequested;
-               char     *FileName;
+               String   FileName;
                uint32_t PollPeriod; ///< Sleep time in seconds;
 };
 

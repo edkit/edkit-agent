@@ -55,14 +55,14 @@ vis.prototype.getMainPanel = function()
    var w = $(window).width() - label_width - margin_right;
 
    convert_data();
-   h = allocer_label.length*15;
+   h = data.allocer.length*15;
 
    if(scale == "log")
       x = pv.Scale.log(1, memory_max).range(0, w);
    else
       x = pv.Scale.linear(0, memory_max).range(0, w);
-   var y = pv.Scale.linear(0, allocer_label.length-1).range(0, h);
-   var labels = pv.range(0, allocer_label.length, 1);
+   var y = pv.Scale.linear(0, data.allocer.length-1).range(0, h);
+   var labels = pv.range(0, data.allocer.length, 1);
 
    /* The root panel. */
    var vis = new pv.Panel()
@@ -82,7 +82,7 @@ vis.prototype.getMainPanel = function()
       .anchor("left").add(pv.Label)
          .textAlign("right")
          .text( function(d) { 
-               return allocer_label[d] });
+               return data.allocer[d].eip });
 
    /* X-axis and ticks. */
    vis.add(pv.Rule)
@@ -109,52 +109,34 @@ vis.prototype.getMainPanel = function()
 }
 
 
-function find_allocer(allocer, value)
-{
-   var i;
-
-   for(i=0; i<allocer.length; i++)
-   {
-      if(allocer[i] == value)
-         return(i);
-   }
-   return undefined;
-}
-
-
 function convert_data()
 {
    var   i,j;
    var   point_index;
-   var   slice_count = data.length;
+   var   slice_count = data.slice.length;
    var   slice_color_index;
 
    plot_data = [];
-   allocer_label = [];
    memory_max = 0;
 
    point_index = 0;
    for(i=0; i<slice_count; i++)
    {
       slice_color_index = Math.round(i*100/slice_count)+1;
-      for(j=0; j<data[i].length; j++)
+      for(j=0; j<data.slice[i].length; j++)
       {
-         /* do not print null values. This should be replaced with a real
-          * algorithm to remove unleaked entries (first value == last value) */
-         if(data[i][j].memory != 0)
+         /* do not print null values. For two reasons:
+          * - A 0 entry cannot leak. This should be replaced with a real
+          *    algorithm to remove unleaked entries (first value == last value)
+          * - 0 is not valid on log scale. */
+         if(data.slice[i][j].mem != 0)
          {
-            allocer_index = find_allocer(allocer_label, [data[i][j].eip]);
-            if(allocer_index == undefined)
-            {
-               allocer_label.push(data[i][j].eip);
-               allocer_index = allocer_label.length - 1;
-            }
             plot_data[point_index] = {};
             plot_data[point_index].c = slice_color_index;
-            plot_data[point_index].x = data[i][j].memory;
-            plot_data[point_index].y = allocer_index;
-            if(data[i][j].memory > memory_max)
-               memory_max = data[i][j].memory;
+            plot_data[point_index].x = data.slice[i][j].mem;
+            plot_data[point_index].y = data.slice[i][j].alc;
+            if(data.slice[i][j].mem > memory_max)
+               memory_max = data.slice[i][j].mem;
             point_index++;
          }
       }
@@ -162,6 +144,3 @@ function convert_data()
 }
 
 
-$(document).ready( function()
-{
-});
