@@ -66,6 +66,11 @@ HttpdRequest::~HttpdRequest(void)
       HeaderList.DelItemAt(0);
    }
 
+   if(Payload != NULL)
+   {
+      free(Payload);
+   }
+
    return;
 }
 
