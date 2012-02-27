@@ -33,3 +33,29 @@ body
    font-size:10pt;
    background: #6F9669;
 }
+
+
+/* edleak */
+#ws_loader ul, #ws_loader ul li
+{
+   margin : 0;
+   padding-left : 0.5ex;
+   padding-right : 0.5ex;
+   list-style: none inside none;
+}
+
+#edkit_ws_ip
+{
+   width : 12ex;
+}
+
+#edkit_ws_duration
+{
+   width : 7ex;
+}
+
+#edkit_ws_period
+{
+   width : 7ex;
+}
+

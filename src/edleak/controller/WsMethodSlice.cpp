@@ -30,6 +30,7 @@
 *
 *****************************************************************************/
 #include "WsMethodSlice.h"
+#include "ContextUtils.h"
 
 
 /**
@@ -63,7 +64,24 @@ WsMethodSlice::~WsMethodSlice(void)
 *  Slice Method : Returns a new memory slice.
 *
 ******************************************************************************/
-int32_t WsMethodSlice::Call(const DynObject &Params, DynObject *p_Answer)
+int32_t WsMethodSlice::Call(const DynObject &Params, String *p_Answer)
 {
-   return(0);
+   int32_t i_Ret;
+   String JsonSlice, JsonAllocers;
+
+   if(p_Answer == NULL)
+      return(-1);
+
+   i_Ret = CU_GetSlice(&JsonSlice, &JsonAllocers);
+   if(i_Ret == 0)
+   {
+      p_Answer->SetTo("{ \"status\": 0, \"data\" : {\n");
+
+      *p_Answer << "\"slice\": [\n";
+      *p_Answer << JsonSlice << "],\n";
+      *p_Answer << JsonAllocers << "\n";
+      *p_Answer << "} }\n";
+   }
+
+   return(i_Ret);
 }

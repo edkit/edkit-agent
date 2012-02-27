@@ -98,7 +98,7 @@ int32_t  WsInterface::DelMethod(WsMethod *p_Method)
 *  - DynObj field "MethodParams" : Method parameters.
 *
 ******************************************************************************/
-int32_t  WsInterface::Call(const DynObject &Params, DynObject *p_Answer)
+int32_t  WsInterface::Call(const DynObject &Params, String *p_Answer)
 {
    ListIterator<AList<WsMethod*>, WsMethod*>  Iterator;
    WsMethod *p_Method = NULL;

@@ -16,4 +16,4 @@ run: cleanruntime
 cleanall: clean cleanruntime
 
 cleanruntime:
-	rm -f edleak.json
+	rm -f *.edleak.json

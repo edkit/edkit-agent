@@ -115,11 +115,18 @@ int32_t Req2Mg(struct mg_connection *Handle,
    ///@todo status error string
    mg_printf(Handle, "HTTP/1.1 %d OK\r\n", Answer.GetStatus());
 
+   // get payload
+   const uint8_t *p_Payload;
+   uint32_t       i_PayloadSize;
+   if(Answer.GetPayload(&p_Payload, &i_PayloadSize) != 0)
+      return(-1);
+
    // common headers
    mg_printf(Handle, "Pragma: no-cache\r\n");
+   mg_printf(Handle, "Content-Length: %d\r\n", i_PayloadSize);
    mg_printf(Handle, "Keep-Alive: timeout=5, max=92\r\n");
    mg_printf(Handle, "Connection: Keep-Alive\r\n");
-   mg_printf(Handle, "Content-Type: text/plain\r\n");
+   mg_printf(Handle, "Content-Type: text/plain; charset=utf-8\r\n");
 
    // answer headers
    HttpdRequest::Header *p_CurHeader;
@@ -142,12 +149,8 @@ int32_t Req2Mg(struct mg_connection *Handle,
    // end of headers
    mg_printf(Handle, "\r\n");
 
-   // payload
-   const uint8_t *p_Payload;
-   uint32_t       i_PayloadSize;
-   if(Answer.GetPayload(&p_Payload, &i_PayloadSize) != 0)
-      return(-1);
 
+   // write payload
    mg_write(Handle, p_Payload, i_PayloadSize);
    return(0);
 }
@@ -219,7 +222,12 @@ Httpd::~Httpd(void)
 int32_t Httpd::Start(uint16_t TcpPort)
 {
    char sz_Port[16];
-   const char *sz_Options[] = { "listening_ports", sz_Port, NULL};
+   const char *sz_Options[] =
+   {
+      "listening_ports", sz_Port,
+      // "document_root", "",
+      NULL
+   };
 
    sprintf(sz_Port, "%d", TcpPort);
    MgHandle = mg_start(&MgEventHandler, this, sz_Options);

@@ -39,7 +39,7 @@ class WsMethodSlice : public WsMethod
                               WsMethodSlice(void);
       virtual                 ~WsMethodSlice(void);
 
-      virtual  int32_t        Call(const DynObject &Params, DynObject *p_Answer);
+      virtual  int32_t        Call(const DynObject &Params, String *p_Answer);
 };
 
 #endif /* WSMETHOD_H */

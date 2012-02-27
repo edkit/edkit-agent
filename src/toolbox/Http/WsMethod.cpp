@@ -30,6 +30,7 @@
 *
 *****************************************************************************/
 #include "WsMethod.h"
+#include "JsonFlattener.h"
 
 
 /**
@@ -56,4 +57,46 @@ WsMethod::~WsMethod(void)
    return;
 }
 
+
+/**
+* @date     2012/02/22
+*
+*  Call the method. Overload it for method that return informations directly in
+*  a json string.
+*
+* @param    Params (in): Method call parameters.
+* @param    p_Answer (out): Method return values.
+* @return   0 if success.
+* @return   Error otherwise.
+******************************************************************************/
+int32_t WsMethod::Call(const DynObject &Params, String *p_Answer)
+{
+   int32_t     i_Ret;
+   DynObject   ObjAnswer;
+
+   i_Ret = Call(Params, &ObjAnswer);
+   if(i_Ret == 0)
+   {
+      JsonFlattener Flattener;
+      i_Ret = Flattener.Flatten(&ObjAnswer, p_Answer);
+   }
+   return(i_Ret);
+}
+
+
+/**
+* @date     2012/02/22
+*
+*  Call the method. Overload it for method that return informations in a
+*  DynObject.
+*
+* @param    Params (in): Method call parameters.
+* @param    p_Answer (out): Method return values.
+* @return   0 if success.
+* @return   Error otherwise.
+******************************************************************************/
+int32_t WsMethod::Call(const DynObject &Params, DynObject *p_Answer)
+{
+   return(-1);
+}
 

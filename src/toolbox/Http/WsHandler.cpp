@@ -113,7 +113,6 @@ int32_t  WsHandler::RequestReceived(const HttpdRequest &Request,
       return(0);
 
    DynObject   Params;
-   DynObject   AnswerObj;
    const uint8_t *Payload;
    uint32_t i_Length;
    i_Ret = Request.GetPayload(&Payload, &i_Length);
@@ -139,8 +138,13 @@ int32_t  WsHandler::RequestReceived(const HttpdRequest &Request,
       {
          if(p_Interface->GetName() == *RequestInterface)
          {
-            i_Ret = p_Interface->Call(Params, &AnswerObj);
-            /// @todo convert obj to request
+            String   AnswerString;
+            i_Ret = p_Interface->Call(Params, &AnswerString);
+            if(i_Ret == 0)
+            {
+               i_Ret = Answer->SetPayload((const uint8_t*)AnswerString.GetString(),
+                                          AnswerString.GetSize());
+            }
             break;
          }
       }
@@ -165,13 +169,16 @@ int32_t  WsHandler::HandleCors(const HttpdRequest &Request,
    if(Answer == NULL)
       return(-1);
 
+   // always add this header to handle simple request
+   Answer->SetHeader("Access-Control-Allow-Origin", "*");
+
+   // handle preflight requests
    if(Request.GetMethod() != HttpdRequest::OPTIONS)
       return(-1);
 
    String AcrmHeader;
    if(Request.GetHeader("Access-Control-Request-Method", &AcrmHeader) == 0)
    {
-      Answer->SetHeader("Access-Control-Allow-Origin", "*");
       Answer->SetHeader("Access-Control-Allow-Methods", "POST");
       return(0);
    }

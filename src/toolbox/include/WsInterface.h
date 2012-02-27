@@ -47,7 +47,7 @@ class WsInterface
                const String&  GetName(void) const { return(InterfaceName); };
                int32_t        AddMethod(WsMethod *p_Method);
                int32_t        DelMethod(WsMethod *p_Method);
-      virtual  int32_t        Call(const DynObject &Params, DynObject *p_Answer);
+      virtual  int32_t        Call(const DynObject &Params, String *p_Answer);
 
 
       protected:

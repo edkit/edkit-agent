@@ -43,7 +43,8 @@ class WsMethod
                int32_t        InitCheck(void) const { return(InitStatus); };
 
                const String&  GetName(void) const { return(MethodName); };
-      virtual  int32_t        Call(const DynObject &Params, DynObject *p_Answer) = 0;
+      virtual  int32_t        Call(const DynObject &Params, String *p_Answer);
+      virtual  int32_t        Call(const DynObject &Params, DynObject *p_Answer);
 
 
       protected:
