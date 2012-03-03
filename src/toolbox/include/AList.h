@@ -40,7 +40,11 @@ class AList
 {
    public:
                            AList(void) : Array(NULL), ArraySize(0), ItemCount(0) {};
-      virtual              ~AList(void) {};
+      virtual              ~AList(void)
+                           {
+                              if(Array != NULL)
+                                 free(Array);
+                           };
 
                int32_t     AddItem(T Item)
                            {

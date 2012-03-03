@@ -62,8 +62,8 @@ HttpdRequest::~HttpdRequest(void)
 
    while(HeaderList.GetItemAt(0, &p_CurHeader) == 0)
    {
-      delete p_CurHeader;
       HeaderList.DelItemAt(0);
+      delete p_CurHeader;
    }
 
    if(Payload != NULL)

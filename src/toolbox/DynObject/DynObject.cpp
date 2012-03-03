@@ -176,14 +176,10 @@ int32_t DynObject::MakeEmpty(void)
    if(i_ItemsCount == 0)
       return(0);
 
-   int i;
-   for(i=i_ItemsCount-1; i>=0; i--)
+   while(EntryList.GetItemAt(0, &p_Entry) == 0)
    {
-      if(EntryList.GetItemAt(i, &p_Entry) == 0)
-      {
-         EntryList.DelItemAt(i);
-         delete p_Entry;
-      }
+      EntryList.DelItemAt(0);
+      delete p_Entry;
    }
    return(0);
 
