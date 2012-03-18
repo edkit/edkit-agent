@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/01
-* 
+*
 *****************************************************************************/
 #include <stdint.h>
 #include "DlList.h"
@@ -42,14 +42,15 @@ class ExeContext : public DlListItem
       virtual ~ExeContext(void);
       static ExeContext*   Get(void *ContextEip);
       static DlList*       GetList(void);
+      const char*          GetName(void);
 
       void                 *Eip;
       int64_t              Memory;
-      char                 Name[ALLOCER_NAME_SIZE];
 
    private:
+      char                 Name[ALLOCER_NAME_SIZE];
       ExeContext(void);
 
 };
 
-#endif 
+#endif

@@ -68,7 +68,7 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       else
          b_FirstContext = false;
 
-      *p_JsonAllocers << "{ \"eip\":\"" << p_CurContext->Name << "\"}";
+      *p_JsonAllocers << "{ \"eip\":\"" << p_CurContext->GetName() << "\"}";
       *p_JsonSlice << "{ \"mem\":" << p_CurContext->Memory << ",";
       *p_JsonSlice << "\"alc\":" << i_Index << "}";
 

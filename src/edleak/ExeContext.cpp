@@ -43,8 +43,12 @@
 *  Constructor.
 *
 ******************************************************************************/
-ExeContext::ExeContext(void): DlListItem()
+ExeContext::ExeContext(void):
+   DlListItem(),
+   Eip(NULL), Memory(0)
+
 {
+   Name[0] = '\0';
    return;
 }
 
@@ -108,24 +112,43 @@ ExeContext* ExeContext::Get(void *ContextEip)
       p_Context = new(std::nothrow) ExeContext();
       if(p_Context != NULL)
       {
-         Dl_info s_info;
-
          p_Context->Eip = ContextEip;
-         p_Context->Memory = 0;
-         if( (dladdr(ContextEip, &s_info) != 0) && (s_info.dli_sname != NULL) )
-         {
-            snprintf(p_Context->Name, ALLOCER_NAME_SIZE, "%p:%s",
-                  ContextEip, s_info.dli_sname);
-         }
-         else
-         {
-            snprintf(p_Context->Name, ALLOCER_NAME_SIZE, "%p", ContextEip);
-         }
-         p_Context->Name[ALLOCER_NAME_SIZE-1] = '\0';
          p_ContextList->AppendItem(p_Context);
       }
    }
    return(p_Context);
 }
 
+
+/**
+* @date     2012/18/03
+*
+*  returns the name of the ExeContext eip.
+*  Name resolution is done during first access because dladdr is used here. This
+*  cannot be done in a hooked call because glibc protects all dlxx calls with a
+*  mutex. Since dlopen is using malloc, this causes a deadlock between glibc and
+*  edleak locks.
+*
+* @return   Name if success.
+* @return   NULL otherwise.
+*
+******************************************************************************/
+const char* ExeContext::GetName(void)
+{
+   if(Name[0] == '\0')
+   {
+      Dl_info s_info;
+      if( (dladdr(Eip, &s_info) != 0) && (s_info.dli_sname != NULL) )
+      {
+         snprintf(Name, ALLOCER_NAME_SIZE, "%p:%s",
+                  Eip, s_info.dli_sname);
+      }
+      else
+      {
+         snprintf(Name, ALLOCER_NAME_SIZE, "%p", Eip);
+      }
+      Name[ALLOCER_NAME_SIZE-1] = '\0';
+   }
+   return(Name);
+}
 

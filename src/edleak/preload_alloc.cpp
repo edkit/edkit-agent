@@ -149,7 +149,6 @@ static enum PreloadState Preload_Init(void)
       DeleteProbe.InitCheck(M2STR(CXX_SYM_DELETE));
       DeleteNoThrowProbe.InitCheck(M2STR(CXX_SYM_DELETE_NOTHROW));
       State = STATE_STARTED;
-      ControllersInit();
    }
 
    return State;
