@@ -3,8 +3,8 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
-*                          Copyright (c) 2011
+*                     \___/\__,_|_\_\_.__/_|\__/__/
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -39,10 +39,10 @@ var memory_max = 0;
 var scale = "linear";
 
 // constructor 
-vis = function(title) 
-{ 
-   this.title = title; 
-}; 
+vis = function(container) 
+{
+   this.container = container;
+};
 
 vis.prototype.title = "";
 
@@ -57,54 +57,101 @@ vis.prototype.getMainPanel = function()
    convert_data();
    h = data.allocer.length*15;
 
+   var graph_scale;
+   if(scale == "log")
+      graph_scale = "logarithmic";
+   else
+      graph_scale =  "linear";
+   /*
    if(scale == "log")
       x = pv.Scale.log(1, memory_max).range(0, w);
    else
       x = pv.Scale.linear(0, memory_max).range(0, w);
    var y = pv.Scale.linear(0, data.allocer.length-1).range(0, h);
    var labels = pv.range(0, data.allocer.length, 1);
+   */
 
-   /* The root panel. */
-   var vis = new pv.Panel()
-      .width(w)
-      .height(h+15)
-      .bottom(20)
-      .left(label_width)
-      .right(margin_right)
-      .top(10);
+     var options =   {
+            chart: {
+                renderTo: this.container,
+                type: 'scatter',
+                zoomType: 'x'
+            },
+            title: {
+                text: null
+            },
+            xAxis: {
+                title: {
+                    enabled: true,
+                    text: 'Size (Byte)'
+                },
+                startOnTick: true,
+                endOnTick: true,
+                showLastLabel: true,
+                type: graph_scale
+            },
+            yAxis: {
+                title: {
+                    text: null
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                        var size = this.x;
+                        var size_unit = 'B';
+                        if(size > 1024)
+                        {
+                           size = size/1024;
+                           var size_unit = 'KiB';
+                        }
+                        if(size > 1024)
+                        {
+                           size = size/1024;
+                           var size_unit = 'MiB';
+                        }
+                        size = Math.round(size);
+                        return 'size: ' + size + size_unit + '<br/>' +
+                           'backtrace: <br/> ' + 
+                           ' - ' + data.allocer[this.y].eip ;
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 70,
+                floating: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1
+            },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        radius: 5,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+            series : [{ data: plot_data}],
+               };
 
+ 
 
-   /* Y-axis and ticks. */
-   vis.add(pv.Rule)
-      .data(labels)
-      .bottom(y)
-      .strokeStyle(function(d) { return d ? "#eee" : "#000"} )
-      .anchor("left").add(pv.Label)
-         .textAlign("right")
-         .text( function(d) { 
-               return data.allocer[d].eip });
-
-   /* X-axis and ticks. */
-   vis.add(pv.Rule)
-      .data(x.ticks())
-      .left(x)
-      .strokeStyle(function(d) { return d ? "#eee" : "#000"} )
-      .anchor("bottom").add(pv.Label)
-      .text(x.tickFormat);
-
-   /* The dot plot! */
-   vis.add(pv.Panel)
-      .data(plot_data)
-      .add(pv.Dot)
-         .left(function(d) { return x(d.x)})
-         .bottom(function(d) { return y(d.y)})
-         .strokeStyle(function(d) { 
-               return c(d.c)
-               })
-         .fillStyle(function() { return this.strokeStyle() })
-         .size(function(d) { return 20});
-
-   return(vis);
+   var chart = new Highcharts.Chart(options);
+   return(chart);
 
 }
 
@@ -112,32 +159,34 @@ vis.prototype.getMainPanel = function()
 function convert_data()
 {
    var   i,j;
-   var   point_index;
    var   slice_count = data.slice.length;
    var   slice_color_index;
 
    plot_data = [];
    memory_max = 0;
 
-   point_index = 0;
    for(i=0; i<slice_count; i++)
    {
       slice_color_index = Math.round(i*100/slice_count)+1;
+      var color_obj = c(slice_color_index);
+
       for(j=0; j<data.slice[i].length; j++)
       {
-         /* do not print null values. For two reasons:
+         /* remove null values. For two reasons:
           * - A 0 entry cannot leak. This should be replaced with a real
           *    algorithm to remove unleaked entries (first value == last value)
           * - 0 is not valid on log scale. */
-         if(data.slice[i][j].mem != 0)
+         /* remove identical values to avoid adding useless points on the graph */
+         if( (data.slice[i][j].mem != 0) && 
+             ( (j>0) && (data.slice[i][j].mem != data.slice[i][j-1].mem) )
+            )
          {
-            plot_data[point_index] = {};
-            plot_data[point_index].c = slice_color_index;
-            plot_data[point_index].x = data.slice[i][j].mem;
-            plot_data[point_index].y = data.slice[i][j].alc;
+            plot_data.push( {
+               x: data.slice[i][j].mem,
+               y: data.slice[i][j].alc,
+               marker: { fillColor: color_obj.color} });
             if(data.slice[i][j].mem > memory_max)
                memory_max = data.slice[i][j].mem;
-            point_index++;
          }
       }
    }

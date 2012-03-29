@@ -35,12 +35,10 @@ var v = undefined;
 
 function vis_display()
 {
-   $('span').remove();
    if(v != undefined)
       delete v;
-   v = new vis("The Title"); 
+   v = new vis("scatter-graph"); 
    visRoot = v.getMainPanel(); 
-   visRoot.render();
 }
 
 $(document).ready( function()
