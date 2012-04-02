@@ -55,21 +55,14 @@ vis.prototype.getMainPanel = function()
    var w = $(window).width() - label_width - margin_right;
 
    convert_data();
-   h = data.allocer.length*15;
+   h = data.allocer.length*10;
+   $('#scatter-graph').css("height", h);
 
    var graph_scale;
    if(scale == "log")
       graph_scale = "logarithmic";
    else
       graph_scale =  "linear";
-   /*
-   if(scale == "log")
-      x = pv.Scale.log(1, memory_max).range(0, w);
-   else
-      x = pv.Scale.linear(0, memory_max).range(0, w);
-   var y = pv.Scale.linear(0, data.allocer.length-1).range(0, h);
-   var labels = pv.range(0, data.allocer.length, 1);
-   */
 
      var options =   {
             chart: {
@@ -145,7 +138,7 @@ vis.prototype.getMainPanel = function()
                     }
                 }
             },
-            series : [{ data: plot_data}],
+            series : [{ data: plot_data,  turboThreshold: 500000}],
                };
 
  
