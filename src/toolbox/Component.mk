@@ -1,5 +1,6 @@
-include ../../build/arch.make
-include flags.make
+
+CFLAGS = -fPIC -g -Wall -Werror -D_GNU_SOURCE
+CFLAGS += -DNO_SSL
 
 SRCS = Os/rtsym.c
 SRCS += Http/mongoose/mongoose.c
@@ -17,5 +18,5 @@ CPPFLAGS = -I./include -I../thirdparty/json-c
 NAME = toolbox
 BUILD_TYPE = staticlib
 
-include ../../build/makefile.gen
+include $(BUILDDIR)/srcbuild.mk
 

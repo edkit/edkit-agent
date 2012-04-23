@@ -1,9 +1,6 @@
 C_OBJS = $(SRCS:.c=.o)
 CXX_OBJS = $(CXX_SRCS:.cpp=.o)
 OBJS = $(C_OBJS) $(CXX_OBJS)
-CC = $(ARCH)gcc
-CXX = $(ARCH)g++
-AR = $(ARCH)ar
 
 TARGET_NAME = $(NAME)
 ifeq ($(BUILD_TYPE),staticlib)
