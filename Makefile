@@ -1,9 +1,9 @@
 include ./configure.in
 include ./build/global.mk
 
-all: jsonc cppunit toolbox edleak
+all: jsonc toolbox edleak
 
-test_all: toolbox_test edleak_test
+test_all: cppunit toolbox_test edleak_test
 
 test_run: toolbox_test_run edleak_test_run
 
