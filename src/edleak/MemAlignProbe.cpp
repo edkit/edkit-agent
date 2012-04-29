@@ -78,6 +78,22 @@ void MemAlignProbe::InitCheck(void)
 
 
 /**
+* @date     2012/04/29
+*
+*  Probe initialization. This method is used for unitest so that a fake align
+*  function can be used.
+*
+******************************************************************************/
+void MemAlignProbe::InitCheck(memalign_t AlignHook)
+{
+   if(AlignFunc == NULL)
+   {
+      AlignFunc = AlignHook;
+   }
+   return;
+}
+
+/**
 * @date     2012/01/03
 *
 *  Probe Passthrough : The original function is called direclty.
@@ -106,22 +122,32 @@ void* MemAlignProbe::PassThrough(size_t i_Boundary, size_t i_Size)
 void* MemAlignProbe::MemAlign(size_t i_Boundary, size_t i_Size, void *Eip)
 {
    uint8_t  *Data = NULL;
+   uint32_t Padding = 0;
+
+   if(i_Boundary != 0)
+   {
+      if(i_Boundary > sizeof(HeapEntry))
+         Padding = i_Boundary - sizeof(HeapEntry);
+      else
+         Padding = sizeof(HeapEntry) % i_Boundary;
+   }
+
    if(AlignFunc != NULL)
    {
       if(GetHeap()->Lock() == 0)
       {
-         /// @todo fix boundary according to HeapEntry size
-         Data = (uint8_t*)AlignFunc(i_Boundary, i_Size + sizeof(HeapEntry));
+         Data = (uint8_t*)AlignFunc(i_Boundary, i_Size + sizeof(HeapEntry) + Padding);
          if(Data != NULL)
          {
             ExeContext *p_Context = ExeContext::Get(Eip);
-            HeapEntry  *Entry = new (Data) HeapEntry(i_Size, p_Context);
+            HeapEntry  *Entry = new (Data + Padding) HeapEntry(i_Size, p_Context);
 
+            Entry->Start = Data;
             GetHeap()->GetEntryList()->AppendItem(Entry);
             if(p_Context != NULL)
                p_Context->Memory += i_Size;
 
-            Data = Data + sizeof(HeapEntry);
+            Data = Data + sizeof(HeapEntry) + Padding;
          }
       }
       else

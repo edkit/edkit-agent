@@ -123,7 +123,10 @@ void* MemFreeProbe::Free(void *Data)
             if(Entry->Magic == HEAPENTRY_MAGIC)
             {
                GetHeap()->GetEntryList()->DelItem(Entry);
-               Data = Entry;
+               if(Entry->Start != NULL) // there is some padding on allocated chunk
+                  Data = Entry->Start;
+               else
+                  Data = Entry;
                Entry->Magic = 0;   /* sanity clean */
                if(Entry->Context != NULL)
                   Entry->Context->Memory -= Entry->Size;

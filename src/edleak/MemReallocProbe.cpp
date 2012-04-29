@@ -122,7 +122,10 @@ void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, void *Eip)
                if(Entry->Context != NULL)
                   Entry->Context->Memory -= Entry->Size;
 
-               Data = (uint8_t*)Entry;
+               if(Entry->Start != NULL) // there is some padding on allocated chunk
+                  Data = (uint8_t*)Entry->Start;
+               else
+                  Data = (uint8_t*)Entry;
             }
          }
          Data = (uint8_t*)AllocFunc(Data, i_Size + sizeof(HeapEntry));

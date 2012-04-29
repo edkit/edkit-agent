@@ -43,6 +43,7 @@ class MemAlignProbe : MemProbe
       virtual           ~MemAlignProbe(void);
 
                void     InitCheck(void);
+               void     InitCheck(memalign_t AlignHook);
       static   void*    PassThrough(size_t i_Boundary, size_t i_Size);
                void*    MemAlign(size_t i_Boundary, size_t i_Size, void *Eip);
 

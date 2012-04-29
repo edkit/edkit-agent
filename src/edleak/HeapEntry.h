@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/01
-* 
+*
 *****************************************************************************/
 #include <stdint.h>
 
@@ -42,11 +42,12 @@ class ExeContext;
 struct HeapEntry : public DlListItem
 {
    HeapEntry(size_t i_Size, ExeContext *p_Context) : DlListItem(),
-      Context(p_Context), Size(i_Size), Magic(HEAPENTRY_MAGIC)
+      Start(NULL), Context(p_Context), Size(i_Size), Magic(HEAPENTRY_MAGIC)
    {
       return;
    };
 
+   void*             Start;
    ExeContext        *Context;
    size_t            Size;
    uint32_t          Magic;
