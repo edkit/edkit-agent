@@ -34,12 +34,15 @@ edleak_clean:
 
 
 edleak_test:
+	$(MAKE) -C test/edleak -f Component.mk all
 	$(MAKE) -C test/edleak_func -f Component.mk all
 
 edleak_test_run:
+	$(MAKE) -C test/edleak -f Component.mk run
 	$(MAKE) -C test/edleak_func -f Component.mk run
 
 edleak_test_clean:
+	$(MAKE) -C test/edleak -f Component.mk clean
 	$(MAKE) -C test/edleak_func -f Component.mk clean
 
 jsonc:

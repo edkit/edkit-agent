@@ -20,7 +20,7 @@ staticlib: $(OBJS)
 	$(AR) -rcs lib$(NAME).a $(OBJS)
 
 dynlib: $(OBJS)
-	$(CXX) -shared -Wl,-soname,$(NAME) -o lib$(NAME).so $(OBJS) $(LDFLAGS)
+	$(CXX) -shared -Wl,-soname,$(TARGET_NAME) -o $(TARGET_NAME) $(OBJS) $(LDFLAGS)
 
 clean:
 	rm -f $(C_OBJS)
