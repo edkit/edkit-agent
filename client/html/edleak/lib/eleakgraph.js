@@ -183,6 +183,7 @@ function convert_data()
          }
       }
    }
+   plot_data.reverse();
 }
 
 
