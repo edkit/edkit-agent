@@ -122,15 +122,7 @@ void* MemAlignProbe::PassThrough(size_t i_Boundary, size_t i_Size)
 void* MemAlignProbe::MemAlign(size_t i_Boundary, size_t i_Size, void *Eip)
 {
    uint8_t  *Data = NULL;
-   uint32_t Padding = 0;
-
-   if(i_Boundary != 0)
-   {
-      if(i_Boundary > sizeof(HeapEntry))
-         Padding = i_Boundary - sizeof(HeapEntry);
-      else
-         Padding = sizeof(HeapEntry) % i_Boundary;
-   }
+   uint32_t Padding = MemProbe::GetAlignmentPadding(i_Boundary, sizeof(HeapEntry));
 
    if(AlignFunc != NULL)
    {

@@ -43,6 +43,7 @@ class MemAllocProbe : MemProbe
       virtual           ~MemAllocProbe(void);
 
                void     InitCheck(const char *sz_AllocFunc = NULL);
+               void     InitCheck(malloc_t BaseAllocFunc);
       static   void*    PassThrough(size_t i_Size, const char *sz_AllocFunc = NULL);
                void*    Alloc(size_t i_Size, void *Eip);
 

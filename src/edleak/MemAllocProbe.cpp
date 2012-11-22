@@ -82,6 +82,29 @@ void MemAllocProbe::InitCheck(const char *sz_AllocFunc)
    return;
 }
 
+
+/**
+* @date     2011/11/21
+*
+*  Probe initialization.
+*
+* @param BaseAllocFunc (in): Pointer to the allocation function. "malloc" is used if
+*                             NULL is provided here.
+*
+******************************************************************************/
+void MemAllocProbe::InitCheck(malloc_t BaseAllocFunc)
+{
+   if(AllocFunc == NULL)
+   {
+      if(BaseAllocFunc != NULL)
+         AllocFunc = BaseAllocFunc;
+      else
+         AllocFunc = (malloc_t) rtsym_resolve("malloc");
+   }
+   return;
+}
+
+
 /**
 * @date     2012/01/02
 *
@@ -117,22 +140,24 @@ void* MemAllocProbe::PassThrough(size_t i_Size, const char *sz_AllocFunc)
 void* MemAllocProbe::Alloc(size_t i_Size, void *Eip)
 {
    uint8_t *Data = NULL;
+   uint32_t Padding = MemProbe::GetAlignmentPadding(ALLOC_ALIGNMENT, sizeof(HeapEntry));
 
    if(AllocFunc != NULL)
    {
       if(GetHeap()->Lock() == 0)
       {
-         Data = (uint8_t*)AllocFunc(i_Size + sizeof(HeapEntry));
+         Data = (uint8_t*)AllocFunc(i_Size + sizeof(HeapEntry) + Padding);
          if(Data != NULL)
          {
             ExeContext *p_Context = ExeContext::Get(Eip);
-            HeapEntry  *Entry = new (Data) HeapEntry(i_Size, p_Context);
+            HeapEntry  *Entry = new (Data + Padding) HeapEntry(i_Size, p_Context);
 
+            Entry->Start = Data;
             GetHeap()->GetEntryList()->AppendItem(Entry);
             if(p_Context != NULL)
                p_Context->Memory += i_Size;
 
-            Data = Data + sizeof(HeapEntry);
+            Data = Data + sizeof(HeapEntry) + Padding;
          }
       }
       else

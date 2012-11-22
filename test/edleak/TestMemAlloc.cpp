@@ -1,13 +1,10 @@
-#ifndef __MEMPROBE_H
-#define __MEMPROBE_H
-
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,22 +26,54 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/05/01
+* @date     2012/11/21
 *
 *****************************************************************************/
-#include "Probe.h"
-#include "MemHeap.h"
+#include <malloc.h>
+#include "MemAllocProbe.h"
+#include "TestMemAlloc.h"
+#include "FakeAlloc.h"
 
-class MemProbe : Probe
+CPPUNIT_TEST_SUITE_REGISTRATION( TestMemAlloc );
+
+void TestMemAlloc::setUp()
 {
-   public:
-#define ALLOC_ALIGNMENT    8
+}
 
-               MemProbe(void);
-      virtual  ~MemProbe(void);
 
-               MemHeap* GetHeap(void) { return(MemHeap::Instantiate()); };
-      static   uint32_t    GetAlignmentPadding(size_t i_Boundary, size_t i_ObjectSize);
-};
+void TestMemAlloc::tearDown()
+{
+}
 
-#endif
+
+void TestMemAlloc::TestBuild()
+{
+   MemAllocProbe  Probe;
+   MemAllocProbe  *p_Probe;
+
+   Probe.InitCheck();
+   p_Probe = new(std::nothrow) MemAllocProbe();
+
+   CPPUNIT_ASSERT(p_Probe != NULL);
+   p_Probe->InitCheck();
+
+   delete p_Probe;
+}
+
+void TestMemAlloc::TestAlign()
+{
+   MemAllocProbe  Probe;
+   Probe.InitCheck(FakeAlloc_Malloc);
+
+   char *SysAddress = (char*)malloc(512);
+   CPPUNIT_ASSERT(SysAddress != NULL);
+
+   FakeAlloc_SetAllocAddress(SysAddress);
+   char *ProbeAddress = (char*)Probe.Alloc(25, NULL);
+   CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
+   CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % ALLOC_ALIGNMENT == 0);
+   CPPUNIT_ASSERT(ProbeAddress < SysAddress+sizeof(HeapEntry)+ALLOC_ALIGNMENT);
+}
+
+
+

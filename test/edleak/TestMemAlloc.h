@@ -1,5 +1,5 @@
-#ifndef __MEMPROBE_H
-#define __MEMPROBE_H
+#ifndef __TESTMEMALLOC_H_
+#define __TESTMEMALLOC_H_
 
 /*
 *****************************************************************************
@@ -7,7 +7,7 @@
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2012
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,22 +29,24 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/05/01
+* @date     2012/11/21
 *
 *****************************************************************************/
-#include "Probe.h"
-#include "MemHeap.h"
+#include <cppunit/extensions/HelperMacros.h>
 
-class MemProbe : Probe
+class TestMemAlloc: public CppUnit::TestFixture
 {
-   public:
-#define ALLOC_ALIGNMENT    8
+  CPPUNIT_TEST_SUITE( TestMemAlloc );
+  CPPUNIT_TEST( TestBuild );
+  CPPUNIT_TEST( TestAlign );
+  CPPUNIT_TEST_SUITE_END();
 
-               MemProbe(void);
-      virtual  ~MemProbe(void);
+public:
+  void setUp();
+  void tearDown();
 
-               MemHeap* GetHeap(void) { return(MemHeap::Instantiate()); };
-      static   uint32_t    GetAlignmentPadding(size_t i_Boundary, size_t i_ObjectSize);
+  void TestBuild();
+  void TestAlign();
 };
 
 #endif

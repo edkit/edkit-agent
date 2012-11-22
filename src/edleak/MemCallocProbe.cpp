@@ -128,26 +128,28 @@ void* MemCallocProbe::PassThrough(size_t i_MembCount, size_t i_Size)
 void* MemCallocProbe::Calloc(size_t i_MembCount, size_t i_Size, void *Eip)
 {
    uint8_t *Data = NULL;
+   uint32_t Padding = MemProbe::GetAlignmentPadding(ALLOC_ALIGNMENT, sizeof(HeapEntry));
 
    if(AllocFunc != NULL)
    {
       if(GetHeap()->Lock() == 0)
       {
          /* just try to add an overhead as small as possible */
-         if( (i_MembCount > 1) && (i_Size > sizeof(HeapEntry)) )
+         if( (i_MembCount > 1) && (i_Size > (sizeof(HeapEntry)+Padding)) )
             Data = (uint8_t*)AllocFunc(i_MembCount+1, i_Size);
          else
-            Data = (uint8_t*)AllocFunc(i_MembCount, i_Size+sizeof(HeapEntry));
+            Data = (uint8_t*)AllocFunc(i_MembCount, i_Size+sizeof(HeapEntry)+Padding);
 
          if(Data != NULL)
          {
             ExeContext *p_Context = ExeContext::Get(Eip);
-            HeapEntry  *Entry = new (Data) HeapEntry(i_Size*i_MembCount, p_Context);
+            HeapEntry  *Entry = new (Data+Padding) HeapEntry(i_Size*i_MembCount, p_Context);
 
+            Entry->Start = Data;
             GetHeap()->GetEntryList()->AppendItem(Entry);
             if(p_Context != NULL)
                p_Context->Memory += (i_Size*i_MembCount);
-            Data = Data + sizeof(HeapEntry);
+            Data = Data + sizeof(HeapEntry) + Padding;
          }
       }
       else  // recursive lock, do not try to monitor it
