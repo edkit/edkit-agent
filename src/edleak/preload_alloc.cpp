@@ -161,7 +161,9 @@ void *malloc (size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemAllocProbe  &Probe = Preload_GetMallocProbe();
-      Data = Probe.Alloc(i_Size, __builtin_return_address(0));
+      CallStack Callers;
+      UnwindCaller(Callers);
+      Data = Probe.Alloc(i_Size, Callers);
    }
    else
    {
@@ -178,7 +180,9 @@ void *memalign(size_t i_Boundary, size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemAlignProbe  &Probe = Preload_GetMemAlignProbe();
-      Data = Probe.MemAlign(i_Boundary, i_Size, __builtin_return_address(0));
+      CallStack Callers;
+      UnwindCaller(Callers);
+      Data = Probe.MemAlign(i_Boundary, i_Size, Callers);
    }
    else
    {
@@ -197,7 +201,9 @@ void *calloc(size_t i_MembCount, size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemCallocProbe &Probe = Preload_GetCallocProbe();
-      Data = Probe.Calloc(i_MembCount, i_Size, __builtin_return_address(0));
+      CallStack Callers;
+      UnwindCaller(Callers);
+      Data = Probe.Calloc(i_MembCount, i_Size, Callers);
    }
    else
    {
@@ -215,7 +221,9 @@ void *realloc(void *Ptr, size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemReallocProbe   &Probe = Preload_GetReallocProbe();
-      Data = Probe.Realloc(Ptr, i_Size, __builtin_return_address(0));
+      CallStack Callers;
+      UnwindCaller(Callers);
+      Data = Probe.Realloc(Ptr, i_Size, Callers);
    }
    else
    {
@@ -247,7 +255,9 @@ void *CXX_SYM_NEW(size_t i_Size)
    if(Preload_Init() == STATE_STARTED)
    {
       MemAllocProbe  &Probe = Preload_GetNewProbe();
-      Data = Probe.Alloc(i_Size, __builtin_return_address(0));
+      CallStack Callers;
+      UnwindCaller(Callers);
+      Data = Probe.Alloc(i_Size, Callers);
    }
    else
    {
@@ -266,7 +276,9 @@ void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemAllocProbe  &Probe = Preload_GetNewNoThrowProbe();
-      Data = Probe.Alloc(i_Size, __builtin_return_address(0));
+      CallStack Callers;
+      UnwindCaller(Callers);
+      Data = Probe.Alloc(i_Size, Callers);
    }
    else
    {

@@ -39,8 +39,11 @@ class CallStack
 {
    public:
 #define CALLSTACK_MAX_DEPTH         5
+#define ALLOCER_NAME_SIZE  64
+#define UnwindCaller(c) c.SetCaller(__builtin_return_address(0))
 
                                     CallStack(void);
+                                    CallStack(const CallStack& Callers);
                                     ~CallStack(void);
 
                bool                 operator==(const CallStack &Rhs) const;
@@ -48,19 +51,23 @@ class CallStack
 
 
                void                 Unwind(void);
-               void                 UnwindCaller(void) { Stack[0] = __builtin_return_address(0); };
+               void                 SetCaller(void *Caller) { Stack[0] = Caller; };
                const void**         Get(void) const { return((const void**)(Stack)); };
                uint32_t             GetDepth(void) const { return(Depth);};
                void                 SetTo(const CallStack &Target, uint32_t Level = CALLSTACK_MAX_DEPTH);
+               const char*          GetName(uint32_t Level);
 
    private:
       static   _Unwind_Reason_Code  UnwindCallback(struct _Unwind_Context *Context, void *Closure);
                _Unwind_Reason_Code  UnwindCallback(struct _Unwind_Context *Context);
+               void                 ResolveNames(void);
 
                void*                Stack[CALLSTACK_MAX_DEPTH];
+               char                 StackNames[CALLSTACK_MAX_DEPTH][ALLOCER_NAME_SIZE];
                uint32_t             Depth;
                int32_t              SkipFrameCount;
                uint32_t             StackIndex;
+               bool                 NamesAreResolved;
 };
 
 #endif

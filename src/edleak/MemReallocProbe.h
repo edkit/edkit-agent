@@ -35,7 +35,7 @@
 #include "MemProbe.h"
 #include "rtsym.h"
 
-
+class CallStack;
 class MemReallocProbe : MemProbe
 {
    public:
@@ -44,7 +44,7 @@ class MemReallocProbe : MemProbe
 
                void     InitCheck(void);
       static   void*    PassThrough(void *Ptr, size_t i_Size);
-               void*    Realloc(void *Ptr, size_t i_Size, void *Eip);
+               void*    Realloc(void *Ptr, size_t i_Size, const CallStack& Callers);
 
    private:
                realloc_t   AllocFunc;

@@ -43,12 +43,11 @@
 *  Constructor.
 *
 ******************************************************************************/
-ExeContext::ExeContext(void):
+ExeContext::ExeContext(const CallStack &Callers):
    DlListItem(),
-   Eip(NULL), Memory(0)
+   Memory(0), Stack(Callers)
 
 {
-   Name[0] = '\0';
    return;
 }
 
@@ -85,15 +84,15 @@ DlList* ExeContext::GetList(void)
 * @date     2011/05/01
 *
 *  returns an ExeContext object. if a context already exists for the specified
-*  eip, then this context is returned. Otherwise a new context is created and
+*  callers, then this context is returned. Otherwise a new context is created and
 *  returned.
 *
-* @param    ContextEip (in): Address of the caller.
+* @param    Callers (in): Callstack of the callers.
 * @return   ExeContext if success.
 * @return   NULL otherwise.
 *
 ******************************************************************************/
-ExeContext* ExeContext::Get(void *ContextEip)
+ExeContext* ExeContext::Get(const CallStack &Callers)
 {
    DlList *p_ContextList = ExeContext::GetList();
    ExeContext *p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
@@ -101,7 +100,7 @@ ExeContext* ExeContext::Get(void *ContextEip)
    /* search for an existing allocer */
    while(p_Context != NULL)
    {
-      if(p_Context->Eip == ContextEip)
+      if(p_Context->GetCallStack() == Callers)
          break;
       p_Context = (ExeContext*)p_Context->Next;
    }
@@ -109,10 +108,9 @@ ExeContext* ExeContext::Get(void *ContextEip)
    /* allocate a new entry if not found */
    if(p_Context == NULL)
    {
-      p_Context = new(std::nothrow) ExeContext();
+      p_Context = new(std::nothrow) ExeContext(Callers);
       if(p_Context != NULL)
       {
-         p_Context->Eip = ContextEip;
          p_ContextList->AppendItem(p_Context);
       }
    }
@@ -120,35 +118,4 @@ ExeContext* ExeContext::Get(void *ContextEip)
 }
 
 
-/**
-* @date     2012/18/03
-*
-*  returns the name of the ExeContext eip.
-*  Name resolution is done during first access because dladdr is used here. This
-*  cannot be done in a hooked call because glibc protects all dlxx calls with a
-*  mutex. Since dlopen is using malloc, this causes a deadlock between glibc and
-*  edleak locks.
-*
-* @return   Name if success.
-* @return   NULL otherwise.
-*
-******************************************************************************/
-const char* ExeContext::GetName(void)
-{
-   if(Name[0] == '\0')
-   {
-      Dl_info s_info;
-      if( (dladdr(Eip, &s_info) != 0) && (s_info.dli_sname != NULL) )
-      {
-         snprintf(Name, ALLOCER_NAME_SIZE, "%p:%s",
-                  Eip, s_info.dli_sname);
-      }
-      else
-      {
-         snprintf(Name, ALLOCER_NAME_SIZE, "%p", Eip);
-      }
-      Name[ALLOCER_NAME_SIZE-1] = '\0';
-   }
-   return(Name);
-}
 

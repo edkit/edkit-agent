@@ -36,6 +36,7 @@
 #include "rtsym.h"
 
 
+class CallStack;
 class MemCallocProbe : MemProbe
 {
    public:
@@ -44,7 +45,7 @@ class MemCallocProbe : MemProbe
 
                void     InitCheck(void);
       static   void*    PassThrough(size_t i_MembCount, size_t i_Size);
-               void*    Calloc(size_t i_MembCount, size_t i_Size, void *Eip);
+               void*    Calloc(size_t i_MembCount, size_t i_Size, const CallStack& Callers);
 
    private:
       calloc_t AllocFunc;

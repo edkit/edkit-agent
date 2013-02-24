@@ -55,6 +55,7 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       static_cast<ExeContext*>(ExeContext::GetList()->GetHead());
 
    uint32_t i_Index = 0;
+   uint32_t i_AllocerIndex;
    bool     b_FirstContext = true;
    *p_JsonSlice << "[\n";
    *p_JsonAllocers << "\"allocer\": [\n";
@@ -68,7 +69,24 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       else
          b_FirstContext = false;
 
-      *p_JsonAllocers << "{ \"eip\":\"" << p_CurContext->GetName() << "\"}";
+      *p_JsonAllocers << "{ \"eip\": [";
+      CallStack &Stack = p_CurContext->GetCallStack();
+      uint32_t Depth = Stack.GetDepth();
+      const char *CallerName;
+      for(i_AllocerIndex=0; i_AllocerIndex<Depth; i_AllocerIndex++)
+      {
+         CallerName = Stack.GetName(i_AllocerIndex);
+         if(CallerName != NULL)
+         {
+            if(i_AllocerIndex>0)
+            {
+               *p_JsonAllocers << ",";
+            }
+            *p_JsonAllocers << "\"" <<  CallerName << "\"";
+         }
+      }
+      *p_JsonAllocers << "]}";
+
       *p_JsonSlice << "{ \"mem\":" << p_CurContext->Memory << ",";
       *p_JsonSlice << "\"alc\":" << i_Index << "}";
 

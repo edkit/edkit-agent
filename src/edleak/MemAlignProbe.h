@@ -35,7 +35,7 @@
 #include "MemProbe.h"
 #include "rtsym.h"
 
-
+class CallStack;
 class MemAlignProbe : MemProbe
 {
    public:
@@ -45,7 +45,7 @@ class MemAlignProbe : MemProbe
                void     InitCheck(void);
                void     InitCheck(memalign_t AlignHook);
       static   void*    PassThrough(size_t i_Boundary, size_t i_Size);
-               void*    MemAlign(size_t i_Boundary, size_t i_Size, void *Eip);
+               void*    MemAlign(size_t i_Boundary, size_t i_Size, const CallStack& Callers);
 
    private:
       memalign_t AlignFunc;

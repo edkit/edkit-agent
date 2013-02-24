@@ -34,23 +34,23 @@
 *****************************************************************************/
 #include <stdint.h>
 #include "DlList.h"
+#include "CallStack.h"
 
 class ExeContext : public DlListItem
 {
    public:
-#define ALLOCER_NAME_SIZE  64
+               ExeContext(const CallStack &Callers);
       virtual ~ExeContext(void);
-      static ExeContext*   Get(void *ContextEip);
+      static ExeContext*   Get(const CallStack &Callers);
       static DlList*       GetList(void);
-      const char*          GetName(void);
+      CallStack&           GetCallStack(void) { return(Stack);};
 
-      void                 *Eip;
       int64_t              Memory;
 
    private:
-      char                 Name[ALLOCER_NAME_SIZE];
       ExeContext(void);
 
+      CallStack            Stack;
 };
 
 #endif

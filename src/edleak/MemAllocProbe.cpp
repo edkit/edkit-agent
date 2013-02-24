@@ -134,10 +134,10 @@ void* MemAllocProbe::PassThrough(size_t i_Size, const char *sz_AllocFunc)
 *  Allocates some data by using the internal allocer.
 *
 * @param i_Size (in): Size to allocate.
-* @param Eip (in): Caller address.
+* @param Callers (in): Callers address.
 *
 ******************************************************************************/
-void* MemAllocProbe::Alloc(size_t i_Size, void *Eip)
+void* MemAllocProbe::Alloc(size_t i_Size, const CallStack& Callers)
 {
    uint8_t *Data = NULL;
    uint32_t Padding = MemProbe::GetAlignmentPadding(ALLOC_ALIGNMENT, sizeof(HeapEntry));
@@ -149,7 +149,7 @@ void* MemAllocProbe::Alloc(size_t i_Size, void *Eip)
          Data = (uint8_t*)AllocFunc(i_Size + sizeof(HeapEntry) + Padding);
          if(Data != NULL)
          {
-            ExeContext *p_Context = ExeContext::Get(Eip);
+            ExeContext *p_Context = ExeContext::Get(Callers);
             HeapEntry  *Entry = new (Data + Padding) HeapEntry(i_Size, p_Context);
 
             Entry->Start = Data;

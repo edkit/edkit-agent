@@ -30,6 +30,7 @@
 *
 *****************************************************************************/
 #include <malloc.h>
+#include "CallStack.h"
 #include "MemAllocProbe.h"
 #include "TestMemAlloc.h"
 #include "FakeAlloc.h"
@@ -69,7 +70,9 @@ void TestMemAlloc::TestAlign()
    CPPUNIT_ASSERT(SysAddress != NULL);
 
    FakeAlloc_SetAllocAddress(SysAddress);
-   char *ProbeAddress = (char*)Probe.Alloc(25, NULL);
+   CallStack Caller;
+   Caller.UnwindCaller();
+   char *ProbeAddress = (char*)Probe.Alloc(25, Caller);
    CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
    CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % ALLOC_ALIGNMENT == 0);
    CPPUNIT_ASSERT(ProbeAddress < SysAddress+sizeof(HeapEntry)+ALLOC_ALIGNMENT);

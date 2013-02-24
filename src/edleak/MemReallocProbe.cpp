@@ -100,9 +100,9 @@ void* MemReallocProbe::PassThrough(void *Ptr, size_t i_Size)
 *
 * @param Ptr (in): Pointer to re-allocate.
 * @param i_Size (in): Size to allocate.
-* @param Eip (in): Caller address.
+* @param Callers (in): Callers address.
 ******************************************************************************/
-void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, void *Eip)
+void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, const CallStack& Callers)
 {
    uint8_t *Data = NULL;
    uint32_t Padding = MemProbe::GetAlignmentPadding(ALLOC_ALIGNMENT, sizeof(HeapEntry));
@@ -132,7 +132,7 @@ void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, void *Eip)
          Data = (uint8_t*)AllocFunc(Data, i_Size + sizeof(HeapEntry)+Padding);
          if(Data != NULL)
          {
-            ExeContext *p_Context = ExeContext::Get(Eip);
+            ExeContext *p_Context = ExeContext::Get(Callers);
             HeapEntry  *Entry = new (Data+Padding) HeapEntry(i_Size, p_Context);
 
             Entry->Start = Data;

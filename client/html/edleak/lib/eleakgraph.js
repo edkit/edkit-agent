@@ -56,6 +56,7 @@ vis.prototype.getMainPanel = function()
 
    convert_data();
    h = data.allocer.length*10;
+   h += 100; // x axis
    $('#scatter-graph').css("height", h);
 
    var graph_scale;
@@ -92,20 +93,22 @@ vis.prototype.getMainPanel = function()
                 formatter: function() {
                         var size = this.x;
                         var size_unit = 'B';
-                        if(size > 1024)
-                        {
+                        if(size > 1024) {
                            size = size/1024;
                            var size_unit = 'KiB';
                         }
-                        if(size > 1024)
-                        {
+                        if(size > 1024) {
                            size = size/1024;
                            var size_unit = 'MiB';
                         }
                         size = Math.round(size);
-                        return 'size: ' + size + size_unit + '<br/>' +
-                           'backtrace: <br/> ' + 
-                           ' - ' + data.allocer[this.y].eip ;
+                        var result = 'size: ' + size + size_unit + '<br/>';
+                        result += 'backtrace: <br/> ';
+                        var i;
+                        for(i=0;i<data.allocer[this.y].eip.length;i++) {
+                           result += ' - ' + data.allocer[this.y].eip[i];
+                        }
+                        return(result);
                 }
             },
             legend: {

@@ -45,6 +45,9 @@ class CallStackTestSuite: public CppUnit::TestFixture
   CPPUNIT_TEST( SetTo );
   CPPUNIT_TEST( OperatorEqual );
   CPPUNIT_TEST( OperatorDifferent );
+  CPPUNIT_TEST( GetNameBigLevel );
+  CPPUNIT_TEST( GetName );
+  CPPUNIT_TEST( GetNameCaller );
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -58,6 +61,9 @@ public:
   void SetTo();
   void OperatorEqual();
   void OperatorDifferent();
+  void GetNameBigLevel();
+  void GetName();
+  void GetNameCaller();
 };
 
 
@@ -85,7 +91,7 @@ extern "C"
 {
 void TestSuiteCaller(CallStack &Unwinder)
 {
-   Unwinder.UnwindCaller();
+   UnwindCaller(Unwinder);
 }
 
 void TestSuiteCaller1(CallStack &Unwinder)
@@ -136,7 +142,7 @@ void CallStackTestSuite::UnwindCaller()
    const void **Stack = TestCallStack.Get();
    Dl_info Info;
    CPPUNIT_ASSERT(dladdr(Stack[0], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteCaller") == 0);
+   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteCaller1") == 0);
 };
 
 void CallStackTestSuite::Unwind()
@@ -198,5 +204,45 @@ void CallStackTestSuite::OperatorDifferent()
 
    CPPUNIT_ASSERT(TestCallStack != TestCallStack2);
    CPPUNIT_ASSERT(!(TestCallStack != TestCallStack3));
+};
+
+void CallStackTestSuite::GetNameBigLevel()
+{
+   CallStack   TestCallStack;
+
+   TestSuiteUnwind5(TestCallStack);
+
+   CPPUNIT_ASSERT(TestCallStack.GetName(300000) == NULL);
+};
+
+
+void CallStackTestSuite::GetName()
+{
+   CallStack   TestCallStack;
+
+   TestSuiteUnwind5(TestCallStack);
+
+   /* check for names, format is "pointer:name" so we compare the name for
+    * symbols that should be resolved */
+   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteUnwind1") == 0);
+   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(1), ':')+1, "TestSuiteUnwind2") == 0);
+   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(2), ':')+1, "TestSuiteUnwind3") == 0);
+   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(3), ':')+1, "TestSuiteUnwind4") == 0);
+};
+
+void CallStackTestSuite::GetNameCaller()
+{
+   CallStack   TestCallStack;
+
+   TestSuiteCaller1(TestCallStack);
+
+   /* check for names, format is "pointer:name" so we compare the name for
+    * symbols that should be resolved */
+   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteCaller") == 0);
+   uint32_t Level;
+   for(Level=1;Level<TestCallStack.GetDepth(); Level++)
+   {
+      CPPUNIT_ASSERT(TestCallStack.GetName(Level) == NULL);
+   }
 };
 

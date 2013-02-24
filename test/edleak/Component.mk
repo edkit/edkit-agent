@@ -4,7 +4,7 @@ CPPFLAGS = -I$(SRCDIR)/toolbox/include -I$(SRCDIR)/thirdparty/cppunit/include
 CPPFLAGS += -I$(SRCDIR)/thirdparty/cppunit/include
 CPPFLAGS += -I$(SRCDIR)/edleak
 
-LDFLAGS = -rdynamic -L$(LD_LIBRARY_PATH) -l$(LDLIB_DL)
+LDFLAGS = -rdynamic
 LDFLAGS += -L$(SRCDIR)/toolbox -ltoolbox
 LDFLAGS += -L$(SRCDIR)/edleak -ledleak
 LDFLAGS += -L$(SRCDIR)/thirdparty/json-c/.libs -ljson

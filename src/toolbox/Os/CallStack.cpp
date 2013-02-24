@@ -29,7 +29,9 @@
 * @date     2011/05/01
 *
 *****************************************************************************/
+#include <dlfcn.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "CallStack.h"
 
@@ -40,9 +42,27 @@
 *  Constructor.
 ******************************************************************************/
 CallStack::CallStack(void):
-   Depth(CALLSTACK_MAX_DEPTH), SkipFrameCount(0), StackIndex(0)
+   Depth(CALLSTACK_MAX_DEPTH), SkipFrameCount(0), StackIndex(0),
+   NamesAreResolved(false)
 {
    memset(Stack, 0, CALLSTACK_MAX_DEPTH*sizeof(void*));
+   memset(StackNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
+   return;
+}
+
+
+/**
+* @date     2012/02/09
+*
+*  Constructor.
+******************************************************************************/
+CallStack::CallStack(const CallStack& Callers):
+   Depth(CALLSTACK_MAX_DEPTH), SkipFrameCount(0), StackIndex(0),
+   NamesAreResolved(false)
+{
+   memset(Stack, 0, CALLSTACK_MAX_DEPTH*sizeof(void*));
+   memset(StackNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
+   SetTo(Callers);
    return;
 }
 
@@ -145,5 +165,56 @@ void CallStack::SetTo(const CallStack &Target, uint32_t Level)
 {
    memcpy(Stack, Target.Get(), sizeof(Stack));
    return;
+}
+
+
+/**
+* @date     2013/02/11
+*
+*  Resolves the symbols names in the callstack.
+*
+******************************************************************************/
+void CallStack::ResolveNames(void)
+{
+   if(NamesAreResolved == true)
+      return;
+
+   uint32_t Level;
+   for(Level=0; Level<Depth; Level++)
+   {
+      if(Stack[Level] != NULL)
+      {
+         Dl_info s_info;
+         if( (dladdr(Stack[Level], &s_info) != 0) && (s_info.dli_sname != NULL) )
+         {
+            snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
+                  Stack[Level], s_info.dli_sname);
+         }
+         else
+         {
+            snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p", Stack[Level]);
+         }
+         StackNames[Level][ALLOCER_NAME_SIZE-1] = '\0';
+      }
+   }
+   NamesAreResolved = true;
+}
+
+
+/**
+* @date     2013/02/09
+*
+*  Returns the symbol name of the callstack at the specified level.
+*
+******************************************************************************/
+const char* CallStack::GetName(uint32_t Level)
+{
+   if(Level >= Depth)
+      return(NULL);
+
+   ResolveNames();
+   if(StackNames[Level][0] == '\0')
+      return(NULL);
+   return(StackNames[Level]);
 }
 

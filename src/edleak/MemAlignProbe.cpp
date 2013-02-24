@@ -119,7 +119,7 @@ void* MemAlignProbe::PassThrough(size_t i_Boundary, size_t i_Size)
 *  Frees previously allocated data.
 *
 ******************************************************************************/
-void* MemAlignProbe::MemAlign(size_t i_Boundary, size_t i_Size, void *Eip)
+void* MemAlignProbe::MemAlign(size_t i_Boundary, size_t i_Size, const CallStack& Callers)
 {
    uint8_t  *Data = NULL;
    uint32_t Padding = MemProbe::GetAlignmentPadding(i_Boundary, sizeof(HeapEntry));
@@ -131,7 +131,7 @@ void* MemAlignProbe::MemAlign(size_t i_Boundary, size_t i_Size, void *Eip)
          Data = (uint8_t*)AlignFunc(i_Boundary, i_Size + sizeof(HeapEntry) + Padding);
          if(Data != NULL)
          {
-            ExeContext *p_Context = ExeContext::Get(Eip);
+            ExeContext *p_Context = ExeContext::Get(Callers);
             HeapEntry  *Entry = new (Data + Padding) HeapEntry(i_Size, p_Context);
 
             Entry->Start = Data;
