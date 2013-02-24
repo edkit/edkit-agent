@@ -12,21 +12,22 @@ edKit is a set of tools to help debugging applications in embedded environments.
 1- Building:
    1.1 - configuration
 
-   Before compiling any component, configuration mus be selected. This is simply
-   done creating a symbolic link of "build/arch.make" to the arch configuration
-   file of your target. The default configuration is linux native host (i.e
-   linux x86 in most situations). The "build/arch" directory contains some
-   definitions for several targets. These can serve as example for other
-   targets.
+   For a simple configuration, just run the configure script:
+   $> ./configure
+
+   If cross-compilation is needed, then provide the type of the host where the
+   binaries will be executed via the "host" option. for example on a mipsel
+   target:
+   $> ./configure --host=mipsel-linux-uclibc
 
    1.1- toolbox
-   
+
    Toolbox is a set of classes used by all components. So it must be build
    before any other component.
 
    $> cd src/toolbox
    $> make
-  
+
    1.2- edLeak
 
    edleak is the component that detects memory leaks. It is a shared library
@@ -57,7 +58,7 @@ edKit is a set of tools to help debugging applications in embedded environments.
    Html clients have been tested on opera, firefox, and chromium.
    Chromium must be run with the "allow-file-access-from-files" option:
 
-   $> chromium-browser --allow-file-access-from-files               
+   $> chromium-browser --allow-file-access-from-files
 
    3.2- edLeak
 
