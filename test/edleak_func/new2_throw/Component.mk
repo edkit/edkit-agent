@@ -14,7 +14,7 @@ run: cleanruntime
 clean: cleanruntime
 
 cleanruntime:
-	rm -f $(CURDIR)/*.edleak.json
+	rm -f $(CURDIR)/edleak.json.*
 
 include $(BUILDDIR)/srcbuild.mk
 
