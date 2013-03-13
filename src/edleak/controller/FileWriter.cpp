@@ -121,21 +121,15 @@ int32_t FileWriter::Stop(void)
 ******************************************************************************/
 void FileWriter::Loop(void)
 {
-   int   i_File;
+   int   i_File = -1;
    bool  b_FirstSlice;
    String JsonSlice, JsonAllocers;
    String Json;
    off_t  i_Offset = 0;
 
-   i_File = open(FileName.GetString(), O_RDWR|O_CREAT|O_TRUNC, S_IRWXU|S_IRGRP|S_IROTH);
-   if(i_File == -1)
-      return;
    Json << "{\n";
    Json << "\"slice\": [\n";
    b_FirstSlice = true;
-   write(i_File, Json.GetString(), Json.GetSize());
-   i_Offset += Json.GetSize();
-
    while(1)
    {
       Sleep();
@@ -153,6 +147,12 @@ void FileWriter::Loop(void)
          }
          else
          {
+            i_File = open(FileName.GetString(), O_RDWR|O_CREAT|O_TRUNC, S_IRWXU|S_IRGRP|S_IROTH);
+            if(i_File == -1)
+               break;
+
+            write(i_File, Json.GetString(), Json.GetSize());
+            i_Offset += Json.GetSize();
             b_FirstSlice = false;
          }
          write(i_File, JsonSlice.GetString(), JsonSlice.GetSize());
@@ -165,7 +165,8 @@ void FileWriter::Loop(void)
       }
    }
 
-   close(i_File);
+   if(i_File != -1)
+      close(i_File);
 }
 
 
