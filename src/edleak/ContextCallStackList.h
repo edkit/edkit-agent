@@ -1,5 +1,5 @@
-#ifndef __EXECONTEXT_H
-#define __EXECONTEXT_H
+#ifndef __CONTEXTCALLSTACKLSIT_H
+#define __CONTEXTCALLSTACKLIST_H
 
 /*
 *****************************************************************************
@@ -7,7 +7,7 @@
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2011
+*                          Copyright (c) 2013
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,33 +29,21 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2011/05/01
+* @date     2013/03/04
 *
 *****************************************************************************/
 #include <stdint.h>
-#include "DlList.h"
-#include "CallStack.h"
+#include "AList.h"
+#include "ExeContext.h"
 
-class ExeContext : public DlListItem
+class ContextCallStackList : public AList<ExeContext*>
 {
    public:
-                              ExeContext(const CallStack &Callers);
-      virtual                 ~ExeContext(void);
-      static   ExeContext*    Get(const CallStack &Callers);
-      static   ExeContext*    Get(const uint32_t Id);
-               uint32_t       GetId(void) const {return(Id);};
-      static   DlList*        GetList(void);
-               CallStack&     GetCallStack(void) { return(Stack);};
-
-      int64_t                 Memory;
+      static ContextCallStackList*   Instantiate(void);
 
    private:
-                              ExeContext(void);
-               void           SetId(void);
-
-
-      CallStack            Stack;
-      uint32_t             Id;
+               ContextCallStackList();
+      virtual ~ContextCallStackList(void);
 };
 
 #endif

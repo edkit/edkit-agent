@@ -4,7 +4,7 @@
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2012
+*                          Copyright (c) 2013
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,63 +26,75 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2012/01/24
+* @date     2013/03/04
 *
 *****************************************************************************/
-#include <new>
-#include "WebService.h"
-#include "WsInterface.h"
-#include "WsMethodSlice.h"
+#include <stdio.h>
 #include "WsMethodStackWatchAdd.h"
-#include "WsHandlerSingleton.h"
+#include "ContextCallStackList.h"
+
 
 /**
-* @date     2012/01/24
+* @date     2013/03/04
 *
 *  Constructor.
 ******************************************************************************/
-WebService::WebService(void):
-   Interface(NULL), SliceMethod(NULL), StackWatchAddMethod(NULL)
+WsMethodStackWatchAdd::WsMethodStackWatchAdd():
+   WsMethod("AddStackWatch")
 {
-   int32_t i_Ret;
-
-   WsHandlerSingleton *WsHandler = WsHandlerSingleton::Instantiate();
-   if(WsHandler == NULL)
-      return;
-
-   Interface = new(std::nothrow) WsInterface("Edleak");
-   if(Interface == NULL)
-      return;
-   i_Ret = Interface->InitCheck();
-   if(i_Ret == 0)
-   {
-      SliceMethod = new(std::nothrow) WsMethodSlice();
-      if(SliceMethod != NULL)
-      {
-         Interface->AddMethod(SliceMethod);
-         StackWatchAddMethod = new(std::nothrow) WsMethodStackWatchAdd();
-         if(StackWatchAddMethod != NULL)
-         {
-            Interface->AddMethod(StackWatchAddMethod);
-         }
-      }
-   }
-   WsHandler->AddInterface(Interface);
    return;
 }
 
 
 /**
-* @date     2012/01/24
+* @date     2013/03/04
 *
 *  Destructor.
-*
 ******************************************************************************/
-WebService::~WebService(void)
+WsMethodStackWatchAdd::~WsMethodStackWatchAdd(void)
 {
-   if(Interface != NULL)
-      delete Interface;
    return;
 }
 
 
+/**
+* @date     2013/03/04
+*
+*  Add StackWatch Method : Adds a new stackcall context. The provided caller eip
+*  will then be monitored with the full call stack.
+******************************************************************************/
+int32_t WsMethodStackWatchAdd::Call(const DynObject &Params, String *p_Answer)
+{
+   int32_t i_Ret;
+   String JsonSlice, JsonAllocers;
+
+   if(p_Answer == NULL)
+      return(-1);
+
+   ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+   if(CallStackList == NULL)
+      return(-1);
+
+   int64_t  ContextId;
+   i_Ret = Params.FindInt("id", &ContextId);
+   if(i_Ret == 0)
+   {
+      ExeContext *Context = ExeContext::Get(ContextId);
+      if(Context == NULL)
+         i_Ret = -1;
+      if(i_Ret == 0)
+      {
+         if(CallStackList->HasItem(Context) == false)
+         {
+            i_Ret = CallStackList->AddItem(Context);
+         }
+
+         if(i_Ret == 0)
+         {
+            p_Answer->SetTo("{ \"status\": 0, \"data\" : {}\n");
+         }
+      }
+   }
+
+   return(i_Ret);
+}

@@ -91,3 +91,19 @@ void AList1::TestIntResize()
    }
 
 }
+
+
+void AList1::TestHasItem()
+{
+   AList<int32_t> List;
+
+   CPPUNIT_ASSERT(List.AddItem(1) == 0);
+   CPPUNIT_ASSERT(List.AddItem(2) == 0);
+   CPPUNIT_ASSERT(List.HasItem(1) == true);
+   CPPUNIT_ASSERT(List.HasItem(2) == true);
+   CPPUNIT_ASSERT(List.HasItem(3) == false);
+
+   CPPUNIT_ASSERT(List.DelItem(1) == 0);
+   CPPUNIT_ASSERT(List.HasItem(1) == false);
+};
+

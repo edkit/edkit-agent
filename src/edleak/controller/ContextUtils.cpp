@@ -69,7 +69,8 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       else
          b_FirstContext = false;
 
-      *p_JsonAllocers << "{ \"eip\": [";
+      *p_JsonAllocers << "{ \"id\": " << p_CurContext->GetId() <<", ";
+      *p_JsonAllocers << "\"stack\": [";
       CallStack &Stack = p_CurContext->GetCallStack();
       uint32_t Depth = Stack.GetDepth();
       const char *CallerName;

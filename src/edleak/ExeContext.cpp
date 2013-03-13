@@ -36,7 +36,6 @@
 #include "ExeContext.h"
 
 
-
 /**
 * @date     2011/05/01
 *
@@ -45,9 +44,10 @@
 ******************************************************************************/
 ExeContext::ExeContext(const CallStack &Callers):
    DlListItem(),
-   Memory(0), Stack(Callers)
+   Memory(0), Stack(Callers), Id(0)
 
 {
+   SetId();
    return;
 }
 
@@ -61,6 +61,23 @@ ExeContext::ExeContext(const CallStack &Callers):
 ExeContext::~ExeContext()
 {
    return;
+}
+
+
+/**
+* @date     2013/03/10
+*
+*  Sets a unique Id assotiated to a context.
+******************************************************************************/
+void ExeContext::SetId(void)
+{
+   static uint32_t NextId = 0;
+   /** @todo :
+     - atomic
+     - check against integer overflow
+     - check against already used id
+   */
+   Id = NextId++;
 }
 
 
@@ -118,4 +135,27 @@ ExeContext* ExeContext::Get(const CallStack &Callers)
 }
 
 
+/**
+* @date     2013/03/10
+*
+*  returns an ExeContext object that matches the provided Id.
+*
+* @param    Id (in): Id to search.
+* @return   ExeContext if success.
+* @return   NULL otherwise.
+******************************************************************************/
+ExeContext* ExeContext::Get(const uint32_t Id)
+{
+   DlList *p_ContextList = ExeContext::GetList();
+   ExeContext *p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
+
+   while(p_Context != NULL)
+   {
+      if(p_Context->GetId() == Id)
+         break;
+      p_Context = (ExeContext*)p_Context->Next;
+   }
+
+   return(p_Context);
+}
 

@@ -40,7 +40,7 @@ class CallStackTestSuite: public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE( CallStackTestSuite );
   CPPUNIT_TEST( Build );
   CPPUNIT_TEST( GetDepth );
-  CPPUNIT_TEST( UnwindCaller );
+  CPPUNIT_TEST( UnwindOneCaller );
   CPPUNIT_TEST( Unwind );
   CPPUNIT_TEST( SetTo );
   CPPUNIT_TEST( OperatorEqual );
@@ -56,7 +56,7 @@ public:
 
   void Build();
   void GetDepth();
-  void UnwindCaller();
+  void UnwindOneCaller();
   void Unwind();
   void SetTo();
   void OperatorEqual();
@@ -133,7 +133,7 @@ void CallStackTestSuite::GetDepth()
    CPPUNIT_ASSERT(TestCallStack.GetDepth() == CALLSTACK_MAX_DEPTH);
 };
 
-void CallStackTestSuite::UnwindCaller()
+void CallStackTestSuite::UnwindOneCaller()
 {
    CallStack   TestCallStack;
 
@@ -238,7 +238,7 @@ void CallStackTestSuite::GetNameCaller()
 
    /* check for names, format is "pointer:name" so we compare the name for
     * symbols that should be resolved */
-   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteCaller") == 0);
+   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteCaller1") == 0);
    uint32_t Level;
    for(Level=1;Level<TestCallStack.GetDepth(); Level++)
    {

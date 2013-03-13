@@ -34,6 +34,7 @@
 
 class WsInterface;
 class WsMethodSlice;
+class WsMethodStackWatchAdd;
 class WebService
 {
    public:
@@ -41,8 +42,9 @@ class WebService
       virtual                 ~WebService(void);
 
    private:
-               WsInterface    *Interface;
-               WsMethodSlice  *SliceMethod;
+               WsInterface             *Interface;
+               WsMethodSlice           *SliceMethod;
+               WsMethodStackWatchAdd   *StackWatchAddMethod;
 };
 
 #endif /* WEBSERVICE_H */

@@ -72,7 +72,7 @@ void MemAlign1::TestBasic()
    FakeAlloc_SetAllocAddress(SysAddress);
 
    CallStack Caller;
-   Caller.UnwindCaller();
+   UnwindCaller(Caller);
    char *ProbeAddress = (char*)Probe.MemAlign(4, 259, Caller);
    CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
    CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % 4 == 0);
@@ -107,7 +107,7 @@ void MemAlign1::TestBigAlign()
    FakeAlloc_SetAllocAddress(SysAddress);
 
    CallStack Caller;
-   Caller.UnwindCaller();
+   UnwindCaller(Caller);
    char *ProbeAddress = (char*)Probe.MemAlign(256, 259, Caller);
    CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
    CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % 256 == 0);

@@ -103,6 +103,20 @@ class AList
                               return(0);
                            };
 
+               bool        HasItem(T Item)
+                           {
+                              uint32_t i;
+
+                              for(i=0; i<ItemCount; i++)
+                              {
+                                 if(Item == Array[i])
+                                 {
+                                    return(true);
+                                 }
+                              }
+                              return(false);
+                           };
+
                uint32_t    CountItems(void) const { return(ItemCount); };
 
       private:

@@ -102,11 +102,12 @@ vis.prototype.getMainPanel = function()
                            var size_unit = 'MiB';
                         }
                         size = Math.round(size);
-                        var result = 'size: ' + size + size_unit + '<br/>';
-                        result += 'backtrace: <br/> ';
+                        var result = 'size: ' + size + size_unit + '<br/>' +
+                           'id: '+ data.allocer[this.y].id + '<br/>' +
+                           'backtrace: <br/> ';
                         var i;
-                        for(i=0;i<data.allocer[this.y].eip.length;i++) {
-                           result += ' - ' + data.allocer[this.y].eip[i];
+                        for(i=0;i<data.allocer[this.y].stack.length;i++) {
+                           result += ' - ' + data.allocer[this.y].stack[i];
                         }
                         return(result);
                 }

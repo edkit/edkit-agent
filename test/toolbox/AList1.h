@@ -39,6 +39,7 @@ class AList1 : public CppUnit::TestFixture
   CPPUNIT_TEST_SUITE( AList1 );
   CPPUNIT_TEST( TestIntBasic );
   CPPUNIT_TEST( TestIntResize );
+  CPPUNIT_TEST( TestHasItem);
   CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -47,6 +48,7 @@ public:
 
   void TestIntBasic();
   void TestIntResize();
+  void TestHasItem();
 };
 
 #endif

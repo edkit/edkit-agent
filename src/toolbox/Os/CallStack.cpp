@@ -57,7 +57,7 @@ CallStack::CallStack(void):
 *  Constructor.
 ******************************************************************************/
 CallStack::CallStack(const CallStack& Callers):
-   Depth(CALLSTACK_MAX_DEPTH), SkipFrameCount(0), StackIndex(0),
+   Depth(Callers.GetDepth()), SkipFrameCount(0), StackIndex(0),
    NamesAreResolved(false)
 {
    memset(Stack, 0, CALLSTACK_MAX_DEPTH*sizeof(void*));
@@ -88,8 +88,11 @@ CallStack::~CallStack(void)
 ******************************************************************************/
 bool CallStack::operator==(const CallStack &Rhs) const
 {
-   if(memcmp(Stack, Rhs.Get(), Depth*sizeof(void*)) == 0)
-      return(true);
+   if(Depth == Rhs.GetDepth())
+   {
+      if(memcmp(Stack, Rhs.Get(), Depth*sizeof(void*)) == 0)
+         return(true);
+   }
    return(false);
 }
 
@@ -120,6 +123,20 @@ void CallStack::Unwind(void)
    return;
 }
 
+
+/**
+* @date     2013/02/25
+*
+*  Initializes the callstack from another callstack but for only one level (the
+*  caller).
+*
+******************************************************************************/
+void CallStack::SetCaller(const CallStack& Callers)
+{
+   Depth = 1;
+   Stack[0] = Callers.Get()[0];
+   return;
+}
 
 /**
 * @date     2012/03/22

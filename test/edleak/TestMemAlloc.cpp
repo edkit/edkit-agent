@@ -71,7 +71,7 @@ void TestMemAlloc::TestAlign()
 
    FakeAlloc_SetAllocAddress(SysAddress);
    CallStack Caller;
-   Caller.UnwindCaller();
+   UnwindCaller(Caller);
    char *ProbeAddress = (char*)Probe.Alloc(25, Caller);
    CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
    CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % ALLOC_ALIGNMENT == 0);
