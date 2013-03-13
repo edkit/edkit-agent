@@ -57,9 +57,9 @@ FileWriter::FileWriter(void): Thread(),
    char *sz_FileName;
    sz_FileName = getenv(ENV_FILENAME);
    if(sz_FileName == NULL)
-      FileName << getpid() << "." << FW_DEFAULT_FILENAME ;
+      FileName << FW_DEFAULT_FILENAME << "." << getpid() ;
    else
-      FileName << getpid() << "." << sz_FileName ;
+      FileName << sz_FileName << "." << getpid();
 
    char *sz_PollPeriod = getenv(ENV_POLL_PERIOD);
    if(sz_PollPeriod != NULL)
