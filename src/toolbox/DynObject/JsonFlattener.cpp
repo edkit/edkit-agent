@@ -142,6 +142,7 @@ int32_t JsonFlattener::UnFlatten(struct json_object *p_JsonObject, DynObject *p_
             {
                i_Ret = p_Object->AddDynObject(Key, ChildObject);
             }
+            ChildObject.MakeEmpty();
             break;
 
          case json_type_string:
