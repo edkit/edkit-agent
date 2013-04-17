@@ -84,9 +84,10 @@ int32_t WsMethodStackWatchAdd::Call(const DynObject &Params, String *p_Answer)
          i_Ret = -1;
       if(i_Ret == 0)
       {
-         if(CallStackList->HasItem(Context) == false)
+         const void *Caller = Context->GetCallStack().Get()[0];
+         if(CallStackList->HasItem(Caller) == false)
          {
-            i_Ret = CallStackList->AddItem(Context);
+            i_Ret = CallStackList->AddItem(Caller);
          }
 
          if(i_Ret == 0)

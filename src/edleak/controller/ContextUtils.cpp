@@ -88,7 +88,7 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       }
       *p_JsonAllocers << "]}";
 
-      *p_JsonSlice << "{ \"mem\":" << p_CurContext->Memory << ",";
+      *p_JsonSlice << "{ \"mem\":" << p_CurContext->GetMemory() << ",";
       *p_JsonSlice << "\"alc\":" << i_Index << "}";
 
       p_CurContext = static_cast<ExeContext*>(p_CurContext->Next);

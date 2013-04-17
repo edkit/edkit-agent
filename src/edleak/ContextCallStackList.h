@@ -36,7 +36,7 @@
 #include "AList.h"
 #include "ExeContext.h"
 
-class ContextCallStackList : public AList<ExeContext*>
+class ContextCallStackList : public AList<const void*>
 {
    public:
       static ContextCallStackList*   Instantiate(void);

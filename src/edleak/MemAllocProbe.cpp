@@ -155,7 +155,7 @@ void* MemAllocProbe::Alloc(size_t i_Size, const CallStack& Callers)
             Entry->Start = Data;
             GetHeap()->GetEntryList()->AppendItem(Entry);
             if(p_Context != NULL)
-               p_Context->Memory += i_Size;
+               p_Context->UpdateMemory(i_Size);
 
             Data = Data + sizeof(HeapEntry) + Padding;
          }

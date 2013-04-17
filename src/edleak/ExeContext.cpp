@@ -42,9 +42,9 @@
 *  Constructor.
 *
 ******************************************************************************/
-ExeContext::ExeContext(const CallStack &Callers):
+ExeContext::ExeContext(const CallStack &Callers, uint32_t Level):
    DlListItem(),
-   Memory(0), Stack(Callers), Id(0)
+   Memory(0), Stack(Callers, Level), ParentContext(NULL), Id(0)
 
 {
    SetId();
@@ -113,12 +113,19 @@ ExeContext* ExeContext::Get(const CallStack &Callers)
 {
    DlList *p_ContextList = ExeContext::GetList();
    ExeContext *p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
+   ExeContext *p_ParentContext = NULL;
 
    /* search for an existing allocer */
    while(p_Context != NULL)
    {
       if(p_Context->GetCallStack() == Callers)
          break;
+      else if( (p_ParentContext == NULL) &&
+               (p_Context->GetCallStack().GetDepth() == 1) &&
+               (p_Context->GetCallStack().CallerIs(Callers)) )
+      {
+         p_ParentContext = p_Context;
+      }
       p_Context = (ExeContext*)p_Context->Next;
    }
 
@@ -128,7 +135,30 @@ ExeContext* ExeContext::Get(const CallStack &Callers)
       p_Context = new(std::nothrow) ExeContext(Callers);
       if(p_Context != NULL)
       {
-         p_ContextList->AppendItem(p_Context);
+         if(Callers.GetDepth() == 1)
+         {
+            p_ContextList->AppendItem(p_Context);
+         }
+         else
+         {
+            /* And also allocate parent if it does not exist yet */
+            if(p_ParentContext == NULL)
+            {
+               p_ParentContext = new(std::nothrow) ExeContext(Callers, 1);
+               if(p_ParentContext != NULL)
+                  p_ContextList->AppendItem(p_ParentContext);
+            }
+            if(p_ParentContext != NULL)
+            {
+               p_Context->ParentContext = p_ParentContext;
+               p_ContextList->AppendItem(p_Context);
+            }
+            else
+            {
+               delete p_Context;
+               p_Context = NULL;
+            }
+         }
       }
    }
    return(p_Context);

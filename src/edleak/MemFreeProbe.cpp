@@ -129,7 +129,7 @@ void* MemFreeProbe::Free(void *Data)
                   Data = Entry;
                Entry->Magic = 0;   /* sanity clean */
                if(Entry->Context != NULL)
-                  Entry->Context->Memory -= Entry->Size;
+                  Entry->Context->UpdateMemory(-(Entry->Size));
             }
          }
       }

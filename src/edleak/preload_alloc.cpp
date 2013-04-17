@@ -34,6 +34,7 @@
 #include "MemCallocProbe.h"
 #include "MemReallocProbe.h"
 #include "MemFreeProbe.h"
+#include "ContextCallStackList.h"
 #include "controller/Controllers.h"
 
 extern "C" {
@@ -161,8 +162,15 @@ void *malloc (size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemAllocProbe  &Probe = Preload_GetMallocProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return(NULL);
+
       CallStack Callers;
       UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
       Data = Probe.Alloc(i_Size, Callers);
    }
    else
@@ -180,8 +188,15 @@ void *memalign(size_t i_Boundary, size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemAlignProbe  &Probe = Preload_GetMemAlignProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return(NULL);
+
       CallStack Callers;
       UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
       Data = Probe.MemAlign(i_Boundary, i_Size, Callers);
    }
    else
@@ -201,8 +216,15 @@ void *calloc(size_t i_MembCount, size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemCallocProbe &Probe = Preload_GetCallocProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return(NULL);
+
       CallStack Callers;
       UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
       Data = Probe.Calloc(i_MembCount, i_Size, Callers);
    }
    else
@@ -221,8 +243,15 @@ void *realloc(void *Ptr, size_t i_Size) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemReallocProbe   &Probe = Preload_GetReallocProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return(NULL);
+
       CallStack Callers;
       UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
       Data = Probe.Realloc(Ptr, i_Size, Callers);
    }
    else
@@ -255,8 +284,15 @@ void *CXX_SYM_NEW(size_t i_Size)
    if(Preload_Init() == STATE_STARTED)
    {
       MemAllocProbe  &Probe = Preload_GetNewProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return(NULL);
+
       CallStack Callers;
       UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
       Data = Probe.Alloc(i_Size, Callers);
    }
    else
@@ -276,8 +312,15 @@ void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemAllocProbe  &Probe = Preload_GetNewNoThrowProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return(NULL);
+
       CallStack Callers;
       UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
       Data = Probe.Alloc(i_Size, Callers);
    }
    else

@@ -38,7 +38,7 @@
 *  Constructor.
 ******************************************************************************/
 ContextCallStackList::ContextCallStackList(void) :
-   AList<ExeContext*>()
+   AList<const void*>()
 {
 }
 

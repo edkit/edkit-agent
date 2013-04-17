@@ -148,7 +148,7 @@ void* MemCallocProbe::Calloc(size_t i_MembCount, size_t i_Size, const CallStack&
             Entry->Start = Data;
             GetHeap()->GetEntryList()->AppendItem(Entry);
             if(p_Context != NULL)
-               p_Context->Memory += (i_Size*i_MembCount);
+               p_Context->UpdateMemory((i_Size*i_MembCount));
             Data = Data + sizeof(HeapEntry) + Padding;
          }
       }

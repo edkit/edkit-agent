@@ -121,7 +121,7 @@ void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, const CallStack& Caller
                GetHeap()->GetEntryList()->DelItem(Entry);
                Entry->Magic = 0;
                if(Entry->Context != NULL)
-                  Entry->Context->Memory -= Entry->Size;
+                  Entry->Context->UpdateMemory(-(Entry->Size));
 
                if(Entry->Start != NULL) // there is some padding on allocated chunk
                   Data = (uint8_t*)Entry->Start;
@@ -138,7 +138,7 @@ void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, const CallStack& Caller
             Entry->Start = Data;
             GetHeap()->GetEntryList()->AppendItem(Entry);
             if(p_Context != NULL)
-               p_Context->Memory += i_Size;
+               p_Context->UpdateMemory(i_Size);
 
             Data = Data + sizeof(HeapEntry) + Padding;
          }

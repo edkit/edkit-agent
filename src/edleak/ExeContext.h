@@ -39,23 +39,29 @@
 class ExeContext : public DlListItem
 {
    public:
-                              ExeContext(const CallStack &Callers);
+                              ExeContext(const CallStack &Callers, uint32_t Level=0);
       virtual                 ~ExeContext(void);
       static   ExeContext*    Get(const CallStack &Callers);
       static   ExeContext*    Get(const uint32_t Id);
                uint32_t       GetId(void) const {return(Id);};
       static   DlList*        GetList(void);
                CallStack&     GetCallStack(void) { return(Stack);};
-
-      int64_t                 Memory;
+               void           UpdateMemory(size_t Size)
+               {
+                  Memory += Size;
+                  if(ParentContext != NULL)
+                     ParentContext->UpdateMemory(Size);
+               };
+               int64_t        GetMemory(void) const {return(Memory);};
 
    private:
                               ExeContext(void);
                void           SetId(void);
 
-
-      CallStack            Stack;
-      uint32_t             Id;
+               int64_t        Memory;
+               CallStack      Stack;
+               ExeContext     *ParentContext;
+               uint32_t       Id;
 };
 
 #endif
