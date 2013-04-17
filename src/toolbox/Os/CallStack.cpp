@@ -54,14 +54,20 @@ CallStack::CallStack(void):
 /**
 * @date     2012/02/09
 *
-*  Constructor.
+*  Copy Constructor.
+*  @param Callers (in): Callstack.to copy.
+*  @param Level (in): Optionnal max level to copy. If Level is strictly positive
+*  and less that the depth of Callers, then only this level of callers is
+*  assigned.
 ******************************************************************************/
-CallStack::CallStack(const CallStack& Callers):
+CallStack::CallStack(const CallStack& Callers, uint32_t Level):
    Depth(Callers.GetDepth()), SkipFrameCount(0), StackIndex(0),
    NamesAreResolved(false)
 {
    memset(Stack, 0, CALLSTACK_MAX_DEPTH*sizeof(void*));
    memset(StackNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
+   if( (Level > 0) &&(Level < Depth) )
+      Depth = Level;
    SetTo(Callers);
    return;
 }
@@ -80,7 +86,7 @@ CallStack::~CallStack(void)
 
 
 /**
-* @date     2012/03/22
+* @date     2013/02/22
 *
 *  Equality operator. Two callstacks are considered equal if their Stack arrays
 *  are identical.
@@ -98,7 +104,7 @@ bool CallStack::operator==(const CallStack &Rhs) const
 
 
 /**
-* @date     2012/02/22
+* @date     2013/02/22
 *
 *  Inequality operator.
 *
@@ -110,6 +116,23 @@ bool CallStack::operator!=(const CallStack &Rhs) const
 
 
 /**
+* @date     2013/03/25
+*
+*  Equality operator for only a specified depth.
+******************************************************************************/
+bool CallStack::CallerIs(const CallStack &Rhs, uint32_t Level) const
+{
+   if((Depth >= Level) && (Rhs.GetDepth() >= Level))
+   {
+      if(memcmp(Stack, Rhs.Get(), Level*sizeof(void*)) == 0)
+         return(true);
+   }
+   return(false);
+}
+
+
+
+/**
 * @date     2012/03/22
 *
 *  Unwind the callers.
@@ -117,6 +140,7 @@ bool CallStack::operator!=(const CallStack &Rhs) const
 ******************************************************************************/
 void CallStack::Unwind(void)
 {
+   Depth = CALLSTACK_MAX_DEPTH;
    SkipFrameCount = 2;
    StackIndex = 0;
    _Unwind_Backtrace(UnwindCallback, this);

@@ -43,11 +43,12 @@ class CallStack
 #define UnwindCaller(c) c.SetCaller(__builtin_return_address(0))
 
                                     CallStack(void);
-                                    CallStack(const CallStack& Callers);
+                                    CallStack(const CallStack& Callers, uint32_t Level=CALLSTACK_MAX_DEPTH);
                                     ~CallStack(void);
 
                bool                 operator==(const CallStack &Rhs) const;
                bool                 operator!=(const CallStack &Rhs) const;
+               bool                 CallerIs(const CallStack &Rhs, uint32_t Level=1) const;
 
 
                void                 Unwind(void);
