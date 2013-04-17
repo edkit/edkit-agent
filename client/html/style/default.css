@@ -3,6 +3,11 @@ body
    margin: 10px 0 10px 0;
 }
 
+#scatter-graph
+{
+   display : block;
+}
+
 .menu-item
 {
    border-radius: 10px;
@@ -17,6 +22,10 @@ body
    background: #F2F2F2;
 }
 
+.menu-content
+{
+   margin: 1ex;
+}
 
 .menu-item h4
 {
@@ -38,7 +47,7 @@ body
 /* edleak */
 #ws_loader ul, #ws_loader ul li
 {
-   margin : 0;
+   margin : 0 0 0.5ex 0;
    padding-left : 0.5ex;
    padding-right : 0.5ex;
    list-style: none inside none;
@@ -47,15 +56,14 @@ body
 #edkit_ws_ip
 {
    width : 12ex;
+   margin : 0 0.5ex 0 0;
 }
 
-#edkit_ws_duration
+#edkit_ws_duration, #edkit_ws_period, #edkit_caller_adder_id
 {
    width : 7ex;
+   margin : 0 0.5ex 0.5ex 0;
 }
 
-#edkit_ws_period
-{
-   width : 7ex;
-}
+
 

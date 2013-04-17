@@ -107,7 +107,7 @@ vis.prototype.getMainPanel = function()
                            'backtrace: <br/> ';
                         var i;
                         for(i=0;i<data.allocer[this.y].stack.length;i++) {
-                           result += ' - ' + data.allocer[this.y].stack[i];
+                           result += ' - ' + data.allocer[this.y].stack[i] + '<br/>';
                         }
                         return(result);
                 }

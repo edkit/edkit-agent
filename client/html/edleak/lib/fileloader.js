@@ -35,9 +35,10 @@ $(document).ready( function()
 {
    var menu_item  = '<div class="menu-item">';
    menu_item      += '<h4>Load file</h4>';
+   menu_item      += '<div class="menu-content" >';
    menu_item      += '<input type="file" id="edkit_file"';
    menu_item      += 'name="edkit_file"  />';
-   menu_item      += '</div>';
+   menu_item      += '</div></div>';
    $('#menu-bar').append(menu_item);
 
    $('#edkit_file').change( function(evt)
