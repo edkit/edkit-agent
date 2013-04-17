@@ -49,6 +49,8 @@
 * @date     2011/05/08
 *
 *  Constructor.
+*  The filename and poll period (in second) is retrieved from environment
+*  variables. If the Poll period is 0, then the filewriter is disabled.
 *
 ******************************************************************************/
 FileWriter::FileWriter(void): Thread(),
@@ -69,7 +71,8 @@ FileWriter::FileWriter(void): Thread(),
          PollPeriod = FW_DEFAULT_POLL_PERIOD;
    }
 
-   Start();
+   if(PollPeriod > 0)
+      Start();
    return;
 }
 
@@ -82,7 +85,8 @@ FileWriter::FileWriter(void): Thread(),
 ******************************************************************************/
 FileWriter::~FileWriter(void)
 {
-   Stop();
+   if(IsStarted() == true)
+      Stop();
    return;
 }
 
