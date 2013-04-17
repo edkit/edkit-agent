@@ -121,6 +121,7 @@ String& String::operator<<(int Rhs)
    char Num[32];
    int32_t i_Length = snprintf(Num, sizeof(Num), "%d", Rhs);
 
+   Num[sizeof(Num) -1] = '\0';
    AppendString(Num, i_Length);
    return(*this);
 }
@@ -185,7 +186,7 @@ int32_t String::SetTo(const char *Value, uint32_t i_Length)
    if(Area == NULL)
       return(-1);
    AreaSize = ValueLength+1;
-   memcpy(Area, Value, strlen(Value));
+   memcpy(Area, Value, ValueLength);
    Area[ValueLength] = '\0';
    return(0);
 }
