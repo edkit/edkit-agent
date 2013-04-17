@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/08
-* 
+*
 *****************************************************************************/
 #include <stdint.h>
 #include <pthread.h>
@@ -38,19 +38,21 @@
 class Thread
 {
    public:
-                        Thread(void);
-      virtual           ~Thread(void);
+                           Thread(void);
+      virtual              ~Thread(void);
 
-               int32_t  Start(void);
-               int32_t  WaitForEnd(void);
+               int32_t     Start(void);
+               int32_t     WaitForEnd(void);
+               bool        IsStarted(void) const {return(Started);};
 
    protected:
-      virtual  void     Loop(void) = 0;
+      virtual  void        Loop(void) = 0;
 
    private:
-      static   void* PThreadLoop(void* p_Thread);
+      static   void*       PThreadLoop(void* p_Thread);
 
-               pthread_t ThreadId;
+               pthread_t   ThreadId;
+               bool        Started;
 };
 
 #endif

@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,19 +27,20 @@
 /**
 * @author   R. Picard
 * @date     2011/05/08
-* 
+*
 *****************************************************************************/
 #include "Thread.h"
 
 
 /**
 * @date     2011/05/08
-* 
-*  Constructor. 
+*
+*  Constructor.
 *
 ******************************************************************************/
 Thread::Thread(void):
-   ThreadId(0)
+   ThreadId(0),
+   Started(false)
 {
    return;
 }
@@ -47,8 +48,8 @@ Thread::Thread(void):
 
 /**
 * @date     2011/05/08
-* 
-*  Destructor. 
+*
+*  Destructor.
 *
 ******************************************************************************/
 Thread::~Thread(void)
@@ -59,7 +60,7 @@ Thread::~Thread(void)
 
 /**
 * @date     2011/05/08
-* 
+*
 *  Starts a new thread.
 *
 *  @return  0 if success.
@@ -70,36 +71,44 @@ int32_t Thread::Start(void)
    if(pthread_create(&ThreadId, NULL, Thread::PThreadLoop, this) != 0)
       return(-1);
 
+   Started = true;
    return(0);
 }
 
 
 /**
 * @date     2011/05/08
-* 
-*  Blocks until the thread has terminated.
+*
+*  Blocks until the thread has terminated. This API is not multi-thread safe, it
+*  must be called from only one thread.
 *
 *  @return  0 if success.
 *  @return  -1 otherwise.
 ******************************************************************************/
 int32_t Thread::WaitForEnd(void)
 {
-   if(pthread_join(ThreadId, NULL) == 0)
+   if(Started == false)
       return(0);
+
+   if(pthread_join(ThreadId, NULL) == 0)
+   {
+      Started = false;
+      return(0);
+   }
    return(-1);
 }
 
 
 /**
 * @date     2011/05/08
-* 
+*
 *  static method for pthread entry point. Just calls the loop method.
 *
 ******************************************************************************/
 void* Thread::PThreadLoop(void* p_Thread)
 {
    Thread *This = (Thread*)p_Thread;
-   
+
    if(This != NULL)
       This->Loop();
    return(NULL);
