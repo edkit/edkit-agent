@@ -3,13 +3,13 @@ include ./build/global.mk
 
 all: jsonc toolbox edleak
 
-test_all: cppunit toolbox_test edleak_test leaker
+test_all: cppunit cpputest toolbox_test edleak_test leaker
 
 test_run: toolbox_test_run edleak_test_run
 
-test_clean: toolbox_test_clean edleak_test_clean
+test_clean: toolbox_test_clean edleak_test_clean cpputest_clean
 
-clean: toolbox_clean edleak_clean
+clean: test_clean jsonc_clean toolbox_clean edleak_clean
 
 toolbox:
 	$(MAKE) -C src/toolbox -f Component.mk all
@@ -57,6 +57,14 @@ leaker_clean:
 jsonc:
 	$(MAKE) -C src/thirdparty/json-c
 
+jsonc_clean:
+	$(MAKE) -C src/thirdparty/json-c clean
+
 cppunit:
 	$(MAKE) -C src/thirdparty/cppunit
 
+cpputest:
+	$(MAKE) -C src/thirdparty/cpputest all_no_tests extensions_no_tests
+
+cpputest_clean:
+	$(MAKE) -C src/thirdparty/cpputest clean cleanExtensions
