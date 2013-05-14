@@ -29,23 +29,16 @@
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include "AList.h"
 #include "ListIterator.h"
-#include "AListIterator1.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION( AListIterator1 );
-
-void AListIterator1::setUp()
+TEST_GROUP(AListIteratorTestGroup)
 {
-}
+};
 
 
-void AListIterator1::tearDown()
-{
-}
-
-
-void AListIterator1::TestBasic()
+TEST(AListIteratorTestGroup, Basic)
 {
    uint32_t i,j;
 
@@ -54,18 +47,18 @@ void AListIterator1::TestBasic()
 
    for(i=0; i<1234; i++)
    {
-      CPPUNIT_ASSERT(List.AddItem(i) == 0);
-      CPPUNIT_ASSERT(List.CountItems() == i+1);
+      CHECK_EQUAL(0, List.AddItem(i));
+      CHECK_EQUAL(i+1, List.CountItems() );
    }
 
-   CPPUNIT_ASSERT(Iterator.SetTo(&List) == 0);
-   CPPUNIT_ASSERT(Iterator.First() == 0);
+   CHECK_EQUAL(0, Iterator.SetTo(&List));
+   CHECK_EQUAL(0, Iterator.First());
    i=0;
    while(Iterator.IsDone() == false)
    {
-      CPPUNIT_ASSERT(Iterator.GetItem(&j) == 0);
-      CPPUNIT_ASSERT(i == j);
-      CPPUNIT_ASSERT(Iterator.Next() == 0);
+      CHECK_EQUAL(0, Iterator.GetItem(&j));
+      CHECK_EQUAL(i, j);
+      CHECK_EQUAL(0, Iterator.Next());
       i++;
    }
 }

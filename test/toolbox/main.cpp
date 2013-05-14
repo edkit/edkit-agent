@@ -1,13 +1,7 @@
-#include <cppunit/extensions/TestFactoryRegistry.h>
-#include <cppunit/ui/text/TestRunner.h>
+#include "CppUTest/CommandLineTestRunner.h"
 
-int main( int argc, char **argv)
+int main(int ac, char** av)
 {
-   CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
-   CppUnit::TextUi::TestRunner runner;
-
-   runner.addTest( suite );
-
-   runner.run();
-   return 0;
+   return CommandLineTestRunner::RunAllTests(ac, av);
 }
+

@@ -29,25 +29,19 @@
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include "JsonFlattener.h"
-#include "JsonFlattener1.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION( JsonFlattener1 );
 
 #define STRING1 "A test string"
 #define STRING2 "A second test string"
 #define STRING3 "A Third test string"
 
-void JsonFlattener1::setUp()
+TEST_GROUP(JsonFlattenerTestGroup)
 {
-}
+};
 
-
-void JsonFlattener1::tearDown()
-{
-}
-
-void JsonFlattener1::TestBuild()
+TEST(JsonFlattenerTestGroup, Build)
 {
    JsonFlattener *Obj1 = new(std::nothrow)JsonFlattener();
 
@@ -57,52 +51,52 @@ void JsonFlattener1::TestBuild()
    delete Obj1;
 }
 
-void JsonFlattener1::TestUnflattenInt()
+TEST(JsonFlattenerTestGroup, UnflattenInt)
 {
    DynObject      Obj1;
    JsonFlattener  Flattener1;
    String         Json("{ foo: 32, bar:42, other:892382}");
 
-   CPPUNIT_ASSERT(Json.InitCheck() == 0);
-   CPPUNIT_ASSERT(Flattener1.UnFlatten(&Json, &Obj1) == -1);
+   CHECK(Json.InitCheck() == 0);
+   CHECK(Flattener1.UnFlatten(&Json, &Obj1) == -1);
 
-   CPPUNIT_ASSERT(Json.SetTo("{ \"foo\": 32, \"bar\":42, \"other\":892382}") == 0);
-   CPPUNIT_ASSERT(Json.InitCheck() == 0);
-   CPPUNIT_ASSERT(Flattener1.UnFlatten(&Json, &Obj1) == 0);
+   CHECK(Json.SetTo("{ \"foo\": 32, \"bar\":42, \"other\":892382}") == 0);
+   CHECK(Json.InitCheck() == 0);
+   CHECK(Flattener1.UnFlatten(&Json, &Obj1) == 0);
 
    int64_t i;
-   CPPUNIT_ASSERT(Obj1.FindInt("foo", &i) == 0);
-   CPPUNIT_ASSERT(i == 32);
-   CPPUNIT_ASSERT(Obj1.FindInt("bar", &i) == 0);
-   CPPUNIT_ASSERT(i == 42);
-   CPPUNIT_ASSERT(Obj1.FindInt("other", &i) == 0);
-   CPPUNIT_ASSERT(i == 892382);
+   CHECK(Obj1.FindInt("foo", &i) == 0);
+   CHECK(i == 32);
+   CHECK(Obj1.FindInt("bar", &i) == 0);
+   CHECK(i == 42);
+   CHECK(Obj1.FindInt("other", &i) == 0);
+   CHECK(i == 892382);
 
 };
 
 
-void JsonFlattener1::TestUnflattenString()
+TEST(JsonFlattenerTestGroup, UnflattenString)
 {
    DynObject      Obj1;
    JsonFlattener  Flattener1;
    String         Json("{ \"foo\": \"" STRING1 "\", \"bar\":\"" STRING2 "\", \"other\":    \"" STRING3 "\"}");
 
-   CPPUNIT_ASSERT(Json.InitCheck() == 0);
-   CPPUNIT_ASSERT(Flattener1.UnFlatten(&Json, &Obj1) == 0);
+   CHECK(Json.InitCheck() == 0);
+   CHECK(Flattener1.UnFlatten(&Json, &Obj1) == 0);
 
    const String *s;
-   CPPUNIT_ASSERT(Obj1.FindString("foo", &s) == 0);
-   CPPUNIT_ASSERT(s != NULL);
-   CPPUNIT_ASSERT(*s == STRING1);
-   CPPUNIT_ASSERT(Obj1.FindString("bar", &s) == 0);
-   CPPUNIT_ASSERT(s != NULL);
-   CPPUNIT_ASSERT(*s == STRING2);
-   CPPUNIT_ASSERT(Obj1.FindString("other", &s) == 0);
-   CPPUNIT_ASSERT(s != NULL);
-   CPPUNIT_ASSERT(*s == STRING3);
+   CHECK(Obj1.FindString("foo", &s) == 0);
+   CHECK(s != NULL);
+   CHECK(*s == STRING1);
+   CHECK(Obj1.FindString("bar", &s) == 0);
+   CHECK(s != NULL);
+   CHECK(*s == STRING2);
+   CHECK(Obj1.FindString("other", &s) == 0);
+   CHECK(s != NULL);
+   CHECK(*s == STRING3);
 };
 
-void JsonFlattener1::TestUnflattenObj()
+TEST(JsonFlattenerTestGroup, UnflattenObj)
 {
    DynObject         Obj1;
    const DynObject   *p_Obj2;
@@ -110,25 +104,25 @@ void JsonFlattener1::TestUnflattenObj()
 #define OBJ2   "{ \"foo\": \"" STRING1 "\", \"bar\":\"" STRING2 "\", \"other\":    \"" STRING3 "\"}"
    String         Json("{ \"obj\": " OBJ2 "}");
 
-   CPPUNIT_ASSERT(Json.InitCheck() == 0);
-   CPPUNIT_ASSERT(Flattener1.UnFlatten(&Json, &Obj1) == 0);
-   CPPUNIT_ASSERT(Obj1.FindDynObject("obj", &p_Obj2) == 0);
-   CPPUNIT_ASSERT(p_Obj2 != NULL);
+   CHECK(Json.InitCheck() == 0);
+   CHECK(Flattener1.UnFlatten(&Json, &Obj1) == 0);
+   CHECK(Obj1.FindDynObject("obj", &p_Obj2) == 0);
+   CHECK(p_Obj2 != NULL);
 
    const String *s;
-   CPPUNIT_ASSERT(p_Obj2->FindString("foo", &s) == 0);
-   CPPUNIT_ASSERT(s != NULL);
-   CPPUNIT_ASSERT(*s == STRING1);
-   CPPUNIT_ASSERT(p_Obj2->FindString("bar", &s) == 0);
-   CPPUNIT_ASSERT(s != NULL);
-   CPPUNIT_ASSERT(*s == STRING2);
-   CPPUNIT_ASSERT(p_Obj2->FindString("other", &s) == 0);
-   CPPUNIT_ASSERT(s != NULL);
-   CPPUNIT_ASSERT(*s == STRING3);
+   CHECK(p_Obj2->FindString("foo", &s) == 0);
+   CHECK(s != NULL);
+   CHECK(*s == STRING1);
+   CHECK(p_Obj2->FindString("bar", &s) == 0);
+   CHECK(s != NULL);
+   CHECK(*s == STRING2);
+   CHECK(p_Obj2->FindString("other", &s) == 0);
+   CHECK(s != NULL);
+   CHECK(*s == STRING3);
 };
 
 
-void JsonFlattener1::TestFlattenInt()
+TEST(JsonFlattenerTestGroup, FlattenInt)
 {
 #define FLATTEN_INT_RESULT "{ \"foo\": 32, \"bar\": 42, \"other\": 892382 }"
 
@@ -136,32 +130,32 @@ void JsonFlattener1::TestFlattenInt()
    JsonFlattener  Flattener1;
    String         Json;
 
-   CPPUNIT_ASSERT(Obj1.AddInt("foo", 32) == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("bar", 42) == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("other", 892382) == 0);
+   CHECK(Obj1.AddInt("foo", 32) == 0);
+   CHECK(Obj1.AddInt("bar", 42) == 0);
+   CHECK(Obj1.AddInt("other", 892382) == 0);
 
-   CPPUNIT_ASSERT(Flattener1.Flatten(&Obj1, &Json) == 0);
-   CPPUNIT_ASSERT(Json == FLATTEN_INT_RESULT);
+   CHECK(Flattener1.Flatten(&Obj1, &Json) == 0);
+   CHECK(Json == FLATTEN_INT_RESULT);
 };
 
 
-void JsonFlattener1::TestFlattenString()
+TEST(JsonFlattenerTestGroup, FlattenString)
 {
 #define FLATTEN_STRING_RESULT "{ \"foo\": \"" STRING1 "\", \"bar\": \"" STRING2 "\", \"other\": \"" STRING3 "\" }"
    DynObject      Obj1;
    JsonFlattener  Flattener1;
    String         Json;
 
-   CPPUNIT_ASSERT(Obj1.AddString("foo", STRING1) == 0);
-   CPPUNIT_ASSERT(Obj1.AddString("bar", STRING2) == 0);
-   CPPUNIT_ASSERT(Obj1.AddString("other", STRING3) == 0);
+   CHECK(Obj1.AddString("foo", STRING1) == 0);
+   CHECK(Obj1.AddString("bar", STRING2) == 0);
+   CHECK(Obj1.AddString("other", STRING3) == 0);
 
-   CPPUNIT_ASSERT(Flattener1.Flatten(&Obj1, &Json) == 0);
-   CPPUNIT_ASSERT(Json == FLATTEN_STRING_RESULT);
+   CHECK(Flattener1.Flatten(&Obj1, &Json) == 0);
+   CHECK(Json == FLATTEN_STRING_RESULT);
 
 };
 
-void JsonFlattener1::TestFlattenObj()
+TEST(JsonFlattenerTestGroup, FlattenObj)
 {
 #define FLATTEN_OBJ2   "{ \"foo\": \"" STRING1 "\", \"bar\": \"" STRING2 "\", \"other\": \"" STRING3 "\" }"
 #define FLATTEN_OBJ_RESULT "{ \"obj\": " FLATTEN_OBJ2 " }"
@@ -170,12 +164,12 @@ void JsonFlattener1::TestFlattenObj()
    JsonFlattener  Flattener1;
    String         Json;
 
-   CPPUNIT_ASSERT(Obj2.AddString("foo", STRING1) == 0);
-   CPPUNIT_ASSERT(Obj2.AddString("bar", STRING2) == 0);
-   CPPUNIT_ASSERT(Obj2.AddString("other", STRING3) == 0);
-   CPPUNIT_ASSERT(Obj1.AddDynObject("obj", Obj2) == 0);
+   CHECK(Obj2.AddString("foo", STRING1) == 0);
+   CHECK(Obj2.AddString("bar", STRING2) == 0);
+   CHECK(Obj2.AddString("other", STRING3) == 0);
+   CHECK(Obj1.AddDynObject("obj", Obj2) == 0);
 
-   CPPUNIT_ASSERT(Flattener1.Flatten(&Obj1, &Json) == 0);
-   CPPUNIT_ASSERT(Json == FLATTEN_OBJ_RESULT);
+   CHECK(Flattener1.Flatten(&Obj1, &Json) == 0);
+   CHECK(Json == FLATTEN_OBJ_RESULT);
 };
 

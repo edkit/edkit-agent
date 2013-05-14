@@ -1,12 +1,14 @@
 
 CFLAGS = -g -Wall -Werror -D_GNU_SOURCE
 CPPFLAGS = -I$(SRCDIR)/toolbox/include -I$(SRCDIR)/thirdparty/cppunit/include
+CPPFLAGS += -I$(SRCDIR)/thirdparty/cpputest/include
 
 LDFLAGS = -L$(LD_LIBRARY_PATH) -l$(LDLIB_DL)
 LDFLAGS += -Wl,--export-dynamic
+LDFLAGS += -L$(SRCDIR)/thirdparty/cpputest/lib
+LDFLAGS += -lCppUTest -lCppUTestExt
 LDFLAGS += -L$(SRCDIR)/toolbox -ltoolbox
 LDFLAGS += -L$(SRCDIR)/thirdparty/json-c/.libs -ljson
-LDFLAGS += -L$(SRCDIR)/thirdparty/cppunit/src/cppunit/.libs -lcppunit
 
 SRCS =
 

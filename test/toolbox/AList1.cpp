@@ -29,81 +29,76 @@
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include "AList.h"
-#include "AList1.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION( AList1 );
 
-void AList1::setUp()
+TEST_GROUP(AListTestGroup)
 {
-}
+};
 
 
-void AList1::tearDown()
-{
-}
-
-void AList1::TestIntBasic()
+TEST(AListTestGroup, Basic)
 {
    AList<int32_t> List;
 
-   CPPUNIT_ASSERT(List.CountItems() == 0);
-   CPPUNIT_ASSERT(List.AddItem(1) == 0);
-   CPPUNIT_ASSERT(List.AddItem(2) == 0);
-   CPPUNIT_ASSERT(List.AddItem(3) == 0);
-   CPPUNIT_ASSERT(List.AddItem(4) == 0);
-   CPPUNIT_ASSERT(List.CountItems() == 4);
+   CHECK_EQUAL(0, List.CountItems());
+   CHECK_EQUAL(0, List.AddItem(1));
+   CHECK_EQUAL(0, List.AddItem(2));
+   CHECK_EQUAL(0, List.AddItem(3));
+   CHECK_EQUAL(0, List.AddItem(4));
+   CHECK_EQUAL(4, List.CountItems());
 
    int32_t i;
-   CPPUNIT_ASSERT(List.GetItemAt(4, &i) == -1);
-   CPPUNIT_ASSERT(List.GetItemAt(2, &i) == 0);
-   CPPUNIT_ASSERT(i == 3);
+   CHECK_EQUAL(-1, List.GetItemAt(4, &i));
+   CHECK_EQUAL(0, List.GetItemAt(2, &i));
+   CHECK_EQUAL(3, i);
 
-   CPPUNIT_ASSERT(List.DelItem(2) == 0);
-   CPPUNIT_ASSERT(List.CountItems() == 3);
-   CPPUNIT_ASSERT(List.GetItemAt(3, &i) == -1);
-   CPPUNIT_ASSERT(List.GetItemAt(2, &i) == 0);
-   CPPUNIT_ASSERT(i == 4);
-   CPPUNIT_ASSERT(List.GetItemAt(1, &i) == 0);
-   CPPUNIT_ASSERT(i == 3);
-   CPPUNIT_ASSERT(List.GetItemAt(0, &i) == 0);
-   CPPUNIT_ASSERT(i == 1);
+   CHECK_EQUAL(0, List.DelItem(2));
+   CHECK_EQUAL(3, List.CountItems());
+   CHECK_EQUAL(-1, List.GetItemAt(3, &i));
+   CHECK_EQUAL(0, List.GetItemAt(2, &i));
+   CHECK_EQUAL(4, i);
+   CHECK_EQUAL(0, List.GetItemAt(1, &i));
+   CHECK_EQUAL(3, i);
+   CHECK_EQUAL(0, List.GetItemAt(0, &i));
+   CHECK_EQUAL(1, i);
 
-   CPPUNIT_ASSERT(List.DelItem(1) == 0);
-   CPPUNIT_ASSERT(List.CountItems() == 2);
-   CPPUNIT_ASSERT(List.DelItem(2) == -1);
+   CHECK_EQUAL(0, List.DelItem(1));
+   CHECK_EQUAL(2, List.CountItems());
+   CHECK_EQUAL(-1, List.DelItem(2));
 };
 
-void AList1::TestIntResize()
+TEST(AListTestGroup, IntResize)
 {
    uint32_t i,j;
 
    AList<uint32_t> List;
    for(i=0; i<1234; i++)
    {
-      CPPUNIT_ASSERT(List.AddItem(i) == 0);
-      CPPUNIT_ASSERT(List.CountItems() == i+1);
+      CHECK_EQUAL(0, List.AddItem(i));
+      CHECK_EQUAL(i+1, List.CountItems());
    }
    for(i=0; i<1234; i++)
    {
-      CPPUNIT_ASSERT(List.GetItemAt(i, &j) == 0);
-      CPPUNIT_ASSERT(i == j);
+      CHECK_EQUAL(0, List.GetItemAt(i, &j));
+      CHECK_EQUAL(j, i);
    }
 
 }
 
 
-void AList1::TestHasItem()
+TEST(AListTestGroup, HasItem)
 {
    AList<int32_t> List;
 
-   CPPUNIT_ASSERT(List.AddItem(1) == 0);
-   CPPUNIT_ASSERT(List.AddItem(2) == 0);
-   CPPUNIT_ASSERT(List.HasItem(1) == true);
-   CPPUNIT_ASSERT(List.HasItem(2) == true);
-   CPPUNIT_ASSERT(List.HasItem(3) == false);
+   CHECK_EQUAL(0, List.AddItem(1));
+   CHECK_EQUAL(0, List.AddItem(2));
+   CHECK_EQUAL(true, List.HasItem(1));
+   CHECK_EQUAL(true, List.HasItem(2));
+   CHECK_EQUAL(false, List.HasItem(3));
 
-   CPPUNIT_ASSERT(List.DelItem(1) == 0);
-   CPPUNIT_ASSERT(List.HasItem(1) == false);
+   CHECK_EQUAL(0, List.DelItem(1));
+   CHECK_EQUAL(false, List.HasItem(1));
 };
 

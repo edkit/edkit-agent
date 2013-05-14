@@ -29,61 +29,22 @@
 * @date     2013/02/02
 *
 *****************************************************************************/
-#include <cppunit/extensions/HelperMacros.h>
+#include "CppUTest/TestHarness.h"
 #include <dlfcn.h>
 #include <string.h>
 #include "CallStack.h"
 
-
-class CallStackTestSuite: public CppUnit::TestFixture
+TEST_GROUP(CallStackTestGroup)
 {
-  CPPUNIT_TEST_SUITE( CallStackTestSuite );
-  CPPUNIT_TEST( Build );
-  CPPUNIT_TEST( GetDepth );
-  CPPUNIT_TEST( UnwindOneCaller );
-  CPPUNIT_TEST( Unwind );
-  CPPUNIT_TEST( SetTo );
-  CPPUNIT_TEST( OperatorEqual );
-  CPPUNIT_TEST( OperatorDifferent );
-  CPPUNIT_TEST( GetNameBigLevel );
-  CPPUNIT_TEST( GetName );
-  CPPUNIT_TEST( GetNameCaller );
-  CPPUNIT_TEST_SUITE_END();
-
-public:
-  void setUp();
-  void tearDown();
-
-  void Build();
-  void GetDepth();
-  void UnwindOneCaller();
-  void Unwind();
-  void SetTo();
-  void OperatorEqual();
-  void OperatorDifferent();
-  void GetNameBigLevel();
-  void GetName();
-  void GetNameCaller();
 };
 
 
-CPPUNIT_TEST_SUITE_REGISTRATION( CallStackTestSuite );
-
-void CallStackTestSuite::setUp()
-{
-}
-
-
-void CallStackTestSuite::tearDown()
-{
-}
-
-void CallStackTestSuite::Build()
+TEST(CallStackTestGroup, Build)
 {
    CallStack   TestCallStack1, *TestCallStack2;
 
    TestCallStack2 = new(std::nothrow) CallStack();
-   CPPUNIT_ASSERT(TestCallStack2  != NULL);
+   CHECK(TestCallStack2  != NULL);
    delete TestCallStack2;
 };
 
@@ -126,14 +87,14 @@ void TestSuiteUnwind5(CallStack &Unwinder)
 
 }
 
-void CallStackTestSuite::GetDepth()
+TEST(CallStackTestGroup, GetDepth)
 {
    CallStack   TestCallStack;
 
-   CPPUNIT_ASSERT(TestCallStack.GetDepth() == CALLSTACK_MAX_DEPTH);
+   CHECK_EQUAL(CALLSTACK_MAX_DEPTH, TestCallStack.GetDepth());
 };
 
-void CallStackTestSuite::UnwindOneCaller()
+TEST(CallStackTestGroup, UnwindOneCaller)
 {
    CallStack   TestCallStack;
 
@@ -141,11 +102,11 @@ void CallStackTestSuite::UnwindOneCaller()
 
    const void **Stack = TestCallStack.Get();
    Dl_info Info;
-   CPPUNIT_ASSERT(dladdr(Stack[0], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteCaller1") == 0);
+   CHECK(dladdr(Stack[0], &Info) != 0);
+   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteCaller1"));
 };
 
-void CallStackTestSuite::Unwind()
+TEST(CallStackTestGroup, Unwind)
 {
    CallStack   TestCallStack;
 
@@ -153,19 +114,19 @@ void CallStackTestSuite::Unwind()
 
    const void **Stack = TestCallStack.Get();
    Dl_info Info;
-   CPPUNIT_ASSERT(dladdr(Stack[0], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteUnwind1") == 0);
-   CPPUNIT_ASSERT(dladdr(Stack[1], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteUnwind2") == 0);
-   CPPUNIT_ASSERT(dladdr(Stack[2], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteUnwind3") == 0);
-   CPPUNIT_ASSERT(dladdr(Stack[3], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteUnwind4") == 0);
-   CPPUNIT_ASSERT(dladdr(Stack[4], &Info) != 0);
-   CPPUNIT_ASSERT(strcmp(Info.dli_sname, "TestSuiteUnwind5") == 0);
+   CHECK(dladdr(Stack[0], &Info) != 0);
+   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind1"));
+   CHECK(dladdr(Stack[1], &Info) != 0);
+   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind2"));
+   CHECK(dladdr(Stack[2], &Info) != 0);
+   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind3"));
+   CHECK(dladdr(Stack[3], &Info) != 0);
+   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind4"));
+   CHECK(dladdr(Stack[4], &Info) != 0);
+   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind5"));
 };
 
-void CallStackTestSuite::SetTo()
+TEST(CallStackTestGroup, SetTo)
 {
    CallStack   TestCallStack;
    CallStack   TestCallStack2;
@@ -173,12 +134,12 @@ void CallStackTestSuite::SetTo()
    TestSuiteUnwind5(TestCallStack);
    TestCallStack2.SetTo(TestCallStack);
 
-   CPPUNIT_ASSERT(memcmp(TestCallStack.Get(),
-                        TestCallStack2.Get(),
-                        CALLSTACK_MAX_DEPTH*sizeof(void*)) == 0);
+   CHECK_EQUAL(0, memcmp(TestCallStack.Get(),
+                TestCallStack2.Get(),
+                CALLSTACK_MAX_DEPTH*sizeof(void*)));
 };
 
-void CallStackTestSuite::OperatorEqual()
+TEST(CallStackTestGroup, OperatorEqual)
 {
    CallStack   TestCallStack;
    CallStack   TestCallStack2;
@@ -188,11 +149,11 @@ void CallStackTestSuite::OperatorEqual()
    TestCallStack2.SetTo(TestCallStack);
    TestSuiteUnwind4(TestCallStack3);
 
-   CPPUNIT_ASSERT(TestCallStack == TestCallStack2);
-   CPPUNIT_ASSERT(!(TestCallStack == TestCallStack3));
+   CHECK(TestCallStack == TestCallStack2);
+   CHECK(!(TestCallStack == TestCallStack3));
 };
 
-void CallStackTestSuite::OperatorDifferent()
+TEST(CallStackTestGroup, OperatorDifferent)
 {
    CallStack   TestCallStack;
    CallStack   TestCallStack2;
@@ -202,21 +163,21 @@ void CallStackTestSuite::OperatorDifferent()
    TestSuiteUnwind4(TestCallStack2);
    TestCallStack3.SetTo(TestCallStack);
 
-   CPPUNIT_ASSERT(TestCallStack != TestCallStack2);
-   CPPUNIT_ASSERT(!(TestCallStack != TestCallStack3));
+   CHECK(TestCallStack != TestCallStack2);
+   CHECK(!(TestCallStack != TestCallStack3));
 };
 
-void CallStackTestSuite::GetNameBigLevel()
+TEST(CallStackTestGroup, GetNameBigLevel)
 {
    CallStack   TestCallStack;
 
    TestSuiteUnwind5(TestCallStack);
 
-   CPPUNIT_ASSERT(TestCallStack.GetName(300000) == NULL);
+   POINTERS_EQUAL(NULL, TestCallStack.GetName(300000));
 };
 
 
-void CallStackTestSuite::GetName()
+TEST(CallStackTestGroup, GetName)
 {
    CallStack   TestCallStack;
 
@@ -224,13 +185,13 @@ void CallStackTestSuite::GetName()
 
    /* check for names, format is "pointer:name" so we compare the name for
     * symbols that should be resolved */
-   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteUnwind1") == 0);
-   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(1), ':')+1, "TestSuiteUnwind2") == 0);
-   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(2), ':')+1, "TestSuiteUnwind3") == 0);
-   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(3), ':')+1, "TestSuiteUnwind4") == 0);
+   CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteUnwind1"));
+   CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(1), ':')+1, "TestSuiteUnwind2"));
+   CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(2), ':')+1, "TestSuiteUnwind3"));
+   CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(3), ':')+1, "TestSuiteUnwind4"));
 };
 
-void CallStackTestSuite::GetNameCaller()
+TEST(CallStackTestGroup, GetNameCaller)
 {
    CallStack   TestCallStack;
 
@@ -238,11 +199,11 @@ void CallStackTestSuite::GetNameCaller()
 
    /* check for names, format is "pointer:name" so we compare the name for
     * symbols that should be resolved */
-   CPPUNIT_ASSERT(strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteCaller1") == 0);
+   CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(0), ':')+1, "TestSuiteCaller1"));
    uint32_t Level;
    for(Level=1;Level<TestCallStack.GetDepth(); Level++)
    {
-      CPPUNIT_ASSERT(TestCallStack.GetName(Level) == NULL);
+      POINTERS_EQUAL(NULL, TestCallStack.GetName(Level));
    }
 };
 

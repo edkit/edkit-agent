@@ -25,28 +25,21 @@
 * THE SOFTWARE.
 *****************************************************************************/
 /**
-* @author   R. Entrycard
+* @author   R. Picard
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include "DynObject.h"
-#include "DynObject1.h"
-
-CPPUNIT_TEST_SUITE_REGISTRATION( DynObject1 );
 
 #define String1 "A test string"
 #define STRING2 "A second test string"
 
-void DynObject1::setUp()
+TEST_GROUP(DynObjectTestGroup)
 {
-}
+};
 
-
-void DynObject1::tearDown()
-{
-}
-
-void DynObject1::TestBuild()
+TEST(DynObjectTestGroup, Build)
 {
    DynObject *Obj1 = new(std::nothrow)DynObject();
 
@@ -58,126 +51,126 @@ void DynObject1::TestBuild()
 }
 
 
-void DynObject1::TestIntBasic()
+TEST(DynObjectTestGroup, IntBasic)
 {
    DynObject Obj1;
 
    /* Add items */
-   CPPUNIT_ASSERT(Obj1.InitCheck() == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("int1", 8) == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("int1", 5) == -1);
-   CPPUNIT_ASSERT(Obj1.AddInt("int5", 2325) == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("int15", 4025) == 0);
+   CHECK(Obj1.InitCheck() == 0);
+   CHECK(Obj1.AddInt("int1", 8) == 0);
+   CHECK(Obj1.AddInt("int1", 5) == -1);
+   CHECK(Obj1.AddInt("int5", 2325) == 0);
+   CHECK(Obj1.AddInt("int15", 4025) == 0);
 
    /* Retrieve them */
    int64_t i;
-   CPPUNIT_ASSERT(Obj1.FindInt("int1", &i) == 0);
-   CPPUNIT_ASSERT(i == 8);
-   CPPUNIT_ASSERT(Obj1.FindInt("int2", &i) == -1);
-   CPPUNIT_ASSERT(Obj1.FindInt("int5", &i) == 0);
-   CPPUNIT_ASSERT(i == 2325);
-   CPPUNIT_ASSERT(Obj1.FindInt("int15", &i) == 0);
-   CPPUNIT_ASSERT(i == 4025);
+   CHECK(Obj1.FindInt("int1", &i) == 0);
+   CHECK(i == 8);
+   CHECK(Obj1.FindInt("int2", &i) == -1);
+   CHECK(Obj1.FindInt("int5", &i) == 0);
+   CHECK(i == 2325);
+   CHECK(Obj1.FindInt("int15", &i) == 0);
+   CHECK(i == 4025);
 
    /* Check their existence */
-   CPPUNIT_ASSERT(Obj1.HasEntry("int1") == true);
-   CPPUNIT_ASSERT(Obj1.HasEntry("int5") == true);
-   CPPUNIT_ASSERT(Obj1.HasEntry("int15") == true);
-   CPPUNIT_ASSERT(Obj1.HasEntry("foo") == false);
+   CHECK(Obj1.HasEntry("int1") == true);
+   CHECK(Obj1.HasEntry("int5") == true);
+   CHECK(Obj1.HasEntry("int15") == true);
+   CHECK(Obj1.HasEntry("foo") == false);
 
    /* Introspection */
    DynEntry<int64_t> *Entry;
    Entry = dynamic_cast<DynEntry<int64_t>*>(Obj1.GetEntryAt(0));
-   CPPUNIT_ASSERT( Entry != NULL);
-   CPPUNIT_ASSERT( Entry->GetValue() == 8);
+   CHECK( Entry != NULL);
+   CHECK( Entry->GetValue() == 8);
    Entry = dynamic_cast<DynEntry<int64_t>*>(Obj1.GetEntryAt(1));
-   CPPUNIT_ASSERT( Entry != NULL);
-   CPPUNIT_ASSERT( Entry->GetValue() == 2325);
+   CHECK( Entry != NULL);
+   CHECK( Entry->GetValue() == 2325);
    Entry = dynamic_cast<DynEntry<int64_t>*>(Obj1.GetEntryAt(2));
-   CPPUNIT_ASSERT( Entry != NULL);
-   CPPUNIT_ASSERT( Entry->GetValue() == 4025);
+   CHECK( Entry != NULL);
+   CHECK( Entry->GetValue() == 4025);
 
    /* Clean all */
-   CPPUNIT_ASSERT(Obj1.MakeEmpty() == 0);
-   CPPUNIT_ASSERT(Obj1.HasEntry("int1") == false);
-   CPPUNIT_ASSERT(Obj1.HasEntry("int5") == false);
-   CPPUNIT_ASSERT(Obj1.HasEntry("int15") == false);
+   CHECK(Obj1.MakeEmpty() == 0);
+   CHECK(Obj1.HasEntry("int1") == false);
+   CHECK(Obj1.HasEntry("int5") == false);
+   CHECK(Obj1.HasEntry("int15") == false);
 };
 
 
-void DynObject1::TestStringBasic()
+TEST(DynObjectTestGroup, StringBasic)
 {
    DynObject Obj1;
 
    /* Add items */
-   CPPUNIT_ASSERT(Obj1.InitCheck() == 0);
-   CPPUNIT_ASSERT(Obj1.AddString("str1", "string1") == 0);
-   CPPUNIT_ASSERT(Obj1.AddString("str1", "string2") == -1);
-   CPPUNIT_ASSERT(Obj1.AddString("str5", "string5") == 0);
-   CPPUNIT_ASSERT(Obj1.AddString("str15", "string15") == 0);
+   CHECK(Obj1.InitCheck() == 0);
+   CHECK(Obj1.AddString("str1", "string1") == 0);
+   CHECK(Obj1.AddString("str1", "string2") == -1);
+   CHECK(Obj1.AddString("str5", "string5") == 0);
+   CHECK(Obj1.AddString("str15", "string15") == 0);
 
    /* Retrieve them */
    const String *p_String;
-   CPPUNIT_ASSERT(Obj1.FindString("str1", &p_String) == 0);
-   CPPUNIT_ASSERT(*p_String == "string1");
-   CPPUNIT_ASSERT(Obj1.FindString("str2", &p_String) == -1);
-   CPPUNIT_ASSERT(Obj1.FindString("str5", &p_String) == 0);
-   CPPUNIT_ASSERT(*p_String == "string5");
-   CPPUNIT_ASSERT(Obj1.FindString("str15", &p_String) == 0);
-   CPPUNIT_ASSERT(*p_String == "string15");
+   CHECK(Obj1.FindString("str1", &p_String) == 0);
+   CHECK(*p_String == "string1");
+   CHECK(Obj1.FindString("str2", &p_String) == -1);
+   CHECK(Obj1.FindString("str5", &p_String) == 0);
+   CHECK(*p_String == "string5");
+   CHECK(Obj1.FindString("str15", &p_String) == 0);
+   CHECK(*p_String == "string15");
 
    /* Check their existence */
-   CPPUNIT_ASSERT(Obj1.HasEntry("str1") == true);
-   CPPUNIT_ASSERT(Obj1.HasEntry("str5") == true);
-   CPPUNIT_ASSERT(Obj1.HasEntry("str15") == true);
-   CPPUNIT_ASSERT(Obj1.HasEntry("foo") == false);
+   CHECK(Obj1.HasEntry("str1") == true);
+   CHECK(Obj1.HasEntry("str5") == true);
+   CHECK(Obj1.HasEntry("str15") == true);
+   CHECK(Obj1.HasEntry("foo") == false);
 
    /* Introspection */
    DynEntry<const String> *Entry;
    Entry = dynamic_cast<DynEntry<const String>*>(Obj1.GetEntryAt(0));
-   CPPUNIT_ASSERT( Entry != NULL);
-   CPPUNIT_ASSERT( Entry->GetValue() == "string1");
-   CPPUNIT_ASSERT( *(Entry->GetValuePtr()) == "string1");
+   CHECK( Entry != NULL);
+   CHECK( Entry->GetValue() == "string1");
+   CHECK( *(Entry->GetValuePtr()) == "string1");
    Entry = dynamic_cast<DynEntry<const String>*>(Obj1.GetEntryAt(1));
-   CPPUNIT_ASSERT( Entry != NULL);
-   CPPUNIT_ASSERT( Entry->GetValue() == "string5");
-   CPPUNIT_ASSERT( *(Entry->GetValuePtr()) == "string5");
+   CHECK( Entry != NULL);
+   CHECK( Entry->GetValue() == "string5");
+   CHECK( *(Entry->GetValuePtr()) == "string5");
    Entry = dynamic_cast<DynEntry<const String>*>(Obj1.GetEntryAt(2));
-   CPPUNIT_ASSERT( Entry != NULL);
-   CPPUNIT_ASSERT( Entry->GetValue() == "string15");
-   CPPUNIT_ASSERT( *(Entry->GetValuePtr()) == "string15");
+   CHECK( Entry != NULL);
+   CHECK( Entry->GetValue() == "string15");
+   CHECK( *(Entry->GetValuePtr()) == "string15");
 
    /* Clean all */
-   CPPUNIT_ASSERT(Obj1.MakeEmpty() == 0);
-   CPPUNIT_ASSERT(Obj1.HasEntry("str1") == false);
-   CPPUNIT_ASSERT(Obj1.HasEntry("str5") == false);
-   CPPUNIT_ASSERT(Obj1.HasEntry("str15") == false);
+   CHECK(Obj1.MakeEmpty() == 0);
+   CHECK(Obj1.HasEntry("str1") == false);
+   CHECK(Obj1.HasEntry("str5") == false);
+   CHECK(Obj1.HasEntry("str15") == false);
 
 };
 
 
-void DynObject1::TestIntCopy()
+TEST(DynObjectTestGroup, IntCopy)
 {
    DynObject Obj1;
 
    /* Add items */
-   CPPUNIT_ASSERT(Obj1.InitCheck() == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("int1", 8) == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("int1", 5) == -1);
-   CPPUNIT_ASSERT(Obj1.AddInt("int5", 2325) == 0);
-   CPPUNIT_ASSERT(Obj1.AddInt("int15", 4025) == 0);
+   CHECK(Obj1.InitCheck() == 0);
+   CHECK(Obj1.AddInt("int1", 8) == 0);
+   CHECK(Obj1.AddInt("int1", 5) == -1);
+   CHECK(Obj1.AddInt("int5", 2325) == 0);
+   CHECK(Obj1.AddInt("int15", 4025) == 0);
 
    /* Copy object */
    DynObject Obj1Copy(Obj1);
 
    /* Retrieve them */
    int64_t i;
-   CPPUNIT_ASSERT(Obj1Copy.FindInt("int1", &i) == 0);
-   CPPUNIT_ASSERT(i == 8);
-   CPPUNIT_ASSERT(Obj1Copy.FindInt("int2", &i) == -1);
-   CPPUNIT_ASSERT(Obj1Copy.FindInt("int5", &i) == 0);
-   CPPUNIT_ASSERT(i == 2325);
-   CPPUNIT_ASSERT(Obj1Copy.FindInt("int15", &i) == 0);
-   CPPUNIT_ASSERT(i == 4025);
+   CHECK(Obj1Copy.FindInt("int1", &i) == 0);
+   CHECK(i == 8);
+   CHECK(Obj1Copy.FindInt("int2", &i) == -1);
+   CHECK(Obj1Copy.FindInt("int5", &i) == 0);
+   CHECK(i == 2325);
+   CHECK(Obj1Copy.FindInt("int15", &i) == 0);
+   CHECK(i == 4025);
 };
 

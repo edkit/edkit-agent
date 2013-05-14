@@ -29,11 +29,9 @@
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include "HttpdRequest.h"
-#include "HttpdRequest1.h"
 #include "ListIterator.h"
-
-CPPUNIT_TEST_SUITE_REGISTRATION( HttpdRequest1 );
 
 
 #define PATH1 "/ws/somepath/234"
@@ -44,16 +42,11 @@ CPPUNIT_TEST_SUITE_REGISTRATION( HttpdRequest1 );
 #define HEADER1VAL   "Header1 Value"
 #define HEADER2VAL   "Header2 Value"
 
-void HttpdRequest1::setUp()
+TEST_GROUP(HttpdRequestTestGroup)
 {
-}
+};
 
-
-void HttpdRequest1::tearDown()
-{
-}
-
-void HttpdRequest1::TestBuild()
+TEST(HttpdRequestTestGroup, Build)
 {
    HttpdRequest *Obj1 = new(std::nothrow) HttpdRequest();
 
@@ -64,37 +57,37 @@ void HttpdRequest1::TestBuild()
 }
 
 
-void HttpdRequest1::TestBasic()
+TEST(HttpdRequestTestGroup, Basic)
 {
    String   SetPath(PATH1 );
    HttpdRequest Obj1;
 
    /* Path */
    const String   &GetPath1 = Obj1.GetPath();
-   CPPUNIT_ASSERT(GetPath1 == "");
-   CPPUNIT_ASSERT(Obj1.SetPath(SetPath) == 0);
+   CHECK(GetPath1 == "");
+   CHECK(Obj1.SetPath(SetPath) == 0);
 
    const String   &GetPath2 = Obj1.GetPath();
-   CPPUNIT_ASSERT(GetPath2 == SetPath);
+   CHECK(GetPath2 == SetPath);
 
    /* Status */
-   CPPUNIT_ASSERT(Obj1.GetStatus() == 200);
+   CHECK(Obj1.GetStatus() == 200);
    Obj1.SetStatus(404);
-   CPPUNIT_ASSERT(Obj1.GetStatus() == 404);
+   CHECK(Obj1.GetStatus() == 404);
 
    /* Method */
-   CPPUNIT_ASSERT(Obj1.GetMethod() == HttpdRequest::NONE);
+   CHECK(Obj1.GetMethod() == HttpdRequest::NONE);
    Obj1.SetMethod(HttpdRequest::POST);
-   CPPUNIT_ASSERT(Obj1.GetMethod() == HttpdRequest::POST);
+   CHECK(Obj1.GetMethod() == HttpdRequest::POST);
 
    /* payload */
    uint8_t SetPayload[326];
    const uint8_t *GetPayload;
    uint32_t i_Length;
-   CPPUNIT_ASSERT(Obj1.SetPayload(SetPayload, 326) == 0);
-   CPPUNIT_ASSERT(Obj1.GetPayload(&GetPayload, &i_Length) == 0);
-   CPPUNIT_ASSERT(i_Length == 326);
-   CPPUNIT_ASSERT(memcmp(GetPayload, SetPayload, i_Length) == 0);
+   CHECK(Obj1.SetPayload(SetPayload, 326) == 0);
+   CHECK(Obj1.GetPayload(&GetPayload, &i_Length) == 0);
+   CHECK(i_Length == 326);
+   CHECK(memcmp(GetPayload, SetPayload, i_Length) == 0);
 
 
    /* Header */
@@ -102,18 +95,18 @@ void HttpdRequest1::TestBasic()
    String Header1Val(HEADER1VAL), Header2Val(HEADER2VAL);
    String HeaderVal;
 
-   CPPUNIT_ASSERT(Obj1.GetHeader(Header1Name, &HeaderVal) == -1);
-   CPPUNIT_ASSERT(Obj1.SetHeader(Header1Name, Header1Val) == 0);
-   CPPUNIT_ASSERT(Obj1.GetHeader(Header1Name, &HeaderVal) == 0);
-   CPPUNIT_ASSERT(HeaderVal == Header1Val);
+   CHECK(Obj1.GetHeader(Header1Name, &HeaderVal) == -1);
+   CHECK(Obj1.SetHeader(Header1Name, Header1Val) == 0);
+   CHECK(Obj1.GetHeader(Header1Name, &HeaderVal) == 0);
+   CHECK(HeaderVal == Header1Val);
 
-   CPPUNIT_ASSERT(Obj1.SetHeader(Header2Name, Header2Val) == 0);
-   CPPUNIT_ASSERT(Obj1.GetHeader(Header2Name, &HeaderVal) == 0);
-   CPPUNIT_ASSERT(HeaderVal == Header2Val);
+   CHECK(Obj1.SetHeader(Header2Name, Header2Val) == 0);
+   CHECK(Obj1.GetHeader(Header2Name, &HeaderVal) == 0);
+   CHECK(HeaderVal == Header2Val);
 
-   CPPUNIT_ASSERT(Obj1.SetHeader(Header1Name, Header2Val) == 0);
-   CPPUNIT_ASSERT(Obj1.GetHeader(Header1Name, &HeaderVal) == 0);
-   CPPUNIT_ASSERT(HeaderVal == Header2Val);
+   CHECK(Obj1.SetHeader(Header1Name, Header2Val) == 0);
+   CHECK(Obj1.GetHeader(Header1Name, &HeaderVal) == 0);
+   CHECK(HeaderVal == Header2Val);
 
    /* Header list */
    const AList<HttpdRequest::Header*> &HeaderList = Obj1.GetHeaderList();
@@ -125,19 +118,19 @@ void HttpdRequest1::TestBasic()
    Iterator.First();
    while(Iterator.IsDone() == false)
    {
-      CPPUNIT_ASSERT(Iterator.GetItem(&p_CurHeader) == 0);
-      CPPUNIT_ASSERT(p_CurHeader != NULL);
+      CHECK(Iterator.GetItem(&p_CurHeader) == 0);
+      CHECK(p_CurHeader != NULL);
 
-      CPPUNIT_ASSERT(i_Index <= 1);
+      CHECK(i_Index <= 1);
       switch(i_Index)
       {
          case 0:
-            CPPUNIT_ASSERT(p_CurHeader->Name == Header1Name);
-            CPPUNIT_ASSERT(p_CurHeader->Value == Header2Val);
+            CHECK(p_CurHeader->Name == Header1Name);
+            CHECK(p_CurHeader->Value == Header2Val);
          break;
          case 1:
-            CPPUNIT_ASSERT(p_CurHeader->Name == Header2Name);
-            CPPUNIT_ASSERT(p_CurHeader->Value == Header2Val);
+            CHECK(p_CurHeader->Name == Header2Name);
+            CHECK(p_CurHeader->Value == Header2Val);
          break;
       }
       i_Index++;

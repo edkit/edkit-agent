@@ -29,90 +29,83 @@
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include <string.h>
 #include "String.h"
-#include "String1.h"
-
-CPPUNIT_TEST_SUITE_REGISTRATION( String1 );
 
 #define STRING1 "A test string"
 #define STRING2 "A second test string"
 #define STRING3 "test"
 
-void String1::setUp()
+TEST_GROUP(StringTestGroup)
 {
-}
+};
 
-
-void String1::tearDown()
-{
-}
-
-void String1::TestBasic()
+TEST(StringTestGroup, Basic)
 {
    String AString;
-   CPPUNIT_ASSERT(AString.InitCheck() == 0);
-   CPPUNIT_ASSERT(AString.SetTo(STRING1) == 0);
-   CPPUNIT_ASSERT(strcmp(AString.GetString(), STRING1) == 0);
+   CHECK(AString.InitCheck() == 0);
+   CHECK(AString.SetTo(STRING1) == 0);
+   CHECK(strcmp(AString.GetString(), STRING1) == 0);
 
    String BString(AString);
-   CPPUNIT_ASSERT(BString.InitCheck() == 0);
-   CPPUNIT_ASSERT(strcmp(BString.GetString(), STRING1) == 0);
+   CHECK(BString.InitCheck() == 0);
+   CHECK(strcmp(BString.GetString(), STRING1) == 0);
 
-   CPPUNIT_ASSERT(AString.SetTo(STRING2) == 0);
-   CPPUNIT_ASSERT(strcmp(AString.GetString(), STRING2) == 0);
+   CHECK(AString.SetTo(STRING2) == 0);
+   CHECK(strcmp(AString.GetString(), STRING2) == 0);
 
    String CString;
-   CPPUNIT_ASSERT(CString.InitCheck() == 0);
-   CPPUNIT_ASSERT(CString.SetTo(BString) == 0);
-   CPPUNIT_ASSERT(strcmp(CString.GetString(), BString.GetString()) == 0);
+   CHECK(CString.InitCheck() == 0);
+   CHECK(CString.SetTo(BString) == 0);
+   CHECK(strcmp(CString.GetString(), BString.GetString()) == 0);
 
 
 };
 
 
-void String1::TestFind()
+TEST(StringTestGroup, Find)
 {
    String AString;
-   CPPUNIT_ASSERT(AString.InitCheck() == 0);
-   CPPUNIT_ASSERT(AString.SetTo(STRING1) == 0);
+   CHECK(AString.InitCheck() == 0);
+   CHECK(AString.SetTo(STRING1) == 0);
 
    String BString;
-   CPPUNIT_ASSERT(BString.InitCheck() == 0);
-   CPPUNIT_ASSERT(BString.SetTo(STRING3) == 0);
-   CPPUNIT_ASSERT(AString.FindFirst(BString) == 2);
+   CHECK(BString.InitCheck() == 0);
+   CHECK(BString.SetTo(STRING3) == 0);
+   CHECK(AString.FindFirst(BString) == 2);
 
 };
 
-void String1::TestOperator1()
+TEST(StringTestGroup, Operator1)
 {
    String AString;
-   CPPUNIT_ASSERT(AString.InitCheck() == 0);
-   CPPUNIT_ASSERT(AString.SetTo(STRING1) == 0);
+   CHECK(AString.InitCheck() == 0);
+   CHECK(AString.SetTo(STRING1) == 0);
 
    String BString;
-   CPPUNIT_ASSERT(BString.InitCheck() == 0);
-   CPPUNIT_ASSERT(BString == "");
-   CPPUNIT_ASSERT(BString.SetTo(STRING2) == 0);
+   CHECK(BString.InitCheck() == 0);
+   CHECK(BString == "");
+   CHECK(BString.SetTo(STRING2) == 0);
 
-   CPPUNIT_ASSERT(BString != AString);
-   CPPUNIT_ASSERT(BString.SetTo(STRING1) == 0);
-   CPPUNIT_ASSERT(BString == AString);
+   CHECK(BString != AString);
+   CHECK(BString.SetTo(STRING1) == 0);
+   CHECK(BString == AString);
 }
 
 
-void String1::TestOperator2()
+TEST(StringTestGroup, Operator2)
 {
    String AString(STRING1);
    AString << STRING2;
-   CPPUNIT_ASSERT(AString == STRING1 STRING2);
+   CHECK(AString == STRING1 STRING2);
    AString << 938;
-   CPPUNIT_ASSERT(AString == STRING1 STRING2 "938");
+   CHECK(AString == STRING1 STRING2 "938");
    String BString(STRING2);
    AString << BString;
-   CPPUNIT_ASSERT(AString == STRING1 STRING2 "938" STRING2);
+   CHECK(AString == STRING1 STRING2 "938" STRING2);
    BString << BString;
-   CPPUNIT_ASSERT(BString == STRING2 STRING2);
+   CHECK(BString == STRING2 STRING2);
 
    String CString;
    CString << "foo";
