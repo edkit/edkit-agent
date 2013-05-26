@@ -65,6 +65,26 @@ ExeContext::~ExeContext()
 
 
 /**
+* @date     2013/05/22
+*
+*  resets all ExeContexts.
+*  Warning : This should be used in unit tests only.
+******************************************************************************/
+void ExeContext::Reset(void)
+{
+   DlList *p_ContextList = ExeContext::GetList();
+   ExeContext *p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
+   ExeContext *p_DelContext;
+
+   while(p_Context != NULL)
+   {
+      p_DelContext = p_Context;
+      p_Context = (ExeContext*)p_Context->Next;
+      delete p_DelContext;
+   }
+}
+
+/**
 * @date     2013/03/10
 *
 *  Sets a unique Id assotiated to a context.

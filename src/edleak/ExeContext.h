@@ -41,6 +41,7 @@ class ExeContext : public DlListItem
    public:
                               ExeContext(const CallStack &Callers, uint32_t Level=0);
       virtual                 ~ExeContext(void);
+      static   void           Reset(void);
       static   ExeContext*    Get(const CallStack &Callers);
       static   ExeContext*    Get(const uint32_t Id);
                uint32_t       GetId(void) const {return(Id);};
