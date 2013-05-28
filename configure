@@ -15,7 +15,6 @@ LDLIB_DL="dl"
 LDLIB_PTHREAD="pthread"
 
 LIBJSONC="json-c-0.9"
-LIBCPPUNIT="cppunit-1.12.1"
 
 rm -f configure.in
 
@@ -89,12 +88,4 @@ cd json-c
 echo "configuring jsonc..."
 ./configure --host=$ARCH --enable-shared=false --with-pic 1> /dev/null
 
-
-#extract cppunit
-cd $CURDIR/src/thirdparty
-tar zxpvf $LIBCPPUNIT.tar.gz 1> /dev/null
-ln -sf $LIBCPPUNIT cppunit
-cd cppunit 
-echo "configuring cppunit..."
-LDFLAGS="-l$LDLIB_DL" ./configure --host=$ARCH --enable-shared=false --with-pic 1> /dev/null
 
