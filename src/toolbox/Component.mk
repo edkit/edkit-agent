@@ -2,16 +2,16 @@
 CFLAGS = -fPIC -g -Wall -Werror -D_GNU_SOURCE
 CFLAGS += -DNO_SSL
 
-SRCS = Os/rtsym.c
-SRCS += Http/mongoose/mongoose.c
+SRCS = src/Os/rtsym.c
+SRCS += src/Http/mongoose/mongoose.c
 
-CXX_SRCS = Preload/DlList.cpp
-CXX_SRCS += DynObject/DynObject.cpp DynObject/JsonFlattener.cpp
-CXX_SRCS += Os/Thread.cpp Os/CallStack.cpp
-CXX_SRCS += Http/Httpd.cpp Http/HttpdSingleton.cpp Http/HttpdRequest.cpp Http/UrlHandler.cpp Http/WsMethod.cpp 
-CXX_SRCS += Http/WsHandler.cpp Http/WsHandlerSingleton.cpp
-CXX_SRCS += Http/WsMethod.cpp Http/WsHandler.cpp Http/WsInterface.cpp
-CXX_SRCS += String.cpp
+CXX_SRCS = src/Preload/DlList.cpp
+CXX_SRCS += src/DynObject/DynObject.cpp src/DynObject/JsonFlattener.cpp
+CXX_SRCS += src/Os/Thread.cpp src/Os/CallStack.cpp
+CXX_SRCS += src/Http/Httpd.cpp src/Http/HttpdSingleton.cpp src/Http/HttpdRequest.cpp src/Http/UrlHandler.cpp src/Http/WsMethod.cpp 
+CXX_SRCS += src/Http/WsHandler.cpp src/Http/WsHandlerSingleton.cpp
+CXX_SRCS += src/Http/WsMethod.cpp src/Http/WsHandler.cpp src/Http/WsInterface.cpp
+CXX_SRCS += src/String.cpp
 
 CPPFLAGS = -I./include -I../thirdparty/json-c
 
