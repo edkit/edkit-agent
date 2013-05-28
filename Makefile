@@ -3,7 +3,7 @@ include ./build/global.mk
 
 all: jsonc toolbox edleak
 
-test_all: cppunit cpputest toolbox_test edleak_test leaker
+test_all: cpputest toolbox_test edleak_test leaker
 
 test_run: toolbox_test_run edleak_test_run
 
@@ -56,9 +56,6 @@ jsonc:
 
 jsonc_clean:
 	$(MAKE) -C src/thirdparty/json-c clean
-
-cppunit:
-	$(MAKE) -C src/thirdparty/cppunit
 
 cpputest:
 	$(MAKE) -C src/thirdparty/cpputest CPPUTEST_USE_STD_CPP_LIB=Y all_no_tests extensions_no_tests
