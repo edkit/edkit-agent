@@ -29,25 +29,19 @@
 * @date     2012/11/21
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include <malloc.h>
 #include "CallStack.h"
 #include "MemAllocProbe.h"
-#include "TestMemAlloc.h"
 #include "FakeAlloc.h"
+#include "ExeContext.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION( TestMemAlloc );
-
-void TestMemAlloc::setUp()
+TEST_GROUP(MemAllocTestGroup)
 {
-}
+};
 
 
-void TestMemAlloc::tearDown()
-{
-}
-
-
-void TestMemAlloc::TestBuild()
+TEST(MemAllocTestGroup, Build)
 {
    MemAllocProbe  Probe;
    MemAllocProbe  *p_Probe;
@@ -55,27 +49,30 @@ void TestMemAlloc::TestBuild()
    Probe.InitCheck();
    p_Probe = new(std::nothrow) MemAllocProbe();
 
-   CPPUNIT_ASSERT(p_Probe != NULL);
+   CHECK(p_Probe != NULL);
    p_Probe->InitCheck();
 
    delete p_Probe;
 }
 
-void TestMemAlloc::TestAlign()
+TEST(MemAllocTestGroup, Align)
 {
    MemAllocProbe  Probe;
    Probe.InitCheck(FakeAlloc_Malloc);
 
    char *SysAddress = (char*)malloc(512);
-   CPPUNIT_ASSERT(SysAddress != NULL);
+   CHECK(SysAddress != NULL);
 
    FakeAlloc_SetAllocAddress(SysAddress);
    CallStack Caller;
    UnwindCaller(Caller);
    char *ProbeAddress = (char*)Probe.Alloc(25, Caller);
-   CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
-   CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % ALLOC_ALIGNMENT == 0);
-   CPPUNIT_ASSERT(ProbeAddress < SysAddress+sizeof(HeapEntry)+ALLOC_ALIGNMENT);
+   CHECK(ProbeAddress >= SysAddress);
+   CHECK((uint64_t)(intptr_t)ProbeAddress % ALLOC_ALIGNMENT == 0);
+   CHECK(ProbeAddress < SysAddress+sizeof(HeapEntry)+ALLOC_ALIGNMENT);
+
+   free(SysAddress);
+   ExeContext::Reset();
 }
 
 

@@ -29,25 +29,19 @@
 * @date     2012/01/04
 *
 *****************************************************************************/
+#include "CppUTest/TestHarness.h"
 #include <malloc.h>
 #include "CallStack.h"
 #include "MemAlignProbe.h"
-#include "MemAlign1.h"
 #include "FakeAlloc.h"
+#include "ExeContext.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION( MemAlign1 );
-
-void MemAlign1::setUp()
+TEST_GROUP(MemAlignTestGroup)
 {
-}
+};
 
 
-void MemAlign1::tearDown()
-{
-}
-
-
-void MemAlign1::TestBuild()
+TEST(MemAlignTestGroup, Build)
 {
    MemAlignProbe  Probe;
    MemAlignProbe  *p_Probe;
@@ -55,28 +49,31 @@ void MemAlign1::TestBuild()
    Probe.InitCheck();
    p_Probe = new(std::nothrow) MemAlignProbe();
 
-   CPPUNIT_ASSERT(p_Probe != NULL);
+   CHECK(p_Probe != NULL);
    p_Probe->InitCheck();
 
    delete p_Probe;
 }
 
-void MemAlign1::TestBasic()
+
+TEST(MemAlignTestGroup, Basic)
 {
    MemAlignProbe  Probe;
    Probe.InitCheck(FakeAlloc_Memalign);
 
    char *SysAddress = (char*)memalign(4, 512);
-   CPPUNIT_ASSERT(SysAddress != NULL);
+   CHECK(SysAddress != NULL);
 
    FakeAlloc_SetAllocAddress(SysAddress);
 
    CallStack Caller;
    UnwindCaller(Caller);
    char *ProbeAddress = (char*)Probe.MemAlign(4, 259, Caller);
-   CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
-   CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % 4 == 0);
-   CPPUNIT_ASSERT(ProbeAddress < SysAddress+sizeof(HeapEntry)+4);
+   CHECK(ProbeAddress >= SysAddress);
+   CHECK((uint64_t)(intptr_t)ProbeAddress % 4 == 0);
+   CHECK(ProbeAddress < SysAddress+sizeof(HeapEntry)+4);
+
+   ExeContext::Reset();
 }
 
 
@@ -96,20 +93,21 @@ void MemAlign1::TestPassthrough()
 */
 
 
-
-void MemAlign1::TestBigAlign()
+TEST(MemAlignTestGroup, BigAlign)
 {
    MemAlignProbe  Probe;
    Probe.InitCheck(FakeAlloc_Memalign);
 
    char *SysAddress = (char*)memalign(256, 1024);
-   CPPUNIT_ASSERT(SysAddress != NULL);
+   CHECK(SysAddress != NULL);
    FakeAlloc_SetAllocAddress(SysAddress);
 
    CallStack Caller;
    UnwindCaller(Caller);
    char *ProbeAddress = (char*)Probe.MemAlign(256, 259, Caller);
-   CPPUNIT_ASSERT(ProbeAddress >= SysAddress);
-   CPPUNIT_ASSERT((uint64_t)(intptr_t)ProbeAddress % 256 == 0);
-   CPPUNIT_ASSERT(ProbeAddress < SysAddress+sizeof(HeapEntry)+256);
+   CHECK(ProbeAddress >= SysAddress);
+   CHECK((uint64_t)(intptr_t)ProbeAddress % 256 == 0);
+   CHECK(ProbeAddress < SysAddress+sizeof(HeapEntry)+256);
+
+   ExeContext::Reset();
 }

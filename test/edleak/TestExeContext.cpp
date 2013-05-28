@@ -1,13 +1,10 @@
-#ifndef __TESTMEMALLOC_H_
-#define __TESTMEMALLOC_H_
-
 /*
 *****************************************************************************
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
 *                     \___/\__,_|_\_\_.__/_|\__/__/
-*                          Copyright (c) 2012
+*                          Copyright (c) 2013
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,24 +26,38 @@
 *****************************************************************************/
 /**
 * @author   R. Picard
-* @date     2012/11/21
+* @date     2013/05/22
 *
 *****************************************************************************/
-#include <cppunit/extensions/HelperMacros.h>
+#include "CppUTest/TestHarness.h"
+#include <malloc.h>
+#include "CallStack.h"
+#include "MemAllocProbe.h"
+#include "FakeAlloc.h"
+#include "ExeContext.h"
 
-class TestMemAlloc: public CppUnit::TestFixture
+TEST_GROUP(ExeContextTestGroup)
 {
-  CPPUNIT_TEST_SUITE( TestMemAlloc );
-  CPPUNIT_TEST( TestBuild );
-  CPPUNIT_TEST( TestAlign );
-  CPPUNIT_TEST_SUITE_END();
-
-public:
-  void setUp();
-  void tearDown();
-
-  void TestBuild();
-  void TestAlign();
 };
 
-#endif
+
+TEST(ExeContextTestGroup, Build)
+{
+   CallStack   TestStack;
+   ExeContext  TestContext1(TestStack);
+   ExeContext  *TestContext2 = new(std::nothrow) ExeContext(TestStack);
+   CHECK(TestContext2 != NULL);
+
+   delete TestContext2;
+}
+
+
+TEST(ExeContextTestGroup, GetCaller)
+{
+   CallStack   TestStack;
+
+   ExeContext  *TestContext = ExeContext::Get(TestStack);
+   CHECK(TestContext != NULL);
+
+   ExeContext::Reset();
+}
