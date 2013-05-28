@@ -73,14 +73,20 @@ ExeContext::~ExeContext()
 void ExeContext::Reset(void)
 {
    DlList *p_ContextList = ExeContext::GetList();
-   ExeContext *p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
-   ExeContext *p_DelContext;
+   ExeContext *p_Context;
 
-   while(p_Context != NULL)
+   while(1)
    {
-      p_DelContext = p_Context;
-      p_Context = (ExeContext*)p_Context->Next;
-      delete p_DelContext;
+      p_Context = static_cast<ExeContext*>(p_ContextList->GetHead());
+      if(p_Context != NULL)
+      {
+         p_ContextList->DelItem(p_Context);
+         delete p_Context;
+      }
+      else
+      {
+         break;
+      }
    }
 }
 
