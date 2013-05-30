@@ -46,7 +46,7 @@ void Leaker(unsigned int Depth)
    {
       static unsigned int Run = 0;
       Run++;
-      printf("%d-", Run % (MAX_DEPTH-1));
+      // printf("%d-", Run % (MAX_DEPTH-1));
       switch(Run % (MAX_DEPTH-1))
       {
          case 0:
@@ -77,7 +77,7 @@ void Leaker(unsigned int Depth)
       return;
    }
 
-   printf("%d\n", Counter % MAX_DEPTH);
+   // printf("%d\n", Counter % MAX_DEPTH);
    switch(Counter % MAX_DEPTH)
    {
       case 0:
