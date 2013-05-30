@@ -80,11 +80,11 @@ void TestSuiteUnwind4(CallStack &Unwinder)
 {
    TestSuiteUnwind3(Unwinder);
 }
+}
+
 void TestSuiteUnwind5(CallStack &Unwinder)
 {
    TestSuiteUnwind4(Unwinder);
-}
-
 }
 
 TEST(CallStackTestGroup, GetDepth)
@@ -123,7 +123,7 @@ TEST(CallStackTestGroup, Unwind)
    CHECK(dladdr(Stack[3], &Info) != 0);
    CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind4"));
    CHECK(dladdr(Stack[4], &Info) != 0);
-   CHECK_EQUAL(0, strcmp(Info.dli_sname, "TestSuiteUnwind5"));
+   CHECK(strstr(Info.dli_sname, "TestSuiteUnwind5") != NULL);
 };
 
 TEST(CallStackTestGroup, SetTo)
@@ -189,6 +189,7 @@ TEST(CallStackTestGroup, GetName)
    CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(1), ':')+1, "TestSuiteUnwind2"));
    CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(2), ':')+1, "TestSuiteUnwind3"));
    CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(3), ':')+1, "TestSuiteUnwind4"));
+   CHECK_EQUAL(0, strcmp(strchr(TestCallStack.GetName(4), ':')+1, "TestSuiteUnwind5(CallStack&)"));
 };
 
 TEST(CallStackTestGroup, GetNameCaller)

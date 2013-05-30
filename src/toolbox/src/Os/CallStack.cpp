@@ -32,7 +32,8 @@
 #include <dlfcn.h>
 #include <string.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+#include <cxxabi.h>
 #include "CallStack.h"
 
 
@@ -228,8 +229,20 @@ void CallStack::ResolveNames(void)
          Dl_info s_info;
          if( (dladdr(Stack[Level], &s_info) != 0) && (s_info.dli_sname != NULL) )
          {
-            snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
+            int Status;
+            char* UnmangledName =
+               abi::__cxa_demangle(s_info.dli_sname, NULL, 0, &Status);
+            if(UnmangledName  != NULL)
+            {
+               snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
+                  Stack[Level], UnmangledName);
+               free(UnmangledName);
+            }
+            else
+            {
+               snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
                   Stack[Level], s_info.dli_sname);
+            }
          }
          else
          {
