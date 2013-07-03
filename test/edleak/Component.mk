@@ -22,6 +22,14 @@ CXX_SRCS += MemAlign1.cpp
 CXX_SRCS += TestMemAlloc.cpp
 CXX_SRCS += TestExeContext.cpp
 
+CXX_SRCS += mock/rtsym.cpp
+
+ifeq ($(SUPPORT_GLIB),yes)
+CFLAGS += $(CPPFLAGS_GLIB)
+
+CXX_SRCS+= glib/TestSliceFreeProbe.cpp
+endif
+
 
 NAME = edleak_utest
 BUILD_TYPE = exe

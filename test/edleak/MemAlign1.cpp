@@ -46,11 +46,9 @@ TEST(MemAlignTestGroup, Build)
    MemAlignProbe  Probe;
    MemAlignProbe  *p_Probe;
 
-   Probe.InitCheck();
    p_Probe = new(std::nothrow) MemAlignProbe();
 
    CHECK(p_Probe != NULL);
-   p_Probe->InitCheck();
 
    delete p_Probe;
 }
