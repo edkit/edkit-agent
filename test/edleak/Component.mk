@@ -28,6 +28,7 @@ ifeq ($(SUPPORT_GLIB),yes)
 CFLAGS += $(CPPFLAGS_GLIB)
 
 CXX_SRCS+= glib/TestSliceFreeProbe.cpp
+CXX_SRCS+= glib/TestSliceAllocProbe.cpp
 endif
 
 

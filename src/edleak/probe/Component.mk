@@ -8,6 +8,7 @@ CXX_SRCS = src/Probe.cpp src/MemProbe.cpp \
 			  src/MemCallocProbe.cpp src/MemFreeProbe.cpp 
 
 ifeq ($(SUPPORT_GLIB),yes)
+CXX_SRCS+= src/glib/SliceAllocProbe.cpp
 CXX_SRCS+= src/glib/SliceFreeProbe.cpp
 endif
 

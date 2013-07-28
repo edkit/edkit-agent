@@ -105,9 +105,9 @@ TEST(SliceFreeTestGroup, FreeOK)
    Probe.Free(AllocSize, Data+sizeof(HeapEntry));
    CHECK_EQUAL(0, (int)Context->GetMemory() );
 
+   mock().checkExpectations();
    ExeContext::Reset();
    delete Entry;
-   mock().checkExpectations();
 }
 
 TEST(SliceFreeTestGroup, FreeNullFunc)
@@ -170,10 +170,11 @@ TEST(SliceFreeTestGroup, FreeHeapLocked)
    Probe.Free(AllocSize, Entry);
    CHECK_EQUAL(AllocSize, (int)Context->GetMemory() );
 
+   mock().checkExpectations();
    ExeContext::Reset();
+   MemHeap::Instantiate()->Reset();
    delete Entry;
    Heap->Unlock();
-   mock().checkExpectations();
 }
 
 /* Passthrough without free function as parameter */
@@ -259,5 +260,4 @@ TEST(SliceFreeTestGroup, Passthrough4)
 
    mock().checkExpectations();
 }
-
 
