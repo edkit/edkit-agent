@@ -106,6 +106,17 @@ MemHeap* MemHeap::Instantiate(void)
    return(Heap);
 }
 
+/**
+* @date     2013/07/28
+*
+*  resets all ExeContexts.
+*  Warning : This should be used in unit tests only.
+******************************************************************************/
+void MemHeap::Reset(void)
+{
+   EntryList.MakeEmpty();
+}
+
 
 /**
 * @date     2011/05/01
