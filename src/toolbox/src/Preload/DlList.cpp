@@ -3,7 +3,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,14 +27,14 @@
 /**
 * @author   R. Picard
 * @date     2011/05/19
-* 
+*
 *****************************************************************************/
 #include "DlList.h"
 
 
 /**
 * @date     2011/05/19
-* 
+*
 *  Constructor.
 *
 ******************************************************************************/
@@ -47,7 +47,7 @@ DlList::DlList(void):
 
 /**
 * @date     2011/05/19
-* 
+*
 *  Destructor.
 *
 ******************************************************************************/
@@ -59,7 +59,7 @@ DlList::~DlList(void)
 
 /**
 * @date     2011/05/19
-* 
+*
 *  Inserts an item at the start of the list. Once inserted, the item belongs to
 *  the list and must not be deleted.
 *
@@ -93,7 +93,7 @@ void DlList::PrependItem(DlListItem *Item)
 
 /**
 * @date     2011/05/19
-* 
+*
 *  Inserts an item at the end of the list. Once inserted, the item belongs to
 *  the list and must not be deleted.
 *
@@ -127,7 +127,7 @@ void DlList::AppendItem(DlListItem *Item)
 
 /**
 * @date     2011/05/19
-* 
+*
 *  Removes an item from the list. The caller is responsible for deleting the
 *  object removed from the list.
 *
@@ -166,4 +166,18 @@ void DlList::DelItem(DlListItem *Item)
    }
 }
 
+/**
+* @date     2013/07/28
+*
+*  Removes all items from the list. The caller is responsible for deleting the
+*  objects removed from the list.
+*
+******************************************************************************/
+void DlList::MakeEmpty(void)
+{
+   while(Head != NULL)
+   {
+      DelItem(Head);
+   }
+}
 

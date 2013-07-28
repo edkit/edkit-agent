@@ -55,6 +55,7 @@ class DlList
       void PrependItem(DlListItem *Item);
       void AppendItem(DlListItem *Item);
       void DelItem(DlListItem *Item);
+      void MakeEmpty(void);
 
    private:
       DlListItem *Head;
