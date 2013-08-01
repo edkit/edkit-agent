@@ -31,12 +31,24 @@
 *****************************************************************************/
 #include <unistd.h>
 #include <stdlib.h>
+#ifdef LEAK_GLIB
+#include <glib.h>
+#endif
 
 #define MAX_DEPTH 8
+#define TEST_COUNT_BASE 8
+
+#ifdef LEAK_GLIB
+#define TEST_COUNT (TEST_COUNT_BASE+3)
+#else
+#define TEST_COUNT TEST_COUNT_BASE
+#endif
 static void *Trash = NULL;
 static void *TrashNew = NULL;
+#ifdef LEAK_GLIB
+static gpointer GLibTrash = NULL;
+#endif
 
-#include <stdio.h>
 void Leaker(unsigned int Depth)
 {
    static unsigned int Counter = 0;
@@ -46,8 +58,7 @@ void Leaker(unsigned int Depth)
    {
       static unsigned int Run = 0;
       Run++;
-      // printf("%d-", Run % (MAX_DEPTH-1));
-      switch(Run % (MAX_DEPTH-1))
+      switch(Run % (TEST_COUNT))
       {
          case 0:
             Trash = malloc(10);
@@ -73,11 +84,23 @@ void Leaker(unsigned int Depth)
          case 7:
             TrashNew = new int[50];
             break;
+#ifdef LEAK_GLIB
+         case 8:
+            GLibTrash = g_slice_alloc(150);
+            break;
+         case 9:
+            GLibTrash = g_slice_alloc0(3000);
+            break;
+         case 10:
+            g_slice_free1(3000, GLibTrash);
+            break;
+#endif
+
       }
       return;
    }
 
-   // printf("%d\n", Counter % MAX_DEPTH);
+   /* this switch is usefull to get different caller contexts at each iteration */
    switch(Counter % MAX_DEPTH)
    {
       case 0:
