@@ -92,7 +92,7 @@ int32_t WsMethodStackWatchAdd::Call(const DynObject &Params, String *p_Answer)
 
          if(i_Ret == 0)
          {
-            p_Answer->SetTo("{ \"status\": 0, \"data\" : {}\n");
+            p_Answer->SetTo("{ \"status\": 0, \"data\" : {} }\n");
          }
       }
    }
