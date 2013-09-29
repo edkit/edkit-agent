@@ -4,8 +4,9 @@ import matplotlib.colors as colors
 import matplotlib.cm as cm
 
 class SlicePlotter(object):
-   def __init__(self, slice_batch):
-      self.slice_batch = slice_batch
+   def __init__(self, asset):
+      self.asset = asset
+      self.slice_batch = asset.getSliceList()
 
    def sizePlot(self, scale='linear'):
       """
