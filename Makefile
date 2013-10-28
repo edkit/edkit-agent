@@ -51,6 +51,10 @@ leaker_run:
 leaker_clean:
 	$(MAKE) -C test/leaker -f Component.mk clean
 
+edleak_python_client_test:
+	cd test/client/python && PYTHONPATH=../../../client/python/ python edkit_utest.py
+	cd -
+
 jsonc:
 	$(MAKE) -C src/thirdparty/json-c
 
