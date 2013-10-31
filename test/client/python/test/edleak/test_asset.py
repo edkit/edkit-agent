@@ -4,8 +4,11 @@ import tempfile
 
 allocer_list1 = [  {'id' : 0, 'stack' : [ 'caller1', 'caller2']},
               {'id' : 1, 'stack' : [ 'caller11', 'caller12']}]
-slice_list1 = [ { 'mem' : 10, 'alc' : 0},
-            { 'mem' : 15, 'alc' : 1}]
+slice_list1 = [ [ { 'mem' : 10, 'alc' : 0},
+                  { 'mem' : 15, 'alc' : 1}],
+                [ { 'mem' : 15, 'alc' : 0},
+                  { 'mem' : 25, 'alc' : 1}]
+            ]
 
 class TestCaseEdleakAsset(unittest.TestCase):
 
@@ -36,3 +39,15 @@ class TestCaseEdleakAsset(unittest.TestCase):
       asset2 = edleak.asset.Asset.load(name)
       self.assertEqual(asset.getSliceList(), asset2.getSliceList())
       self.assertEqual(asset.getAllocerList(), asset2.getAllocerList())
+
+   def test_coring(self):
+      asset = edleak.asset.Asset()
+      asset.setAllocerList(allocer_list1)
+      asset.setSliceList(slice_list1)
+
+      allocer_list = asset.getAllocerList()
+      self.assertEqual(slice_list1[0][0]['mem'], allocer_list[0]['coring'][0])
+      self.assertEqual(slice_list1[0][1]['mem'], allocer_list[1]['coring'][0])
+      self.assertEqual(slice_list1[1][0]['mem'], allocer_list[0]['coring'][1])
+      self.assertEqual(slice_list1[1][1]['mem'], allocer_list[1]['coring'][1])
+
