@@ -28,7 +28,7 @@ class LeakFactor(object):
 
       coefs = self.getPolynomCoefs(data)
       leak = self.getLeakAmount(coefs, max-min)
-      return { 'coef' : coefs, 'leak' : leak}
+      return { 'coef' : coefs.tolist(), 'leak' : leak}
 
    def getPolynomCoefs(self, allocer_data):
       """
@@ -40,7 +40,7 @@ class LeakFactor(object):
 
       A = vander(xi, 3)
       c,resid,rank,sigma=linalg.lstsq(A,allocer_data)
-#      print "polynom is ", c[0], " + ", c[1], "x + ", c[2], "x^2"
+      print "polynom is ", c[0], " + ", c[1], "x + ", c[2], "x^2"
       return c
 
    def getLeakAmount(self, polynom, original_max):

@@ -7,7 +7,11 @@ allocer_list1 = [  {'id' : 0, 'stack' : [ 'caller1', 'caller2']},
 slice_list1 = [ [ { 'mem' : 10, 'alc' : 0},
                   { 'mem' : 15, 'alc' : 1}],
                 [ { 'mem' : 15, 'alc' : 0},
-                  { 'mem' : 25, 'alc' : 1}]
+                  { 'mem' : 25, 'alc' : 1}],
+                [ { 'mem' : 25, 'alc' : 0},
+                  { 'mem' : 35, 'alc' : 1}],
+                [ { 'mem' : 30, 'alc' : 0},
+                  { 'mem' : 45, 'alc' : 1}]
             ]
 
 class TestCaseEdleakAsset(unittest.TestCase):
@@ -50,4 +54,16 @@ class TestCaseEdleakAsset(unittest.TestCase):
       self.assertEqual(slice_list1[0][1]['mem'], allocer_list[1]['coring'][0])
       self.assertEqual(slice_list1[1][0]['mem'], allocer_list[0]['coring'][1])
       self.assertEqual(slice_list1[1][1]['mem'], allocer_list[1]['coring'][1])
+      self.assertEqual(slice_list1[2][0]['mem'], allocer_list[0]['coring'][2])
+      self.assertEqual(slice_list1[2][1]['mem'], allocer_list[1]['coring'][2])
+      self.assertEqual(slice_list1[3][0]['mem'], allocer_list[0]['coring'][3])
+      self.assertEqual(slice_list1[3][1]['mem'], allocer_list[1]['coring'][3])
+
+   def test_leak_factor(self):
+      asset = edleak.asset.Asset()
+      asset.setAllocerList(allocer_list1)
+      asset.setSliceList(slice_list1)
+
+      allocer_list = asset.getAllocerList()
+      self.assertIsNotNone(allocer_list[0]['leak_factor'])
 
