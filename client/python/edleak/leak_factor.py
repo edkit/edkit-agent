@@ -26,11 +26,11 @@ class LeakFactor(object):
       data -= min          # shift array to start at 0
       data /= max-min      # normalize to [0:1]
 
-      coefs = self.getPolynomCoefs(data)
-      leak = self.getLeakAmount(coefs, max-min)
+      coefs = self.__getPolynomCoefs(data)
+      leak = self.__getLeakAmount(coefs, max-min)
       return { 'coef' : coefs.tolist(), 'leak' : leak}
 
-   def getPolynomCoefs(self, allocer_data):
+   def __getPolynomCoefs(self, allocer_data):
       """
       Does a 2nd order polynomial regression on the provided array and returns
       its coefficients as a list.
@@ -40,10 +40,10 @@ class LeakFactor(object):
 
       A = vander(xi, 3)
       c,resid,rank,sigma=linalg.lstsq(A,allocer_data)
-      print "polynom is ", c[0], " + ", c[1], "x + ", c[2], "x^2"
+#      print "polynom is ", c[0], " + ", c[1], "x + ", c[2], "x^2"
       return c
 
-   def getLeakAmount(self, polynom, original_max):
+   def __getLeakAmount(self, polynom, original_max):
       """
       Computes the amount of leaked memory
       """
