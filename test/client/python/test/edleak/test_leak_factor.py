@@ -30,6 +30,47 @@ class TestCaseEdleakLeakFactor(unittest.TestCase):
 
       self.assertTrue(leak_factor['leak'] < 4100)
       self.assertTrue(leak_factor['leak'] > 3900)
+
+   def test_get_classification_constant(self):
+      coefs = [0.0, 0.0, 0.1]
+      leak = 0
+      self.assertEqual(edleak.leak_factor.leaker_class_constant,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+      leak = 1
+      self.assertEqual(edleak.leak_factor.leaker_class_constant,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+
+   def test_get_classification_log(self):
+      coefs = [-0.21, 1.2, 0.0]
+      leak = 12000
+      self.assertEqual(edleak.leak_factor.leaker_class_log,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+      coefs = [-0.92, 1.8, 1.0]
+      self.assertEqual(edleak.leak_factor.leaker_class_log,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+
+   def test_get_classification_exp(self):
+      coefs = [0.21, 0.2, 0.0]
+      leak = 12000
+      self.assertEqual(edleak.leak_factor.leaker_class_exp,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+      coefs = [0.92, 0.8, 1.0]
+      self.assertEqual(edleak.leak_factor.leaker_class_exp,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+
+   def test_get_classification_linear(self):
+      coefs = [0.19, 1.2, 0.0]
+      leak = 12000
+      self.assertEqual(edleak.leak_factor.leaker_class_linear,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+      coefs = [-0.19, 1.1, 1.0]
+      self.assertEqual(edleak.leak_factor.leaker_class_linear,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+      coefs = [0.01, 1.0, 1.0]
+      self.assertEqual(edleak.leak_factor.leaker_class_linear,
+            edleak.leak_factor.get_leaker_classification(coefs, leak))
+
+
    """
    def test_allocer_list(self):
       asset = edleak.asset.Asset()

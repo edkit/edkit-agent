@@ -1,6 +1,25 @@
 from numpy import *
 from scipy import linalg
 
+leaker_class_constant   = 1
+leaker_class_linear     = 2
+leaker_class_log        = 3
+leaker_class_exp        = 4
+
+def get_leaker_classification(coefs, leak):
+   """
+      Returns the leaker classification, computed from the provided 2nd order
+      polynom coefficients and the leak amout.
+   """
+   if leak <= 1:
+      return leaker_class_constant
+   if coefs[0] < -0.2:
+      return leaker_class_log
+   if coefs[0] > 0.2:
+      return leaker_class_exp
+
+   return leaker_class_linear
+
 class LeakFactor(object):
 #   def __init__(self, asset):
 #      self.asset = asset
@@ -9,8 +28,11 @@ class LeakFactor(object):
       """
       Computes the leak factor for the provided array. The leak factor is a dict
       with:
+         - 'min_size' : Minimum allocated size for this allocer
+         - 'max_size' : Maximum allocated size for this allocer
          - 'coef' : the coefficients of the 2nd degree polynom computed via regression
          - 'leak' : the amount of leaked memory computed from this polynom.
+         - 'class' : The classification of the leak
       """
 
       if allocer_data == None:
@@ -28,7 +50,11 @@ class LeakFactor(object):
 
       coefs = self.__getPolynomCoefs(data)
       leak = self.__getLeakAmount(coefs, max-min)
-      return { 'coef' : coefs.tolist(), 'leak' : leak}
+      leaker_class = get_leaker_classification(coefs, leak)
+      return { 'min_size': min, 'max_size': max,
+               'coef' : coefs.tolist(),
+               'leak' : leak,
+               'class': leaker_class}
 
    def __getPolynomCoefs(self, allocer_data):
       """
