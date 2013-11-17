@@ -3,7 +3,7 @@ CFLAGS = -fPIC -g -Wall -Werror -D_GNU_SOURCE
 SRCS = 
 CXX_SRCS = src/Posix.cpp
 ifeq ($(SUPPORT_GLIB),yes)
-CXX_SRCS = src/Glib.cpp
+CXX_SRCS += src/Glib.cpp
 endif
 
 CPPFLAGS += -I$(SRCDIR)/toolbox/include
