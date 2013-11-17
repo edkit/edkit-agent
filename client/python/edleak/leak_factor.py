@@ -1,10 +1,10 @@
 from numpy import *
 from scipy import linalg
 
-leaker_class_constant   = 1
-leaker_class_linear     = 2
-leaker_class_log        = 3
-leaker_class_exp        = 4
+leaker_class_constant   = 'const'
+leaker_class_linear     = 'linear'
+leaker_class_log        = 'log'
+leaker_class_exp        = 'exp'
 
 def get_leaker_classification(coefs, leak):
    """
