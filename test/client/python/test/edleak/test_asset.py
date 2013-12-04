@@ -40,7 +40,7 @@ class TestCaseEdleakAsset(unittest.TestCase):
       asset.setSliceList(slice_list1)
 
       asset.save(name)
-      asset2 = edleak.asset.Asset.load(name)
+      asset2 = edleak.asset.Asset(name)
       self.assertEqual(asset.getSliceList(), asset2.getSliceList())
       self.assertEqual(asset.getAllocerList(), asset2.getAllocerList())
 
