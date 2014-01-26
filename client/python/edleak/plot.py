@@ -39,6 +39,13 @@ class SlicePlotter(object):
             x[slice_index] = alloc_point
             slice_index += 1
 
+         ''' does not work with log scales
+         annotation = 'id' + str(allocer['id']) + ':' + str(allocer['leak_factor']['leak'])
+         ax.annotate(annotation , xy=(0, allocer['id']),
+                xytext=(-50, allocer['id']),
+                horizontalalignment='right', verticalalignment='top'
+                )
+         '''
          ax.scatter(x, y, c=colors, s=60, edgecolors='none',
                cmap=colormaps[allocer['leak_factor']['class']])
 
