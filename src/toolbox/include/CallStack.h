@@ -38,7 +38,7 @@
 class CallStack
 {
    public:
-#define CALLSTACK_MAX_DEPTH         5
+#define CALLSTACK_MAX_DEPTH         16
 #define ALLOCER_NAME_SIZE  64
 #define UnwindCaller(c) c.SetCaller(__builtin_return_address(0))
 
