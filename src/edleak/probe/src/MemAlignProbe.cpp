@@ -101,7 +101,7 @@ void MemAlignProbe::InitCheck(memalign_t AlignHook)
 ******************************************************************************/
 void* MemAlignProbe::PassThrough(size_t i_Boundary, size_t i_Size)
 {
-   void *Data;
+   void *Data = NULL;
    memalign_t AlignFunc;
 
    AlignFunc = (memalign_t) rtsym_resolve("memalign");
