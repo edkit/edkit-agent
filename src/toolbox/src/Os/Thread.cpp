@@ -31,7 +31,8 @@
 *****************************************************************************/
 #include "Thread.h"
 
-
+namespace edkit
+{
 /**
 * @date     2011/05/08
 *
@@ -113,3 +114,5 @@ void* Thread::PThreadLoop(void* p_Thread)
       This->Loop();
    return(NULL);
 }
+
+} // namespace

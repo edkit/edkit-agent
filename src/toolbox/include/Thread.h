@@ -35,6 +35,9 @@
 #include <stdint.h>
 #include <pthread.h>
 
+namespace edkit
+{
+
 class Thread
 {
    public:
@@ -55,4 +58,5 @@ class Thread
                bool        Started;
 };
 
+} // namespace
 #endif

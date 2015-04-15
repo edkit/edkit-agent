@@ -35,7 +35,7 @@
 #include "Thread.h"
 #include "String.h"
 
-class FileWriter : Thread
+class FileWriter : edkit::Thread
 {
    public:
 #define ENV_FILENAME    "edkit_fw_file"

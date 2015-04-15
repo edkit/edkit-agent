@@ -53,7 +53,7 @@
 *  variables. If the Poll period is 0, then the filewriter is disabled.
 *
 ******************************************************************************/
-FileWriter::FileWriter(void): Thread(),
+FileWriter::FileWriter(void): edkit::Thread(),
    StopRequested(false), FileName(), PollPeriod(FW_DEFAULT_POLL_PERIOD)
 {
    char *sz_FileName;
