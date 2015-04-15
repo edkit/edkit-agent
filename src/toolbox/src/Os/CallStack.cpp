@@ -175,7 +175,7 @@ _Unwind_Reason_Code  CallStack::UnwindCallback(struct _Unwind_Context *Context, 
 
    if(This != NULL)
       return(This->UnwindCallback(Context));
-   return(_URC_NORMAL_STOP);
+   return _URC_FOREIGN_EXCEPTION_CAUGHT;
 }
 
 
