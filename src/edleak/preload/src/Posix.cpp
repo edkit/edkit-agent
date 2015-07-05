@@ -42,6 +42,7 @@ void *memalign(size_t i_Boundary, size_t i_Size) throw();
 void *calloc(size_t i_MembCount, size_t i_Size) throw();
 void *realloc(void *Ptr, size_t i_Size) throw();
 void free (void *Ptr) throw();
+void cfree (void *Ptr) throw();
 
 void *CXX_SYM_NEW(size_t i_Size);
 void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw();
@@ -108,6 +109,13 @@ static MemFreeProbe& Preload_GetFreeProbe(void)
 
    return(Probe);
 }
+static MemFreeProbe& Preload_GetCFreeProbe(void)
+{
+   static   MemFreeProbe  Probe;
+
+   return(Probe);
+}
+
 static MemFreeProbe& Preload_GetDeleteProbe(void)
 {
    static   MemFreeProbe  Probe;
@@ -136,6 +144,7 @@ static enum PreloadState Preload_Init(void)
       MemCallocProbe    &CallocProbe         = Preload_GetCallocProbe();
       MemReallocProbe   &ReallocProbe        = Preload_GetReallocProbe();
       MemFreeProbe      &FreeProbe           = Preload_GetFreeProbe();
+      MemFreeProbe      &CFreeProbe          = Preload_GetCFreeProbe();
       MemFreeProbe      &DeleteProbe         = Preload_GetDeleteProbe();
       MemFreeProbe      &DeleteNoThrowProbe  = Preload_GetDeleteNoThrowProbe();
 
@@ -146,6 +155,7 @@ static enum PreloadState Preload_Init(void)
       CallocProbe.InitCheck();
       ReallocProbe.InitCheck();
       FreeProbe.InitCheck();
+      CFreeProbe.InitCheck("cfree");
       DeleteProbe.InitCheck(M2STR(CXX_SYM_DELETE));
       DeleteNoThrowProbe.InitCheck(M2STR(CXX_SYM_DELETE_NOTHROW));
       State = STATE_STARTED;
@@ -266,6 +276,19 @@ void free (void *Ptr) throw()
    if(Preload_Init() == STATE_STARTED)
    {
       MemFreeProbe   &Probe = Preload_GetFreeProbe();
+      Probe.Free(Ptr);
+   }
+   else
+   {
+      MemFreeProbe::PassThrough(Ptr);
+   }
+}
+
+void cfree (void *Ptr) throw()
+{
+   if(Preload_Init() == STATE_STARTED)
+   {
+      MemFreeProbe   &Probe = Preload_GetCFreeProbe();
       Probe.Free(Ptr);
    }
    else
