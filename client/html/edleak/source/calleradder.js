@@ -34,10 +34,9 @@ WsCallerAdder = function()
 {
 }
 
-WsCallerAdder.prototype.ip = "127.0.0.1";
-WsCallerAdder.prototype.port = "8080";
-
 WsCallerAdder.prototype.onAdd = function(id) {
+    var settings = ws_ui.getSettings();
+
    request = { 
       "InterfaceName": "Edleak",
       "MethodName": "AddStackWatch",
@@ -45,7 +44,7 @@ WsCallerAdder.prototype.onAdd = function(id) {
    };
    var serialized_data = JSON.stringify(request);
 
-   $.ajax( { "type": 'POST', "url": "http://" + this.ip + ":" + this.port + "/ws",
+   $.ajax( { "type": 'POST', "url": "http://" + settings.ip + ":" + settings.port + "/ws",
       "success": function(me) {
          return( function(data) {
             }

@@ -30,6 +30,8 @@
 * 
 *****************************************************************************/
 
+var ws_ui = undefined;
+
 WsLoader = function()
 {
 }
@@ -173,9 +175,16 @@ WsLoaderUI.prototype.setClickCbk = function(cbk_click)
 
 WsLoaderUI.prototype.getSettings = function()
 {
+   var hostname = $(this.domRoot + " " + "#edkit_ws_ip").val();
+   hostname = hostname.split(':');
    settings = {};
-   settings.ip       = $(this.domRoot + " " + "#edkit_ws_ip").val();
-   settings.port     = 8080;
+   settings.ip       = hostname[0];
+   if(hostname.length > 1) {
+      settings.port     = hostname[1];
+   }
+   else {
+      settings.port     = 8080;
+   }
    settings.duration = parseInt($(this.domRoot + " " + "#edkit_ws_duration").val());
    settings.period   = parseInt($(this.domRoot + " " + "#edkit_ws_period").val());
    return(settings);
@@ -183,7 +192,7 @@ WsLoaderUI.prototype.getSettings = function()
 
 $(document).ready( function()
 {
-   var ws_ui = new WsLoaderUI('#menu-bar');
+   ws_ui = new WsLoaderUI('#menu-bar');
    var ws_loader = new WsLoader();
 
    ws_loader.setCbk(
