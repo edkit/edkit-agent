@@ -41,7 +41,7 @@ TEST_GROUP(DynObjectTestGroup)
 
 TEST(DynObjectTestGroup, Build)
 {
-   DynObject *Obj1 = new(std::nothrow)DynObject();
+   DynObject *Obj1 = new DynObject();
 
    {
       DynObject Obj2;

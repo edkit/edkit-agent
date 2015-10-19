@@ -43,7 +43,7 @@ TEST_GROUP(JsonFlattenerTestGroup)
 
 TEST(JsonFlattenerTestGroup, Build)
 {
-   JsonFlattener *Obj1 = new(std::nothrow)JsonFlattener();
+   JsonFlattener *Obj1 = new JsonFlattener();
 
    {
       JsonFlattener Obj2;

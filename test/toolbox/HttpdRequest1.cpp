@@ -48,7 +48,7 @@ TEST_GROUP(HttpdRequestTestGroup)
 
 TEST(HttpdRequestTestGroup, Build)
 {
-   HttpdRequest *Obj1 = new(std::nothrow) HttpdRequest();
+   HttpdRequest *Obj1 = new HttpdRequest();
 
    {
       HttpdRequest Obj2;

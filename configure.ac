@@ -19,7 +19,14 @@ AC_PROG_CC
 AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h])
 
 # check for libraries
-AX_PTHREAD
+AC_SEARCH_LIBS([pthread_create], [pthread], [], [
+  AC_MSG_ERROR([unable to find the pthread_create function])
+])
+
+AC_SEARCH_LIBS([dlopen], [dl dld], [], [
+  AC_MSG_ERROR([unable to find the dlopen() function])
+])
+
 PKG_CHECK_MODULES([CPPUTEST], [cpputest >= 3.6], 
       [have_cpputest=yes], [have_cpputest=no])
 
@@ -42,8 +49,8 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile])
-AM_CONDITIONAL([COND_CPPUTEST], [test "x${have_cpputest}" = xyes])
+AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile test/toolbox/Makefile])
+AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
 AC_OUTPUT
 
 echo "
@@ -58,3 +65,4 @@ if test "x${have_cpputest}" = xyes; then
 else
    echo "CppUTest.......: Disabled"
 fi
+

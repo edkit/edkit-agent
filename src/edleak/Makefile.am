@@ -29,5 +29,8 @@ libedleak_la_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(
 libedleak_la_CPPFLAGS += -DFW_DEFAULT_FILENAME=\"edleak.json\"
 libedleak_la_CPPFLAGS += -DFW_DEFAULT_POLL_PERIOD=30
 
-libedleak_la_LIBADD = $(JSON_LIBS) $(PTHREAD_LIBS)
-#libheliostv_la_LDFLAGS = 
+libedleak_la_CXXFLAGS = -fPIC
+
+libedleak_la_LIBADD = ../toolbox/libedkit-toolbox.a
+libedleak_la_LIBADD += $(JSON_LIBS)
+

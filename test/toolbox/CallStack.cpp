@@ -34,6 +34,7 @@
 #include <string.h>
 #include "CallStack.h"
 
+#if 1
 TEST_GROUP(CallStackTestGroup)
 {
 };
@@ -43,7 +44,7 @@ TEST(CallStackTestGroup, Build)
 {
    CallStack   TestCallStack1, *TestCallStack2;
 
-   TestCallStack2 = new(std::nothrow) CallStack();
+   TestCallStack2 = new CallStack();
    CHECK(TestCallStack2  != NULL);
    delete TestCallStack2;
 };
@@ -207,4 +208,4 @@ TEST(CallStackTestGroup, GetNameCaller)
       POINTERS_EQUAL(NULL, TestCallStack.GetName(Level));
    }
 };
-
+#endif
