@@ -34,7 +34,7 @@
 #include <string.h>
 #include "CallStack.h"
 
-#if 1
+#if 0
 TEST_GROUP(CallStackTestGroup)
 {
 };

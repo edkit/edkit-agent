@@ -46,7 +46,7 @@ TEST(MemAllocTestGroup, Build)
    MemAllocProbe  Probe;
    MemAllocProbe  *p_Probe;
 
-   p_Probe = new(std::nothrow) MemAllocProbe();
+   p_Probe = new MemAllocProbe();
 
    CHECK(p_Probe != NULL);
 

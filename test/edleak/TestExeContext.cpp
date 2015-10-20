@@ -45,7 +45,7 @@ TEST(ExeContextTestGroup, Build)
 {
    CallStack   TestStack;
    ExeContext  TestContext1(TestStack);
-   ExeContext  *TestContext2 = new(std::nothrow) ExeContext(TestStack);
+   ExeContext  *TestContext2 = new ExeContext(TestStack);
    CHECK(TestContext2 != NULL);
 
    delete TestContext2;

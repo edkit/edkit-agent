@@ -49,7 +49,7 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
-AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile test/toolbox/Makefile])
+AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile test/toolbox/Makefile test/edleak/Makefile])
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
 AC_OUTPUT
 

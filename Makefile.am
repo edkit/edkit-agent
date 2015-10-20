@@ -4,7 +4,9 @@ EXTRA_DIST = bootstrap
 
 SUBDIRS = src/toolbox src/edleak 
 if HAVE_CPPUTEST
-   SUBDIRS += test/toolbox
+    SUBDIRS += \
+        test/toolbox \
+        test/edleak
 endif
 
 

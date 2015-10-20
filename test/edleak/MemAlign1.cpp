@@ -46,7 +46,7 @@ TEST(MemAlignTestGroup, Build)
    MemAlignProbe  Probe;
    MemAlignProbe  *p_Probe;
 
-   p_Probe = new(std::nothrow) MemAlignProbe();
+   p_Probe = new MemAlignProbe();
 
    CHECK(p_Probe != NULL);
 
