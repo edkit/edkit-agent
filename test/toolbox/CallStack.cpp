@@ -34,7 +34,7 @@
 #include <string.h>
 #include "CallStack.h"
 
-#if 0
+#if 1
 TEST_GROUP(CallStackTestGroup)
 {
 };
@@ -51,39 +51,39 @@ TEST(CallStackTestGroup, Build)
 
 extern "C"
 {
-void TestSuiteCaller(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteCaller(CallStack &Unwinder)
 {
    UnwindCaller(Unwinder);
 }
 
-void TestSuiteCaller1(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteCaller1(CallStack &Unwinder)
 {
    TestSuiteCaller(Unwinder);
 }
 
-void TestSuiteUnwind(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteUnwind(CallStack &Unwinder)
 {
    Unwinder.Unwind();
 }
-void TestSuiteUnwind1(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteUnwind1(CallStack &Unwinder)
 {
    TestSuiteUnwind(Unwinder);
 }
-void TestSuiteUnwind2(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteUnwind2(CallStack &Unwinder)
 {
    TestSuiteUnwind1(Unwinder);
 }
-void TestSuiteUnwind3(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteUnwind3(CallStack &Unwinder)
 {
    TestSuiteUnwind2(Unwinder);
 }
-void TestSuiteUnwind4(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteUnwind4(CallStack &Unwinder)
 {
    TestSuiteUnwind3(Unwinder);
 }
 }
 
-void TestSuiteUnwind5(CallStack &Unwinder)
+void __attribute__((noinline)) TestSuiteUnwind5(CallStack &Unwinder)
 {
    TestSuiteUnwind4(Unwinder);
 }

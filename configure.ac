@@ -49,15 +49,20 @@ AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 
+CXXFLAGS="$CXXFLAGS -fno-optimize-sibling-calls -fno-omit-frame-pointer"
+
 AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile test/toolbox/Makefile test/edleak/Makefile])
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
-AC_OUTPUT
 
+AC_OUTPUT
 echo "
 edkit agents ($PACKAGE_NAME) version $PACKAGE_VERSION
 Prefix.........: $prefix
 Debug Build....: $debug
-C++ Compiler...: $CXX $CXXFLAGS $CPPFLAGS
+C++ Compiler...: $CXX
+CFLAGS.........: $CFLAGS
+CXXFLAGS.......: $CXXFLAGS
+CPPFLAGS.......: $CPPFLAGS
 Linker.........: $LD $LDFLAGS $LIBS"
 
 if test "x${have_cpputest}" = xyes; then

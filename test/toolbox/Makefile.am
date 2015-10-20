@@ -12,8 +12,8 @@ utest_edkit_toolbox_SOURCES = \
     JsonFlattener1.cpp \
     String1.cpp
 
-utest_edkit_toolbox_LDFLAGS = -rdynamic
-utest_edkit_toolbox_CXXFLAGS = -fPIC -fPIE
+utest_edkit_toolbox_LDFLAGS =  -rdynamic 
+utest_edkit_toolbox_CXXFLAGS = -fPIC -fPIE -fno-expensive-optimizations -fno-optimize-sibling-calls -fno-omit-frame-pointer
 
 utest_edkit_toolbox_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox
 utest_edkit_toolbox_CPPFLAGS += $(CPPUTEST_CFLAGS)
