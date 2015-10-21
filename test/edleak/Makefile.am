@@ -24,7 +24,11 @@ utest_edkit_edleak_CPPFLAGS = -D_GNU_SOURCE \
 utest_edkit_edleak_CPPFLAGS += $(CPPUTEST_CFLAGS)
 utest_edkit_edleak_LDADD  = \
     $(CPPUTEST_LIBS) \
-    $(top_srcdir)/src/edleak/libedleak-probe.a \
-    $(top_srcdir)/src/edleak/libedleak-heap.a \
-    $(top_srcdir)/src/toolbox/libedkit-toolbox.a
+    $(top_srcdir)/src/edleak/libedleak-probe.la \
+    $(top_srcdir)/src/edleak/libedleak-heap.la \
+    $(top_srcdir)/src/toolbox/libedkit-toolbox.la
+
+if HAVE_LIBUNWIND
+    utest_edkit_edleak_LDADD += $(LIBUNWIND_LIBS)
+endif
 

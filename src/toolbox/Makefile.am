@@ -1,6 +1,6 @@
-noinst_LIBRARIES = libedkit-toolbox.a
+noinst_LTLIBRARIES = libedkit-toolbox.la
 
-libedkit_toolbox_a_SOURCES = \
+libedkit_toolbox_la_SOURCES = \
     String.cpp \
     DynObject/DynObject.cpp \
     DynObject/JsonFlattener.cpp \
@@ -18,7 +18,7 @@ libedkit_toolbox_a_SOURCES = \
     Os/Thread.cpp \
     Preload/DlList.cpp
 
-libedkit_toolbox_a_CPPFLAGS = -D_GNU_SOURCE -DNO_SSL -I$(top_srcdir)/include/edkit/toolbox $(JSON_CFLAGS)
+libedkit_toolbox_la_CPPFLAGS = -D_GNU_SOURCE -DNO_SSL -I$(top_srcdir)/include/edkit/toolbox $(JSON_CFLAGS)
 
-libedkit_toolbox_a_CFLAGS = -fPIC
-libedkit_toolbox_a_CXXFLAGS = -fPIC
+libedkit_toolbox_la_CFLAGS = -fPIC
+libedkit_toolbox_la_CXXFLAGS = -fPIC

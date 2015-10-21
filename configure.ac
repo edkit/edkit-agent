@@ -37,6 +37,9 @@ PKG_CHECK_MODULES([JSON], [json-c >= 0.9],
   ])
 ])
 
+PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1], 
+      [have_libunwind=yes], [have_libunwind=no])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 AC_TYPE_INT32_T
@@ -53,6 +56,11 @@ CXXFLAGS="$CXXFLAGS -fno-optimize-sibling-calls -fno-omit-frame-pointer"
 
 AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile test/toolbox/Makefile test/edleak/Makefile])
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
+AM_CONDITIONAL([HAVE_LIBUNWIND], [test "x${have_libunwind}" = xyes])
+
+if test "x${have_libunwind}" = xyes; then
+    AC_DEFINE(HAVE_LIBUNWIND,1, [libunwind is available])
+fi
 
 AC_OUTPUT
 echo "
@@ -66,8 +74,14 @@ CPPFLAGS.......: $CPPFLAGS
 Linker.........: $LD $LDFLAGS $LIBS"
 
 if test "x${have_cpputest}" = xyes; then
-   echo "CppUTest.......: $CPPUTEST_LIBS"
+   echo "CppUTest.......: Enabled"
 else
    echo "CppUTest.......: Disabled"
+fi
+
+if test "x${have_libunwind}" = xyes; then
+   echo "libunwind......: Enabled"
+else
+   echo "libunwind......: Disabled"
 fi
 

@@ -29,6 +29,10 @@
 * @date     2011/05/01
 *
 *****************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <dlfcn.h>
 #include <string.h>
 #include <stdio.h>
@@ -36,6 +40,10 @@
 #include <cxxabi.h>
 #include "CallStack.h"
 
+#ifdef HAVE_LIBUNWIND
+#define UNW_LOCAL_ONLY
+#include "libunwind.h"
+#endif
 
 /**
 * @date     2012/03/22
@@ -132,7 +140,38 @@ bool CallStack::CallerIs(const CallStack &Rhs, uint32_t Level) const
 }
 
 
+#ifdef HAVE_LIBUNWIND
+void CallStack::Unwind(void)
+{
+   Depth = CALLSTACK_MAX_DEPTH;
+   SkipFrameCount = 1;
+   StackIndex = 0;
 
+   unw_cursor_t cursor;
+   unw_context_t context;
+
+   // Initialize cursor to current frame for local unwinding.
+   unw_getcontext(&context);
+   unw_init_local(&cursor, &context);
+
+   // Unwind frames one by one, going up the frame stack.
+   while (unw_step(&cursor) > 0) {
+      unw_word_t pc;
+      unw_get_reg(&cursor, UNW_REG_IP, &pc);
+      if (pc == 0) {
+         break;
+      }
+
+      if( (--SkipFrameCount < 0) && (StackIndex < CALLSTACK_MAX_DEPTH) )
+      {
+         Stack[StackIndex] = reinterpret_cast<void *>(pc);
+         StackIndex++;
+      }
+   }
+   return;
+}
+
+#else
 /**
 * @date     2012/03/22
 *
@@ -149,19 +188,6 @@ void CallStack::Unwind(void)
 }
 
 
-/**
-* @date     2013/02/25
-*
-*  Initializes the callstack from another callstack but for only one level (the
-*  caller).
-*
-******************************************************************************/
-void CallStack::SetCaller(const CallStack& Callers)
-{
-   Depth = 1;
-   Stack[0] = Callers.Get()[0];
-   return;
-}
 
 /**
 * @date     2012/03/22
@@ -194,6 +220,21 @@ _Unwind_Reason_Code  CallStack::UnwindCallback(struct _Unwind_Context *Context)
    }
 
    return _URC_NO_REASON;
+}
+#endif
+
+/**
+* @date     2013/02/25
+*
+*  Initializes the callstack from another callstack but for only one level (the
+*  caller).
+*
+******************************************************************************/
+void CallStack::SetCaller(const CallStack& Callers)
+{
+   Depth = 1;
+   Stack[0] = Callers.Get()[0];
+   return;
 }
 
 

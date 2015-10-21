@@ -9,6 +9,7 @@ monitor.
 edKit depends on the following libraries:
     - json-c
     - cpputest (optional)
+    - libunwind (optional)
 
 Run the following command to build the agents:
 

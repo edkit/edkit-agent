@@ -1,11 +1,11 @@
 AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(srcdir)/heap -I$(srcdir)/probe
 AM_CXXFLAGS = -fPIC
 
-noinst_LIBRARIES = \
-    libedleak-controller.a \
-    libedleak-heap.a \
-    libedleak-preload.a \
-    libedleak-probe.a
+noinst_LTLIBRARIES = \
+    libedleak-controller.la \
+    libedleak-heap.la \
+    libedleak-preload.la \
+    libedleak-probe.la
 
 lib_LTLIBRARIES = libedleak.la
 
@@ -14,7 +14,7 @@ glib_sources = \
     probe/glib/SliceAllocProbe.cpp \
     probe/glib/SliceFreeProbe.cpp
 
-libedleak_controller_a_SOURCES = \
+libedleak_controller_la_SOURCES = \
     controller/ContextUtils.cpp \
     controller/Controllers.cpp \
     controller/FileWriter.cpp \
@@ -22,15 +22,15 @@ libedleak_controller_a_SOURCES = \
     controller/WsMethodSlice.cpp \
     controller/WsMethodStackWatchAdd.cpp
 
-libedleak_heap_a_SOURCES = \
+libedleak_heap_la_SOURCES = \
     heap/ContextCallStackList.cpp \
     heap/ExeContext.cpp \
     heap/MemHeap.cpp
 
-libedleak_preload_a_SOURCES = \
+libedleak_preload_la_SOURCES = \
     preload/Posix.cpp
 
-libedleak_probe_a_SOURCES = \
+libedleak_probe_la_SOURCES = \
     probe/MemAlignProbe.cpp \
     probe/MemAllocProbe.cpp \
     probe/MemCallocProbe.cpp \
@@ -41,18 +41,25 @@ libedleak_probe_a_SOURCES = \
 
 libedleak_la_SOURCES =
 
-libedleak_controller_a_CPPFLAGS = $(AM_CPPFLAGS)
-libedleak_controller_a_CPPFLAGS += -DFW_DEFAULT_FILENAME=\"edleak.json\"
-libedleak_controller_a_CPPFLAGS += -DFW_DEFAULT_POLL_PERIOD=30
+libedleak_controller_la_CPPFLAGS = $(AM_CPPFLAGS)
+libedleak_controller_la_CPPFLAGS += -DFW_DEFAULT_FILENAME=\"edleak.json\"
+libedleak_controller_la_CPPFLAGS += -DFW_DEFAULT_POLL_PERIOD=30
 
-libedleak_heap_a_CPPFLAGS = $(AM_CPPFLAGS)
-libedleak_preload_a_CPPFLAGS = $(AM_CPPFLAGS)
-libedleak_probe_a_CPPFLAGS = $(AM_CPPFLAGS)
+libedleak_heap_la_CPPFLAGS = $(AM_CPPFLAGS)
+libedleak_preload_la_CPPFLAGS = $(AM_CPPFLAGS)
+libedleak_probe_la_CPPFLAGS = $(AM_CPPFLAGS)
 
 libedleak_la_CXXFLAGS = -fPIC
 
 libedleak_la_LIBADD = \
-    $(top_builddir)/src/toolbox/libedkit-toolbox.a \
-    $(builddir)/libedleak-controller.a \
+    $(top_builddir)/src/toolbox/libedkit-toolbox.la \
+    $(builddir)/libedleak-controller.la \
+    $(builddir)/libedleak-heap.la \
+    $(builddir)/libedleak-preload.la \
+    $(builddir)/libedleak-probe.la \
     $(JSON_LIBS)
+
+if HAVE_LIBUNWIND
+    libedleak_la_LIBADD += $(LIBUNWIND_LIBS)
+endif
 
