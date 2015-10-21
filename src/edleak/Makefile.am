@@ -52,7 +52,7 @@ libedleak_probe_a_CPPFLAGS = $(AM_CPPFLAGS)
 libedleak_la_CXXFLAGS = -fPIC
 
 libedleak_la_LIBADD = \
-    $(top_srcdir)/src/toolbox/libedkit-toolbox.a \
-    $(srcdir)/libedleak-controller.a \
+    $(top_builddir)/src/toolbox/libedkit-toolbox.a \
+    $(builddir)/libedleak-controller.a \
     $(JSON_LIBS)
 
