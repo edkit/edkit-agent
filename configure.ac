@@ -2,7 +2,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
+AC_PREREQ([2.68])
 AC_INIT([edkit-agent], [0.1.0])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_MACRO_DIR([m4])
@@ -41,7 +41,6 @@ PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1],
       [have_libunwind=yes], [have_libunwind=no])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T
 AC_TYPE_OFF_T
