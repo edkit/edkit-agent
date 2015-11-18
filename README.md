@@ -4,6 +4,10 @@ edKit is a set of tools to help debugging applications in embedded environments.
 This repository contains the agents that must be embedded in the software to
 monitor.
 
+Docmentation about the design and use of edKit is available on my blog:
+
+http://blog.oakbits.com/index.php?tag/edKit
+
 ## Building
 
 edKit depends on the following libraries:
