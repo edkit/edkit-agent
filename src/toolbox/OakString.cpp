@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "String.h"
+#include "OakString.h"
 
 /**
 * @date     2011/12/19

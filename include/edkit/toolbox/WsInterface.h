@@ -32,7 +32,7 @@
 *
 *****************************************************************************/
 #include <stdint.h>
-#include "String.h"
+#include "OakString.h"
 #include "AList.h"
 #include "DynObject.h"
 

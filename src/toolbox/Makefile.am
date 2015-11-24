@@ -1,7 +1,7 @@
 noinst_LTLIBRARIES = libedkit-toolbox.la
 
 libedkit_toolbox_la_SOURCES = \
-    String.cpp \
+    OakString.cpp \
     DynObject/DynObject.cpp \
     DynObject/JsonFlattener.cpp \
     Http/Httpd.cpp \

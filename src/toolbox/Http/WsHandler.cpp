@@ -29,7 +29,7 @@
 * @date     2011/12/21
 *
 *****************************************************************************/
-#include "String.h"
+#include "OakString.h"
 #include "WsHandler.h"
 #include "HttpdRequest.h"
 #include "WsInterface.h"
@@ -184,4 +184,3 @@ int32_t  WsHandler::HandleCors(const HttpdRequest &Request,
    }
    return(-1);
 }
-

@@ -31,7 +31,7 @@
 * @date     2012/01/08
 *
 *****************************************************************************/
-#include "String.h"
+#include "OakString.h"
 #include "AList.h"
 
 class HttpdRequest

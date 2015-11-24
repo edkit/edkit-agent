@@ -31,7 +31,7 @@
 * @date     2011/12/06
 *
 *****************************************************************************/
-#include "String.h"
+#include "OakString.h"
 
 class HttpdRequest;
 class UrlHandler

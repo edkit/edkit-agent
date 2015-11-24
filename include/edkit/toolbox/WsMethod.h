@@ -32,7 +32,7 @@
 *
 *****************************************************************************/
 #include <stdint.h>
-#include "String.h"
+#include "OakString.h"
 #include "DynObject.h"
 
 class WsMethod

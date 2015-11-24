@@ -34,7 +34,7 @@ extern "C"
 #include "json.h"
 }
 #include "JsonFlattener.h"
-#include "String.h"
+#include "OakString.h"
 
 
 /**
@@ -246,4 +246,3 @@ int32_t JsonFlattener::Flatten(const DynObject *p_Object, struct json_object *p_
       return(-1);
    return(0);
 }
-

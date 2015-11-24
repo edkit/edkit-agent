@@ -30,7 +30,7 @@
 *
 *****************************************************************************/
 #include <new>
-#include "String.h"
+#include "OakString.h"
 #include "ListIterator.h"
 #include "DynObject.h"
 
@@ -291,4 +291,3 @@ DEFINE_FINDPTR_FUNCTION(const String, String)
 
 DEFINE_ADDREF_FUNCTION(const DynObject, DynObject)
 DEFINE_FINDPTR_FUNCTION(const DynObject, DynObject)
-

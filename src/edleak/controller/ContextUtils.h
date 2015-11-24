@@ -32,7 +32,7 @@
 * @date     2012/02/16
 *
 *****************************************************************************/
-#include "String.h"
+#include "OakString.h"
 
 extern int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers);
 

@@ -33,7 +33,7 @@
 *
 *****************************************************************************/
 #include "Thread.h"
-#include "String.h"
+#include "OakString.h"
 
 class FileWriter : edkit::Thread
 {

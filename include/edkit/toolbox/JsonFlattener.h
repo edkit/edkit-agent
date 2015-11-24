@@ -31,7 +31,7 @@
 * @date     2012/01/09
 *
 *****************************************************************************/
-#include "String.h"
+#include "OakString.h"
 #include "DynObject.h"
 
 struct json_object;
