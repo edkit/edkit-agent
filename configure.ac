@@ -27,7 +27,7 @@ AC_SEARCH_LIBS([dlopen], [dl dld], [], [
   AC_MSG_ERROR([unable to find the dlopen() function])
 ])
 
-PKG_CHECK_MODULES([CPPUTEST], [cpputest >= 3.6], 
+PKG_CHECK_MODULES([CPPUTEST], [cpputest >= 3.6],
       [have_cpputest=yes], [have_cpputest=no])
 
 PKG_CHECK_MODULES([JSON], [json-c >= 0.9],
@@ -37,7 +37,7 @@ PKG_CHECK_MODULES([JSON], [json-c >= 0.9],
   ])
 ])
 
-PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1], 
+PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1],
       [have_libunwind=yes], [have_libunwind=no])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -53,7 +53,7 @@ AC_TYPE_UINT8_T
 
 CXXFLAGS="$CXXFLAGS -fno-optimize-sibling-calls -fno-omit-frame-pointer"
 
-AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile test/toolbox/Makefile test/edleak/Makefile])
+AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile tools/leaker/Makefile test/toolbox/Makefile test/edleak/Makefile])
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
 AM_CONDITIONAL([HAVE_LIBUNWIND], [test "x${have_libunwind}" = xyes])
 
@@ -83,4 +83,3 @@ if test "x${have_libunwind}" = xyes; then
 else
    echo "libunwind......: Disabled"
 fi
-
