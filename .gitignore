@@ -2,10 +2,11 @@
 *.so
 *.swp
 *.pyc
-*.in
 m4
 .deps
 Makefile
 *.lo
 *.dirstamp
 .libs
+Makefile.in
+config.*
