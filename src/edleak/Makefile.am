@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(srcdir)/heap -I$(srcdir)/probe
+AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox -I$(srcdir)/heap -I$(srcdir)/probe
 AM_CXXFLAGS = -fPIC
 
 noinst_LTLIBRARIES = \
@@ -62,4 +62,3 @@ libedleak_la_LIBADD = \
 if HAVE_LIBUNWIND
     libedleak_la_LIBADD += $(LIBUNWIND_LIBS)
 endif
-

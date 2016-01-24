@@ -53,13 +53,18 @@ AC_TYPE_UINT8_T
 
 CXXFLAGS="$CXXFLAGS -fno-optimize-sibling-calls -fno-omit-frame-pointer"
 
-AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile tools/leaker/Makefile test/toolbox/Makefile test/edleak/Makefile])
+AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile tools/leaker/Makefile test/toolbox/Makefile test/edleak/Makefile include/edkit/toolbox/rtsym.h])
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
 AM_CONDITIONAL([HAVE_LIBUNWIND], [test "x${have_libunwind}" = xyes])
 
 if test "x${have_libunwind}" = xyes; then
     AC_DEFINE(HAVE_LIBUNWIND,1, [libunwind is available])
 fi
+
+MANGLE_SYMBOL([new], [void* operator new(std::size_t)], [MNGL_SYM_NEW])
+MANGLE_SYMBOL([new], [void* operator new(std::size_t, const std::nothrow_t& tag)], [MNGL_SYM_NEW_NOTHROW])
+MANGLE_SYMBOL([new], [void operator delete(void*)], [MNGL_SYM_DELETE])
+MANGLE_SYMBOL([new], [void operator delete(void*, const std::nothrow_t& tag)], [MNGL_SYM_DELETE_NOTHROW])
 
 AC_OUTPUT
 echo "

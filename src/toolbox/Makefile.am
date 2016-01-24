@@ -18,7 +18,7 @@ libedkit_toolbox_la_SOURCES = \
     Os/Thread.cpp \
     Preload/DlList.cpp
 
-libedkit_toolbox_la_CPPFLAGS = -D_GNU_SOURCE -DNO_SSL -I$(top_srcdir)/include/edkit/toolbox $(JSON_CFLAGS)
+libedkit_toolbox_la_CPPFLAGS = -D_GNU_SOURCE -DNO_SSL -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox $(JSON_CFLAGS)
 
 libedkit_toolbox_la_CFLAGS = -fPIC
 libedkit_toolbox_la_CXXFLAGS = -fPIC

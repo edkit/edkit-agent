@@ -6,7 +6,7 @@
 *                      ___       _   _    _ _
 *                     / _ \ __ _| |_| |__(_) |_ ___
 *                    | (_) / _` | / / '_ \ |  _(_-<
-*                     \___/\__,_|_\_\_.__/_|\__/__/      
+*                     \___/\__,_|_\_\_.__/_|\__/__/
 *                          Copyright (c) 2011
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,7 +30,7 @@
 /**
 * @author   R. Picard
 * @date     2011/05/01
-* 
+*
 *****************************************************************************/
 #include <stdlib.h>
 
@@ -50,14 +50,10 @@ extern void* rtsym_resolve(const char *sz_symbol);
 }
 #endif
 
-#if __GXX_ABI_VERSION == 1002
-#define CXX_SYM_NEW              _Znwj
-#define CXX_SYM_NEW_NOTHROW      _ZnwjRKSt9nothrow_t
-#define CXX_SYM_DELETE_NOTHROW   _ZdlPvRKSt9nothrow_t
-#define CXX_SYM_DELETE           _ZdlPv
-#else
-#error Unsupported ABI
-#endif
+#define CXX_SYM_NEW              @MNGL_SYM_NEW@
+#define CXX_SYM_NEW_NOTHROW      @MNGL_SYM_NEW_NOTHROW@
+#define CXX_SYM_DELETE_NOTHROW   @MNGL_SYM_DELETE_NOTHROW@
+#define CXX_SYM_DELETE           @MNGL_SYM_DELETE@
 
 #define SYM_STRING(S) #S
 #define M2STR(S) SYM_STRING(S)
