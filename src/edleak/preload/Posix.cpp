@@ -29,6 +29,7 @@
 * @date     2011/05/01
 *
 *****************************************************************************/
+#include <new>
 #include "MemAllocProbe.h"
 #include "MemAlignProbe.h"
 #include "MemCallocProbe.h"
@@ -37,17 +38,8 @@
 #include "ContextCallStackList.h"
 
 extern "C" {
-void *malloc (size_t i_Size) throw();
-void *memalign(size_t i_Boundary, size_t i_Size) throw();
-void *calloc(size_t i_MembCount, size_t i_Size) throw();
-void *realloc(void *Ptr, size_t i_Size) throw();
-void free (void *Ptr) throw();
-void cfree (void *Ptr) throw();
-
-void *CXX_SYM_NEW(size_t i_Size);
-void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw();
-void CXX_SYM_DELETE_NOTHROW(void *Ptr) throw();
-void CXX_SYM_DELETE(void *Ptr);
+#include <stdlib.h>
+#include <malloc.h>
 }
 
 enum PreloadState
@@ -150,21 +142,21 @@ static enum PreloadState Preload_Init(void)
 
       MallocProbe.InitCheck();
       MemAlignProbe.InitCheck();
-      NewProbe.InitCheck(M2STR(CXX_SYM_NEW));
-      NewNoThrowProbe.InitCheck(M2STR(CXX_SYM_NEW_NOTHROW));
+      NewProbe.InitCheck(CXX_SYM_NEW);
+      NewNoThrowProbe.InitCheck(CXX_SYM_NEW_NOTHROW);
       CallocProbe.InitCheck();
       ReallocProbe.InitCheck();
       FreeProbe.InitCheck();
       CFreeProbe.InitCheck("cfree");
-      DeleteProbe.InitCheck(M2STR(CXX_SYM_DELETE));
-      DeleteNoThrowProbe.InitCheck(M2STR(CXX_SYM_DELETE_NOTHROW));
+      DeleteProbe.InitCheck(CXX_SYM_DELETE);
+      DeleteNoThrowProbe.InitCheck(CXX_SYM_DELETE_NOTHROW);
       State = STATE_STARTED;
    }
 
    return State;
 }
 
-void *malloc (size_t i_Size) throw()
+void *malloc(size_t i_Size)
 {
    void  *Data = NULL;
 
@@ -190,7 +182,7 @@ void *malloc (size_t i_Size) throw()
    return(Data);
 }
 
-void *memalign(size_t i_Boundary, size_t i_Size) throw()
+void *memalign(size_t i_Boundary, size_t i_Size)
 {
    void  *Data = NULL;
 
@@ -217,8 +209,7 @@ void *memalign(size_t i_Boundary, size_t i_Size) throw()
 }
 
 
-
-void *calloc(size_t i_MembCount, size_t i_Size) throw()
+void *calloc(size_t i_MembCount, size_t i_Size)
 {
    void  *Data = NULL;
 
@@ -245,7 +236,7 @@ void *calloc(size_t i_MembCount, size_t i_Size) throw()
 }
 
 
-void *realloc(void *Ptr, size_t i_Size) throw()
+void *realloc(void *Ptr, size_t i_Size)
 {
    void              *Data = NULL;
 
@@ -271,7 +262,7 @@ void *realloc(void *Ptr, size_t i_Size) throw()
 }
 
 
-void free (void *Ptr) throw()
+void free(void *Ptr)
 {
    if(Preload_Init() == STATE_STARTED)
    {
@@ -284,7 +275,8 @@ void free (void *Ptr) throw()
    }
 }
 
-void cfree (void *Ptr) throw()
+
+void cfree(void *Ptr)
 {
    if(Preload_Init() == STATE_STARTED)
    {
@@ -298,8 +290,7 @@ void cfree (void *Ptr) throw()
 }
 
 
-/* new */
-void *CXX_SYM_NEW(size_t i_Size)
+void* operator new(std::size_t i_Size)
 {
    void  *Data = NULL;
 
@@ -308,7 +299,7 @@ void *CXX_SYM_NEW(size_t i_Size)
       MemAllocProbe  &Probe = Preload_GetNewProbe();
       ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
       if(CallStackList == NULL)
-         return(NULL);
+         throw std::bad_alloc();
 
       CallStack Callers;
       UnwindCaller(Callers);
@@ -319,15 +310,14 @@ void *CXX_SYM_NEW(size_t i_Size)
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size, M2STR(CXX_SYM_NEW));
+      Data = MemAllocProbe::PassThrough(i_Size, CXX_SYM_NEW);
    }
 
    return(Data);
 }
 
 
-/* new (std::nothrow) */
-void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw()
+void* operator new(std::size_t i_Size, const std::nothrow_t&) throw()
 {
    void  *Data = NULL;
 
@@ -347,15 +337,14 @@ void *CXX_SYM_NEW_NOTHROW(size_t i_Size)  throw()
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size, M2STR(CXX_SYM_NEW_NOTHROW));
+      Data = MemAllocProbe::PassThrough(i_Size, CXX_SYM_NEW_NOTHROW);
    }
 
    return(Data);
 }
 
 
-/* delete (std::nothrow) */
-void CXX_SYM_DELETE_NOTHROW(void *Ptr) throw()
+void operator delete(void* Ptr, const std::nothrow_t&)
 {
    if(Preload_Init() == STATE_STARTED)
    {
@@ -364,13 +353,12 @@ void CXX_SYM_DELETE_NOTHROW(void *Ptr) throw()
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr, M2STR(CXX_SYM_DELETE_NOTHROW));
+      MemFreeProbe::PassThrough(Ptr, CXX_SYM_DELETE_NOTHROW);
    }
 }
 
 
-/* delete */
-void CXX_SYM_DELETE(void *Ptr)
+void operator delete(void* Ptr)
 {
    if(Preload_Init() == STATE_STARTED)
    {
@@ -379,7 +367,6 @@ void CXX_SYM_DELETE(void *Ptr)
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr, M2STR(CXX_SYM_DELETE));
+      MemFreeProbe::PassThrough(Ptr, CXX_SYM_DELETE);
    }
 }
-

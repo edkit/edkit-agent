@@ -50,12 +50,9 @@ extern void* rtsym_resolve(const char *sz_symbol);
 }
 #endif
 
-#define CXX_SYM_NEW              @MNGL_SYM_NEW@
-#define CXX_SYM_NEW_NOTHROW      @MNGL_SYM_NEW_NOTHROW@
-#define CXX_SYM_DELETE_NOTHROW   @MNGL_SYM_DELETE_NOTHROW@
-#define CXX_SYM_DELETE           @MNGL_SYM_DELETE@
-
-#define SYM_STRING(S) #S
-#define M2STR(S) SYM_STRING(S)
+#define CXX_SYM_NEW              "@MNGL_SYM_NEW@"
+#define CXX_SYM_NEW_NOTHROW      "@MNGL_SYM_NEW_NOTHROW@"
+#define CXX_SYM_DELETE_NOTHROW   "@MNGL_SYM_DELETE_NOTHROW@"
+#define CXX_SYM_DELETE           "@MNGL_SYM_DELETE@"
 
 #endif /* RTSYM_H */

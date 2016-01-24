@@ -29,6 +29,7 @@
 * @date     2013/02/31
 *
 *****************************************************************************/
+#include <new>
 #include <unistd.h>
 #include <stdlib.h>
 #ifdef LEAK_GLIB
