@@ -58,6 +58,7 @@ class CallStack
                uint32_t             GetDepth(void) const { return(Depth);};
                void                 SetTo(const CallStack &Target, uint32_t Level = CALLSTACK_MAX_DEPTH);
                const char*          GetName(uint32_t Level);
+               const char*          GetSoName(uint32_t Level);
 
    private:
       static   _Unwind_Reason_Code  UnwindCallback(struct _Unwind_Context *Context, void *Closure);
@@ -66,6 +67,7 @@ class CallStack
 
                const void*          Stack[CALLSTACK_MAX_DEPTH];
                char                 StackNames[CALLSTACK_MAX_DEPTH][ALLOCER_NAME_SIZE];
+               char                 SoNames[CALLSTACK_MAX_DEPTH][ALLOCER_NAME_SIZE];
                uint32_t             Depth;
                int32_t              SkipFrameCount;
                uint32_t             StackIndex;

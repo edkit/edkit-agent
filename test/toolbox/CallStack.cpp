@@ -34,7 +34,6 @@
 #include <string.h>
 #include "CallStack.h"
 
-#if 1
 TEST_GROUP(CallStackTestGroup)
 {
 };
@@ -208,4 +207,11 @@ TEST(CallStackTestGroup, GetNameCaller)
       POINTERS_EQUAL(NULL, TestCallStack.GetName(Level));
    }
 };
-#endif
+
+TEST(CallStackTestGroup, GetSoName)
+{
+   CallStack   TestCallStack;
+
+   TestSuiteUnwind5(TestCallStack);
+   STRCMP_EQUAL("utest_edkit_toolbox", strstr(TestCallStack.GetSoName(0), "utest_edkit_toolbox"));
+};

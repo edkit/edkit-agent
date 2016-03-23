@@ -86,7 +86,24 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
             *p_JsonAllocers << "\"" <<  CallerName << "\"";
          }
       }
+      *p_JsonAllocers << "], ";
+
+      *p_JsonAllocers << "\"soname\": [";
+      const char *SoName;
+      for(i_AllocerIndex=0; i_AllocerIndex<Depth; i_AllocerIndex++)
+      {
+         SoName = Stack.GetSoName(i_AllocerIndex);
+         if(SoName != NULL)
+         {
+            if(i_AllocerIndex>0)
+            {
+               *p_JsonAllocers << ",";
+            }
+            *p_JsonAllocers << "\"" <<  SoName << "\"";
+         }
+      }
       *p_JsonAllocers << "]}";
+
 
       *p_JsonSlice << "{ \"mem\":" << p_CurContext->GetMemory() << ",";
       *p_JsonSlice << "\"alc\":" << i_Index << "}";

@@ -284,12 +284,21 @@ void CallStack::ResolveNames(void)
                snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
                   Stack[Level], s_info.dli_sname);
             }
+            if(s_info.dli_fname != NULL)
+            {
+               strncpy(SoNames[Level], s_info.dli_fname, ALLOCER_NAME_SIZE);
+            }
+            else
+            {
+               strncpy(SoNames[Level], "", ALLOCER_NAME_SIZE);
+            }
          }
          else
          {
             snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p", Stack[Level]);
          }
          StackNames[Level][ALLOCER_NAME_SIZE-1] = '\0';
+         SoNames[Level][ALLOCER_NAME_SIZE-1] = '\0';
       }
    }
    NamesAreResolved = true;
@@ -313,3 +322,16 @@ const char* CallStack::GetName(uint32_t Level)
    return(StackNames[Level]);
 }
 
+/**
+*  Returns the shared object name of the callstack at the specified level.
+*/
+const char* CallStack::GetSoName(uint32_t Level)
+{
+   if(Level >= Depth)
+      return(NULL);
+
+   ResolveNames();
+   if(SoNames[Level][0] == '\0')
+      return(NULL);
+   return(SoNames[Level]);
+}
