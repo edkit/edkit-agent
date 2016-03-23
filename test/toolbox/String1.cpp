@@ -31,7 +31,7 @@
 *****************************************************************************/
 #include "CppUTest/TestHarness.h"
 #include <string.h>
-#include "String.h"
+#include "OakString.h"
 
 #define STRING1 "A test string"
 #define STRING2 "A second test string"
