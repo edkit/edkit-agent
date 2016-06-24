@@ -56,6 +56,7 @@ CallStack::CallStack(void):
 {
    memset(Stack, 0, CALLSTACK_MAX_DEPTH*sizeof(void*));
    memset(StackNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
+   memset(SoNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
    return;
 }
 
@@ -75,6 +76,7 @@ CallStack::CallStack(const CallStack& Callers, uint32_t Level):
 {
    memset(Stack, 0, CALLSTACK_MAX_DEPTH*sizeof(void*));
    memset(StackNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
+   memset(SoNames, 0, CALLSTACK_MAX_DEPTH*ALLOCER_NAME_SIZE*sizeof(char));
    if( (Level > 0) &&(Level < Depth) )
       Depth = Level;
    SetTo(Callers);
