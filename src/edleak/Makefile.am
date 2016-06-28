@@ -50,6 +50,7 @@ libedleak_preload_la_CPPFLAGS = $(AM_CPPFLAGS)
 libedleak_probe_la_CPPFLAGS = $(AM_CPPFLAGS)
 
 libedleak_la_CXXFLAGS = -fPIC
+libedleak_la_LDFLAGS = -lstdc++
 
 libedleak_la_LIBADD = \
     $(top_builddir)/src/toolbox/libedkit-toolbox.la \
