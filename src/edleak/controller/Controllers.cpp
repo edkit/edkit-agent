@@ -31,6 +31,10 @@
 *****************************************************************************/
 #include <new>
 #include <stdlib.h>
+
+#include <unistd.h>
+#include <pthread.h>
+
 #include "Controllers.h"
 #include "FileWriter.h"
 #include "WebService.h"
@@ -38,21 +42,53 @@
 static   FileWriter  *p_FileWriter = NULL;
 static   WebService  *p_WebService = NULL;
 
+static void AtforkPrepare(void);
+static void AtforkChild(void);
+static void ControllersInstantiate(void);
+
+void AtforkPrepare(void)
+{
+    ControllersEnd();
+    /** @bug
+        There are still some threads doing allocations after the webservice
+        controller exits, which causes a deadlock.
+        We wait a little bit for now until a fix is found.
+    */
+    sleep(1);
+}
+
+void AtforkChild(void)
+{
+   ControllersInstantiate();
+}
+
 void ControllersInit(void)
+{
+    ControllersInstantiate();
+    pthread_atfork(AtforkPrepare, NULL, AtforkChild);
+    atexit(ControllersEnd);
+}
+
+void ControllersInstantiate(void)
 {
    if(p_FileWriter == NULL)
       p_FileWriter = new(std::nothrow) FileWriter();
 
    if(p_WebService == NULL)
       p_WebService = new(std::nothrow) WebService();
-
-   atexit(ControllersEnd);
 }
-
 
 void ControllersEnd(void)
 {
    if(p_FileWriter != NULL)
-      delete p_FileWriter;
+   {
+       delete p_FileWriter;
+       p_FileWriter = NULL;
+   }
 
+  if(p_WebService != NULL)
+  {
+      delete p_WebService;
+      p_WebService = NULL;
+  }
 }

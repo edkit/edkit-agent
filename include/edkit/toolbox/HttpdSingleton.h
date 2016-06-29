@@ -38,11 +38,13 @@ class HttpdSingleton : public Httpd
    public:
 #define ENV_PORT "oaktools_httpd_port"
 
-      static   HttpdSingleton*      Instantiate(void);
+      static   HttpdSingleton*      Instantiate(bool Init = true);
       virtual                       ~HttpdSingleton(void);
+
 
    private:
                                     HttpdSingleton(void);
+      virtual  int32_t              Start();
 };
 
 #endif /* HTTPDSINGLETON_H */

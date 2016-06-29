@@ -43,8 +43,8 @@ class Httpd
                                     Httpd(void);
       virtual                       ~Httpd(void);
 
-               int32_t              Start(uint16_t TcpPort = 80);
-               int32_t              Stop(void);
+      virtual  int32_t              Start(uint16_t TcpPort = 80);
+      virtual  int32_t              Stop(void);
 
                int32_t              AddUrlHandler(UrlHandler *Handler);
                int32_t              DelUrlHandler(UrlHandler *Handler);

@@ -34,6 +34,9 @@
 #include <errno.h>
 #include "HttpdSingleton.h"
 
+#include <sys/types.h>
+#include <unistd.h>
+
 
 /**
 * @date     2011/12/12
@@ -63,41 +66,59 @@ HttpdSingleton::~HttpdSingleton(void)
 /**
 * @date     2011/12/12
 *
-*  Destructor.
+*  Singleton instantiation.
 *
+* @param Init (in): Tell whether the singleton must be instantiated or deleted.
+* @return pointer to server singleton if instantiated, NULL otherwise.
 ******************************************************************************/
-HttpdSingleton* HttpdSingleton::Instantiate(void)
+HttpdSingleton* HttpdSingleton::Instantiate(bool Init)
 {
    static HttpdSingleton *Server = NULL;
 
-   if(Server == NULL)
+   if(Init == true)
    {
-      Server  = new(std::nothrow) HttpdSingleton();
-      if(Server != NULL)
+      if(Server == NULL)
       {
-         int32_t i_Ret = 0;
-         uint16_t Port = 8080;
-         char *sz_Port = getenv(ENV_PORT);
-         if(sz_Port != NULL)
+         Server  = new(std::nothrow) HttpdSingleton();
+         if(Server != NULL)
          {
-            errno = 0;
-            char *EndPtr;
-            Port = strtol(sz_Port, &EndPtr, 10);
-            if( (errno != 0) || (*EndPtr != '\0') )
-               i_Ret = -1;
-         }
-         if(i_Ret == 0)
-         {
-            i_Ret = Server->Start(Port);
-         }
-         if(i_Ret != 0)
-         {
-            delete Server;
-            Server = NULL;
+            int32_t i_Ret = Server->Start();
+            if(i_Ret != 0)
+            {
+               delete Server;
+               Server = NULL;
+            }
          }
       }
+   }
+   else
+   {
+       if(Server != NULL)
+       {
+          delete Server;
+          Server = NULL;
+       }
    }
    return(Server);
 }
 
 
+int32_t HttpdSingleton::Start()
+{
+    int32_t i_Ret = 0;
+    uint16_t Port = 8080;
+    char *sz_Port = getenv(ENV_PORT);
+    if(sz_Port != NULL)
+    {
+       errno = 0;
+       char *EndPtr;
+       Port = strtol(sz_Port, &EndPtr, 10);
+       if( (errno != 0) || (*EndPtr != '\0') )
+          i_Ret = -1;
+    }
+    if(i_Ret == 0)
+    {
+       i_Ret = Httpd::Start(Port);
+    }
+    return i_Ret;
+}

@@ -36,7 +36,7 @@
 class WsHandlerSingleton : public WsHandler
 {
    public:
-      static   WsHandlerSingleton*  Instantiate(void);
+      static   WsHandlerSingleton*  Instantiate(bool Init = true);
       virtual                       ~WsHandlerSingleton(void);
 
    private:

@@ -207,4 +207,3 @@ void FileWriter::Sleep(void)
    }
    return;
 }
-

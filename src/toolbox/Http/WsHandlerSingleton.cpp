@@ -62,36 +62,48 @@ WsHandlerSingleton::~WsHandlerSingleton(void)
 /**
 * @date     2011/12/12
 *
-*  Destructor.
+*  Singleton instantiation.
 *
+* @param Init (in): Tell whether the singleton must be instantiated or deleted.
+* @return pointer to handler singleton if instantiated, NULL otherwise.
 ******************************************************************************/
-WsHandlerSingleton* WsHandlerSingleton::Instantiate(void)
+WsHandlerSingleton* WsHandlerSingleton::Instantiate(bool Init)
 {
    static WsHandlerSingleton *Handler = NULL;
 
-   if(Handler == NULL)
+   if(Init == true)
    {
-      HttpdSingleton *Server = HttpdSingleton::Instantiate();
-      if(Server != NULL)
+      if(Handler == NULL)
       {
-         Handler  = new(std::nothrow) WsHandlerSingleton();
-         if(Handler != NULL)
+         HttpdSingleton *Server = HttpdSingleton::Instantiate();
+         if(Server != NULL)
          {
-            int32_t i_Ret;
-            i_Ret = Server->AddUrlHandler(Handler);
-            if(i_Ret != 0)
+            Handler  = new(std::nothrow) WsHandlerSingleton();
+            if(Handler != NULL)
             {
-               delete Handler;
-               Handler = NULL;
+               int32_t i_Ret;
+               i_Ret = Server->AddUrlHandler(Handler);
+               if(i_Ret != 0)
+               {
+                  delete Handler;
+                  Handler = NULL;
+               }
             }
-         }
-         if(Handler == NULL)
-         {
-            delete Server;
+            if(Handler == NULL)
+            {
+               delete Server;
+            }
          }
       }
    }
+   else
+   {
+       HttpdSingleton::Instantiate(false);
+       if(Handler != NULL)
+       {
+           delete Handler;
+           Handler = NULL;
+       }
+   }
    return(Handler);
 }
-
-

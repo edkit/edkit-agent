@@ -80,9 +80,8 @@ WebService::WebService(void):
 ******************************************************************************/
 WebService::~WebService(void)
 {
+   WsHandlerSingleton::Instantiate(false);
    if(Interface != NULL)
       delete Interface;
    return;
 }
-
-
