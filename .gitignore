@@ -6,6 +6,7 @@ m4
 .deps
 Makefile
 *.lo
+*.la
 *.dirstamp
 .libs
 Makefile.in
