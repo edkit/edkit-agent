@@ -10,7 +10,8 @@ utest_edkit_toolbox_SOURCES = \
     DynObject1.cpp \
     HttpdRequest1.cpp \
     JsonFlattener1.cpp \
-    String1.cpp
+    String1.cpp \
+    HttpdSingleton.cpp
 
 utest_edkit_toolbox_LDFLAGS =  -Wl,--export-dynamic
 utest_edkit_toolbox_CXXFLAGS = -fPIC -fPIE
@@ -23,4 +24,3 @@ utest_edkit_toolbox_LDADD += $(JSON_LIBS)
 if HAVE_LIBUNWIND
     utest_edkit_toolbox_LDADD += $(LIBUNWIND_LIBS)
 endif
-

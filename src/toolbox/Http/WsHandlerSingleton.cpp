@@ -91,7 +91,7 @@ WsHandlerSingleton* WsHandlerSingleton::Instantiate(bool Init)
             }
             if(Handler == NULL)
             {
-               delete Server;
+               HttpdSingleton::Instantiate(false);
             }
          }
       }
