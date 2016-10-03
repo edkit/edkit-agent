@@ -1,4 +1,5 @@
 AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox -I$(srcdir)/heap -I$(srcdir)/probe
+AM_CPPFLAGS += $(LIBGLIB_CFLAGS)
 AM_CXXFLAGS = -fPIC
 
 noinst_LTLIBRARIES = \
@@ -8,11 +9,6 @@ noinst_LTLIBRARIES = \
     libedleak-probe.la
 
 lib_LTLIBRARIES = libedleak.la
-
-glib_sources = \
-    preload/Glib.cpp \
-    probe/glib/SliceAllocProbe.cpp \
-    probe/glib/SliceFreeProbe.cpp
 
 libedleak_controller_la_SOURCES = \
     controller/ContextUtils.cpp \
@@ -30,6 +26,10 @@ libedleak_heap_la_SOURCES = \
 libedleak_preload_la_SOURCES = \
     preload/Posix.cpp
 
+if HAVE_LIBGLIB
+    libedleak_preload_la_SOURCES += preload/Glib.cpp
+endif
+
 libedleak_probe_la_SOURCES = \
     probe/MemAlignProbe.cpp \
     probe/MemAllocProbe.cpp \
@@ -38,6 +38,13 @@ libedleak_probe_la_SOURCES = \
     probe/MemProbe.cpp \
     probe/MemReallocProbe.cpp \
     probe/Probe.cpp
+
+if HAVE_LIBGLIB
+    libedleak_probe_la_SOURCES += \
+        probe/glib/SliceAllocProbe.cpp \
+        probe/glib/SliceFreeProbe.cpp
+endif
+
 
 libedleak_la_SOURCES =
 
@@ -59,6 +66,10 @@ libedleak_la_LIBADD = \
     $(builddir)/libedleak-preload.la \
     $(builddir)/libedleak-probe.la \
     $(JSON_LIBS)
+
+if HAVE_LIBGLIB
+    libedleak_la_LIBADD += $(LIBGLIB_LIBS)
+endif
 
 if HAVE_LIBUNWIND
     libedleak_la_LIBADD += $(LIBUNWIND_LIBS)

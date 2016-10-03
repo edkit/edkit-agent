@@ -14,6 +14,7 @@ LT_INIT
 # Checks for programs.
 AC_PROG_CXX
 AC_PROG_CC
+PKG_PROG_PKG_CONFIG
 
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h inttypes.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h])
@@ -40,6 +41,9 @@ PKG_CHECK_MODULES([JSON], [json-c >= 0.9],
 PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1],
       [have_libunwind=yes], [have_libunwind=no])
 
+PKG_CHECK_MODULES([LIBGLIB], [glib-2.0 >= 2.32],
+    [have_libglib=yes], [have_libglib=no])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T
@@ -56,6 +60,7 @@ CXXFLAGS="$CXXFLAGS -fno-optimize-sibling-calls -fno-omit-frame-pointer"
 AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile tools/leaker/Makefile test/toolbox/Makefile test/edleak/Makefile include/edkit/toolbox/rtsym.h])
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
 AM_CONDITIONAL([HAVE_LIBUNWIND], [test "x${have_libunwind}" = xyes])
+AM_CONDITIONAL([HAVE_LIBGLIB], [test "x${have_libglib}" = xyes])
 
 if test "x${have_libunwind}" = xyes; then
     AC_DEFINE(HAVE_LIBUNWIND,1, [libunwind is available])
@@ -76,6 +81,12 @@ CFLAGS.........: $CFLAGS
 CXXFLAGS.......: $CXXFLAGS
 CPPFLAGS.......: $CPPFLAGS
 Linker.........: $LD $LDFLAGS $LIBS"
+
+if test "x${have_libglib}" = xyes; then
+   echo "glib support...: Enabled"
+else
+   echo "glib support...: Disabled"
+fi
 
 if test "x${have_cpputest}" = xyes; then
    echo "CppUTest.......: Enabled"
