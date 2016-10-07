@@ -29,24 +29,27 @@
 * @date     2013/02/31
 *
 *****************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 #include <new>
 #include <unistd.h>
 #include <stdlib.h>
-#ifdef LEAK_GLIB
+#ifdef HAVE_LIBGLIB
 #include <glib.h>
 #endif
 
 #define MAX_DEPTH 8
 #define TEST_COUNT_BASE 8
 
-#ifdef LEAK_GLIB
+#ifdef HAVE_LIBGLIB
 #define TEST_COUNT (TEST_COUNT_BASE+3)
 #else
 #define TEST_COUNT TEST_COUNT_BASE
 #endif
 static void *Trash = NULL;
 static void *TrashNew = NULL;
-#ifdef LEAK_GLIB
+#ifdef HAVE_LIBGLIB
 static gpointer GLibTrash = NULL;
 #endif
 
@@ -85,7 +88,7 @@ void Leaker(unsigned int Depth)
          case 7:
             TrashNew = new int[50];
             break;
-#ifdef LEAK_GLIB
+#ifdef HAVE_LIBGLIB
          case 8:
             GLibTrash = g_slice_alloc(150);
             break;

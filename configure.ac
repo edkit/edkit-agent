@@ -66,6 +66,11 @@ if test "x${have_libunwind}" = xyes; then
     AC_DEFINE(HAVE_LIBUNWIND,1, [libunwind is available])
 fi
 
+if test "x${have_libglib}" = xyes; then
+    AC_DEFINE(HAVE_LIBGLIB,1, [libglib is available])
+fi
+
+
 MANGLE_SYMBOL([new], [void* operator new(std::size_t)], [MNGL_SYM_NEW])
 MANGLE_SYMBOL([new], [void* operator new(std::size_t, const std::nothrow_t& tag)], [MNGL_SYM_NEW_NOTHROW])
 MANGLE_SYMBOL([new], [void operator delete(void*)], [MNGL_SYM_DELETE])
