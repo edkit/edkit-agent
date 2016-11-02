@@ -1,5 +1,5 @@
-AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox -I$(srcdir)/heap -I$(srcdir)/probe
-AM_CPPFLAGS += $(LIBGLIB_CFLAGS)
+AM_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox -I$(srcdir) -I$(srcdir)/heap -I$(srcdir)/probe
+AM_CPPFLAGS += $(LIBGLIB_CFLAGS) $(JEMALLOC_CFLAGS)
 AM_CXXFLAGS = -fPIC
 
 noinst_LTLIBRARIES = \
@@ -46,7 +46,8 @@ if HAVE_LIBGLIB
 endif
 
 
-libedleak_la_SOURCES =
+libedleak_la_SOURCES = \
+    PosixSymbol.cpp
 
 libedleak_controller_la_CPPFLAGS = $(AM_CPPFLAGS)
 libedleak_controller_la_CPPFLAGS += -DFW_DEFAULT_FILENAME=\"edleak.json\"
@@ -56,6 +57,7 @@ libedleak_heap_la_CPPFLAGS = $(AM_CPPFLAGS)
 libedleak_preload_la_CPPFLAGS = $(AM_CPPFLAGS)
 libedleak_probe_la_CPPFLAGS = $(AM_CPPFLAGS)
 
+libedleak_la_CPPFLAGS = $(AM_CPPFLAGS)
 libedleak_la_CXXFLAGS = -fPIC
 libedleak_la_LDFLAGS = -lstdc++
 
