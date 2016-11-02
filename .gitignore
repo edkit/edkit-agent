@@ -11,3 +11,15 @@ Makefile
 .libs
 Makefile.in
 config.*
+configure
+compile
+libtool
+missing
+test-driver
+aclocal.m4
+ar-lib
+depcomp
+install-sh
+ltmain.sh
+stamp-h1
+autom4te.cache
