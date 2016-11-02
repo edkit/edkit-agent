@@ -28,21 +28,35 @@ AC_SEARCH_LIBS([dlopen], [dl dld], [], [
   AC_MSG_ERROR([unable to find the dlopen() function])
 ])
 
-PKG_CHECK_MODULES([CPPUTEST], [cpputest >= 3.6],
+PKG_CHECK_MODULES([cpputest], [cpputest >= 3.6],
       [have_cpputest=yes], [have_cpputest=no])
 
-PKG_CHECK_MODULES([JSON], [json-c >= 0.9],
+PKG_CHECK_MODULES([jsonc], [json-c >= 0.9],
       [have_json=yes], [
    AC_MSG_ERROR([
       You need to install or upgrade json-c library.
   ])
 ])
 
-PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1],
+PKG_CHECK_MODULES([libunwind], [libunwind >= 1.1],
       [have_libunwind=yes], [have_libunwind=no])
 
-PKG_CHECK_MODULES([LIBGLIB], [glib-2.0 >= 2.32],
+PKG_CHECK_MODULES([glib], [glib-2.0 >= 2.32],
     [have_libglib=yes], [have_libglib=no])
+
+AC_ARG_ENABLE([jemalloc],
+    AS_HELP_STRING([--enable-jemalloc], [Enable jemalloc allocator]))
+
+AS_IF([test "x$enable_jemalloc" = "xyes"], [
+    PKG_CHECK_MODULES([jemalloc], [jemalloc >= 4.2],
+        [have_jemalloc=yes], [have_jemalloc=no])
+])
+
+AC_ARG_WITH([jemalloc_prefix],
+  [AS_HELP_STRING([--with-jemalloc-prefix=<prefix>], [Prefix of jemalloc])],
+  [JEMALLOC_PREFIX="$with_jemalloc_prefix"],
+  [JEMALLOC_PREFIX="je_"]
+)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_INT32_T
@@ -68,6 +82,14 @@ fi
 
 if test "x${have_libglib}" = xyes; then
     AC_DEFINE(HAVE_LIBGLIB,1, [libglib is available])
+fi
+
+if test "x${have_jemalloc}" = xyes; then
+    AC_DEFINE(HAVE_JEMALLOC,1, [jemalloc is available])
+
+    if test "x$JEMALLOC_PREFIX" != "x" ; then
+      AC_DEFINE_UNQUOTED([JEMALLOC_PREFIX], ["$JEMALLOC_PREFIX"], [jemalloc prefix defined])
+    fi
 fi
 
 
@@ -103,4 +125,11 @@ if test "x${have_libunwind}" = xyes; then
    echo "libunwind......: Enabled"
 else
    echo "libunwind......: Disabled"
+fi
+
+if test "x${have_jemalloc}" = xyes; then
+   echo "jemalloc.......: Enabled"
+   echo "jemalloc prefix: $JEMALLOC_PREFIX"
+else
+   echo "jemalloc.......: Disabled"
 fi
