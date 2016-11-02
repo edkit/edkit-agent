@@ -1,3 +1,6 @@
+AM_CPPFLAGS = -D_GNU_SOURCE -DNO_SSL -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox
+AM_CPPFLAGS += $(JSONC_CFLAGS)
+
 noinst_LTLIBRARIES = libedkit-toolbox.la
 
 libedkit_toolbox_la_SOURCES = \
@@ -18,7 +21,7 @@ libedkit_toolbox_la_SOURCES = \
     Os/Thread.cpp \
     Preload/DlList.cpp
 
-libedkit_toolbox_la_CPPFLAGS = -D_GNU_SOURCE -DNO_SSL -I$(top_srcdir)/include/edkit/toolbox -I$(top_builddir)/include/edkit/toolbox $(JSON_CFLAGS)
+libedkit_toolbox_la_CPPFLAGS = $(AM_CPPFLAGS)
 
 libedkit_toolbox_la_CFLAGS = -fPIC
 libedkit_toolbox_la_CXXFLAGS = -fPIC
