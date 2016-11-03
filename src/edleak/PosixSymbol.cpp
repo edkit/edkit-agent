@@ -37,6 +37,12 @@
 #endif
 #include "PosixSymbol.h"
 
+#ifdef __GLIBC__
+extern "C" {
+   void *__libc_calloc();
+}
+#endif
+
 #define PREFIX JEMALLOC_PREFIX
 #define PASTER(x,y) x ## y
 #define EVALUATOR(x,y)  PASTER(x,y)
@@ -203,7 +209,7 @@ memalign_t PosixSymbol::memalign()
 #ifdef HAVE_JEMALLOC
         memalignSymbol = JEMALLOC_SYM(memalign);
 #else
-        memalignSymbol = (realloc_t) rtsym_resolve("memalign");
+        memalignSymbol = (memalign_t) rtsym_resolve("memalign");
 #endif
     }
 

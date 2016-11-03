@@ -34,11 +34,6 @@
 #include "ExeContext.h"
 #include "HeapEntry.h"
 
-#ifdef __GLIBC__
-extern "C" {
-   void *__libc_calloc();
-}
-#endif
 
 /**
 * @date     2011/05/03
