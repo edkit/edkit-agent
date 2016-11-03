@@ -41,8 +41,8 @@ PKG_CHECK_MODULES([JSONC], [json-c >= 0.9],
 PKG_CHECK_MODULES([LIBUNWIND], [libunwind >= 1.1],
       [have_libunwind=yes], [have_libunwind=no])
 
-PKG_CHECK_MODULES([LIBGLIB], [glib-2.0 >= 2.32],
-    [have_libglib=yes], [have_libglib=no])
+#PKG_CHECK_MODULES([LIBGLIB], [glib-2.0 >= 2.32],
+#    [have_libglib=yes], [have_libglib=no])
 
 AC_ARG_ENABLE([jemalloc],
     AS_HELP_STRING([--enable-jemalloc], [Enable jemalloc allocator]))
