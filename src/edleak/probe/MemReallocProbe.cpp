@@ -40,9 +40,9 @@
 *  Constructor.
 *
 ******************************************************************************/
-MemReallocProbe::MemReallocProbe(void):
+MemReallocProbe::MemReallocProbe(realloc_t Allocator):
    MemProbe(),
-   AllocFunc(NULL)
+   AllocFunc(Allocator)
 {
    return;
 }
@@ -57,40 +57,6 @@ MemReallocProbe::MemReallocProbe(void):
 MemReallocProbe::~MemReallocProbe()
 {
    return;
-}
-
-
-/**
-* @date     2011/05/03
-*
-*  Probe initialization.
-*
-******************************************************************************/
-void MemReallocProbe::InitCheck(void)
-{
-   if(AllocFunc == NULL)
-      AllocFunc = (realloc_t)rtsym_resolve("realloc");
-   return;
-}
-
-
-/**
-* @date     2012/01/02
-*
-*  Probe Passthrough : The original function is called direclty.
-*
-******************************************************************************/
-void* MemReallocProbe::PassThrough(void *Ptr, size_t i_Size)
-{
-   uint8_t     *Data = NULL;
-   realloc_t   AllocFunc;
-
-   AllocFunc = (realloc_t)rtsym_resolve("realloc");
-   if(AllocFunc != NULL)
-   {
-      Data = (uint8_t*)AllocFunc(Ptr, i_Size);
-   }
-   return(Data);
 }
 
 /**
@@ -153,4 +119,3 @@ void* MemReallocProbe::Realloc(void *Ptr, size_t i_Size, const CallStack& Caller
    }
    return(Data);
 }
-

@@ -39,11 +39,9 @@ class CallStack;
 class MemReallocProbe : MemProbe
 {
    public:
-                        MemReallocProbe(void);
+                        MemReallocProbe(realloc_t Allocator);
       virtual           ~MemReallocProbe(void);
 
-               void     InitCheck(void);
-      static   void*    PassThrough(void *Ptr, size_t i_Size);
                void*    Realloc(void *Ptr, size_t i_Size, const CallStack& Callers);
 
    private:

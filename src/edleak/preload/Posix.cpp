@@ -90,7 +90,7 @@ static MemCallocProbe& Preload_GetCallocProbe(void)
 }
 static MemReallocProbe& Preload_GetReallocProbe(void)
 {
-   static   MemReallocProbe  Probe;
+   static   MemReallocProbe  Probe(PosixSymbol::realloc());
 
    return(Probe);
 }
@@ -135,13 +135,12 @@ static enum PreloadState Preload_Init(void)
       Preload_GetNewProbe();
       Preload_GetNewNoThrowProbe();
       Preload_GetCallocProbe();
-      MemReallocProbe   &ReallocProbe        = Preload_GetReallocProbe();
+      Preload_GetReallocProbe();
       MemFreeProbe      &FreeProbe           = Preload_GetFreeProbe();
       MemFreeProbe      &CFreeProbe          = Preload_GetCFreeProbe();
       MemFreeProbe      &DeleteProbe         = Preload_GetDeleteProbe();
       MemFreeProbe      &DeleteNoThrowProbe  = Preload_GetDeleteNoThrowProbe();
 
-      ReallocProbe.InitCheck();
       FreeProbe.InitCheck();
       CFreeProbe.InitCheck("cfree");
       DeleteProbe.InitCheck(CXX_SYM_DELETE);
@@ -252,7 +251,7 @@ void *realloc(void *Ptr, size_t i_Size)
    }
    else
    {
-      Data = MemReallocProbe::PassThrough(Ptr, i_Size);
+      Data = PosixSymbol::realloc()(Ptr, i_Size);
    }
    return(Data);
 }
