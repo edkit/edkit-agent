@@ -43,10 +43,10 @@ TEST_GROUP(MemAlignTestGroup)
 
 TEST(MemAlignTestGroup, Build)
 {
-   MemAlignProbe  Probe;
+   MemAlignProbe  Probe(FakeAlloc_Memalign);
    MemAlignProbe  *p_Probe;
 
-   p_Probe = new MemAlignProbe();
+   p_Probe = new MemAlignProbe(FakeAlloc_Memalign);
 
    CHECK(p_Probe != NULL);
 
@@ -56,8 +56,7 @@ TEST(MemAlignTestGroup, Build)
 
 TEST(MemAlignTestGroup, Basic)
 {
-   MemAlignProbe  Probe;
-   Probe.InitCheck(FakeAlloc_Memalign);
+   MemAlignProbe  Probe(FakeAlloc_Memalign);
 
    char *SysAddress = (char*)memalign(4, 512);
    CHECK(SysAddress != NULL);
@@ -93,8 +92,7 @@ void MemAlign1::TestPassthrough()
 
 TEST(MemAlignTestGroup, BigAlign)
 {
-   MemAlignProbe  Probe;
-   Probe.InitCheck(FakeAlloc_Memalign);
+   MemAlignProbe  Probe(FakeAlloc_Memalign);
 
    char *SysAddress = (char*)memalign(256, 1024);
    CHECK(SysAddress != NULL);

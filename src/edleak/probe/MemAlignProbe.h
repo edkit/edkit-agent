@@ -39,12 +39,9 @@ class CallStack;
 class MemAlignProbe : MemProbe
 {
    public:
-                        MemAlignProbe(void);
+                        MemAlignProbe(memalign_t AlignHook);
       virtual           ~MemAlignProbe(void);
 
-               void     InitCheck(void);
-               void     InitCheck(memalign_t AlignHook);
-      static   void*    PassThrough(size_t i_Boundary, size_t i_Size);
                void*    MemAlign(size_t i_Boundary, size_t i_Size, const CallStack& Callers);
 
    private:

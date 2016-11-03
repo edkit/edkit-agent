@@ -41,9 +41,9 @@
 *  Constructor.
 *
 ******************************************************************************/
-MemAlignProbe::MemAlignProbe(void):
+MemAlignProbe::MemAlignProbe(memalign_t AlignHook):
    MemProbe(),
-   AlignFunc(NULL)
+   AlignFunc(AlignHook)
 {
    return;
 }
@@ -58,58 +58,6 @@ MemAlignProbe::MemAlignProbe(void):
 MemAlignProbe::~MemAlignProbe()
 {
    return;
-}
-
-
-/**
-* @date     2012/01/03
-*
-*  Probe initialization.
-*
-******************************************************************************/
-void MemAlignProbe::InitCheck(void)
-{
-   if(AlignFunc == NULL)
-   {
-      AlignFunc = (memalign_t) rtsym_resolve("memalign");
-   }
-   return;
-}
-
-
-/**
-* @date     2012/04/29
-*
-*  Probe initialization. This method is used for unitest so that a fake align
-*  function can be used.
-*
-******************************************************************************/
-void MemAlignProbe::InitCheck(memalign_t AlignHook)
-{
-   if(AlignFunc == NULL)
-   {
-      AlignFunc = AlignHook;
-   }
-   return;
-}
-
-/**
-* @date     2012/01/03
-*
-*  Probe Passthrough : The original function is called direclty.
-*
-******************************************************************************/
-void* MemAlignProbe::PassThrough(size_t i_Boundary, size_t i_Size)
-{
-   void *Data = NULL;
-   memalign_t AlignFunc;
-
-   AlignFunc = (memalign_t) rtsym_resolve("memalign");
-   if(AlignFunc != NULL)
-   {
-      Data = AlignFunc(i_Boundary, i_Size);
-   }
-   return(Data);
 }
 
 
@@ -151,4 +99,3 @@ void* MemAlignProbe::MemAlign(size_t i_Boundary, size_t i_Size, const CallStack&
    }
    return(Data);
 }
-

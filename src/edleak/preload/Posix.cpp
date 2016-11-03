@@ -78,7 +78,7 @@ static MemAllocProbe& Preload_GetNewNoThrowProbe(void)
 
 static MemAlignProbe& Preload_GetMemAlignProbe(void)
 {
-   static   MemAlignProbe  Probe;
+   static   MemAlignProbe  Probe(PosixSymbol::memalign());
 
    return(Probe);
 }
@@ -131,7 +131,7 @@ static enum PreloadState Preload_Init(void)
    {
       State = STATE_STARTING;
       Preload_GetMallocProbe();
-      MemAlignProbe     &MemAlignProbe       = Preload_GetMemAlignProbe();
+      Preload_GetMemAlignProbe();
       Preload_GetNewProbe();
       Preload_GetNewNoThrowProbe();
       MemCallocProbe    &CallocProbe         = Preload_GetCallocProbe();
@@ -141,7 +141,6 @@ static enum PreloadState Preload_Init(void)
       MemFreeProbe      &DeleteProbe         = Preload_GetDeleteProbe();
       MemFreeProbe      &DeleteNoThrowProbe  = Preload_GetDeleteNoThrowProbe();
 
-      MemAlignProbe.InitCheck();
       CallocProbe.InitCheck();
       ReallocProbe.InitCheck();
       FreeProbe.InitCheck();
@@ -200,7 +199,7 @@ void *memalign(size_t i_Boundary, size_t i_Size)
    }
    else
    {
-      Data = MemAlignProbe::PassThrough(i_Boundary, i_Size);
+      Data = PosixSymbol::memalign()(i_Boundary, i_Size);
    }
 
    return(Data);
