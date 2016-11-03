@@ -41,9 +41,9 @@
 *  Constructor.
 *
 ******************************************************************************/
-MemAllocProbe::MemAllocProbe(void):
+MemAllocProbe::MemAllocProbe(malloc_t BaseAllocFunc):
    MemProbe(),
-   AllocFunc(NULL)
+   AllocFunc(BaseAllocFunc)
 {
    return;
 }
@@ -60,73 +60,6 @@ MemAllocProbe::~MemAllocProbe()
    return;
 }
 
-
-/**
-* @date     2011/05/01
-*
-*  Probe initialization.
-*
-* @param sz_AllocFunc (in): Name of the allocation function. "malloc" is used if
-*                             NULL is provided here.
-*
-******************************************************************************/
-void MemAllocProbe::InitCheck(const char *sz_AllocFunc)
-{
-   if(AllocFunc == NULL)
-   {
-      if(sz_AllocFunc != NULL)
-         AllocFunc = (malloc_t) rtsym_resolve(sz_AllocFunc);
-      else
-         AllocFunc = (malloc_t) rtsym_resolve("malloc");
-   }
-   return;
-}
-
-
-/**
-* @date     2011/11/21
-*
-*  Probe initialization.
-*
-* @param BaseAllocFunc (in): Pointer to the allocation function. "malloc" is used if
-*                             NULL is provided here.
-*
-******************************************************************************/
-void MemAllocProbe::InitCheck(malloc_t BaseAllocFunc)
-{
-   if(AllocFunc == NULL)
-   {
-      if(BaseAllocFunc != NULL)
-         AllocFunc = BaseAllocFunc;
-      else
-         AllocFunc = (malloc_t) rtsym_resolve("malloc");
-   }
-   return;
-}
-
-
-/**
-* @date     2012/01/02
-*
-*  Probe Passthrough : The original function is called direclty.
-*
-******************************************************************************/
-void* MemAllocProbe::PassThrough(size_t i_Size, const char *sz_AllocFunc)
-{
-   uint8_t *Data = NULL;
-   malloc_t AllocFunc;
-
-   if(sz_AllocFunc != NULL)
-      AllocFunc = (malloc_t) rtsym_resolve(sz_AllocFunc);
-   else
-      AllocFunc = (malloc_t) rtsym_resolve("malloc");
-
-   if(AllocFunc != NULL)
-   {
-      Data = (uint8_t*)AllocFunc(i_Size);
-   }
-   return(Data);
-}
 
 /**
 * @date     2011/05/01
@@ -175,4 +108,3 @@ void* MemAllocProbe::Alloc(size_t i_Size, const CallStack& Callers)
    }
    return(Data);
 }
-

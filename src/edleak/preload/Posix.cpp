@@ -30,6 +30,7 @@
 *
 *****************************************************************************/
 #include <new>
+#include "PosixSymbol.h"
 #include "MemAllocProbe.h"
 #include "MemAlignProbe.h"
 #include "MemCallocProbe.h"
@@ -57,19 +58,19 @@ enum PreloadState
  */
 static MemAllocProbe& Preload_GetMallocProbe(void)
 {
-   static   MemAllocProbe  Probe;
+   static   MemAllocProbe  Probe(PosixSymbol::malloc());
 
    return(Probe);
 }
 static MemAllocProbe& Preload_GetNewProbe(void)
 {
-   static   MemAllocProbe  Probe;
+   static   MemAllocProbe  Probe(PosixSymbol::new_throw());
 
    return(Probe);
 }
 static MemAllocProbe& Preload_GetNewNoThrowProbe(void)
 {
-   static   MemAllocProbe  Probe;
+   static   MemAllocProbe  Probe(PosixSymbol::new_nothrow());
 
    return(Probe);
 }
@@ -129,10 +130,10 @@ static enum PreloadState Preload_Init(void)
    if(State == STATE_START)
    {
       State = STATE_STARTING;
-      MemAllocProbe     &MallocProbe         = Preload_GetMallocProbe();
+      Preload_GetMallocProbe();
       MemAlignProbe     &MemAlignProbe       = Preload_GetMemAlignProbe();
-      MemAllocProbe     &NewProbe            = Preload_GetNewProbe();
-      MemAllocProbe     &NewNoThrowProbe     = Preload_GetNewNoThrowProbe();
+      Preload_GetNewProbe();
+      Preload_GetNewNoThrowProbe();
       MemCallocProbe    &CallocProbe         = Preload_GetCallocProbe();
       MemReallocProbe   &ReallocProbe        = Preload_GetReallocProbe();
       MemFreeProbe      &FreeProbe           = Preload_GetFreeProbe();
@@ -140,10 +141,7 @@ static enum PreloadState Preload_Init(void)
       MemFreeProbe      &DeleteProbe         = Preload_GetDeleteProbe();
       MemFreeProbe      &DeleteNoThrowProbe  = Preload_GetDeleteNoThrowProbe();
 
-      MallocProbe.InitCheck();
       MemAlignProbe.InitCheck();
-      NewProbe.InitCheck(CXX_SYM_NEW);
-      NewNoThrowProbe.InitCheck(CXX_SYM_NEW_NOTHROW);
       CallocProbe.InitCheck();
       ReallocProbe.InitCheck();
       FreeProbe.InitCheck();
@@ -176,7 +174,7 @@ void *malloc(size_t i_Size)
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size);
+      Data = PosixSymbol::malloc()(i_Size);
    }
 
    return(Data);
@@ -310,7 +308,7 @@ void* operator new(std::size_t i_Size)
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size, CXX_SYM_NEW);
+      Data = PosixSymbol::new_throw()(i_Size);
    }
 
    return(Data);
@@ -337,7 +335,7 @@ void* operator new(std::size_t i_Size, const std::nothrow_t&) throw()
    }
    else
    {
-      Data = MemAllocProbe::PassThrough(i_Size, CXX_SYM_NEW_NOTHROW);
+      Data = PosixSymbol::new_nothrow()(i_Size);
    }
 
    return(Data);

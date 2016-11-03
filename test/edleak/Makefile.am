@@ -31,4 +31,3 @@ utest_edkit_edleak_LDADD  = \
 if HAVE_LIBUNWIND
     utest_edkit_edleak_LDADD += $(LIBUNWIND_LIBS)
 endif
-

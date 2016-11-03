@@ -75,6 +75,7 @@ AC_CONFIG_FILES([Makefile src/toolbox/Makefile src/edleak/Makefile tools/leaker/
 AM_CONDITIONAL([HAVE_CPPUTEST], [test "x${have_cpputest}" = xyes])
 AM_CONDITIONAL([HAVE_LIBUNWIND], [test "x${have_libunwind}" = xyes])
 AM_CONDITIONAL([HAVE_LIBGLIB], [test "x${have_libglib}" = xyes])
+AM_CONDITIONAL([HAVE_JEMALLOC], [test "x${have_jemalloc}" = xyes])
 
 if test "x${have_libunwind}" = xyes; then
     AC_DEFINE(HAVE_LIBUNWIND,1, [libunwind is available])
@@ -91,7 +92,6 @@ if test "x${have_jemalloc}" = xyes; then
       AC_DEFINE_UNQUOTED([JEMALLOC_PREFIX], [$JEMALLOC_PREFIX], [jemalloc prefix defined])
     fi
 fi
-
 
 MANGLE_SYMBOL([new], [void* operator new(std::size_t)], [MNGL_SYM_NEW])
 MANGLE_SYMBOL([new], [void* operator new(std::size_t, const std::nothrow_t& tag)], [MNGL_SYM_NEW_NOTHROW])

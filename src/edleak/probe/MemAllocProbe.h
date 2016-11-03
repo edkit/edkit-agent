@@ -39,12 +39,9 @@ class CallStack;
 class MemAllocProbe : MemProbe
 {
    public:
-                        MemAllocProbe(void);
+                        MemAllocProbe(malloc_t BaseAllocFunc);
       virtual           ~MemAllocProbe(void);
-
-               void     InitCheck(const char *sz_AllocFunc = NULL);
-               void     InitCheck(malloc_t BaseAllocFunc);
-      static   void*    PassThrough(size_t i_Size, const char *sz_AllocFunc = NULL);
+      
                void*    Alloc(size_t i_Size, const CallStack& Callers);
 
    private:

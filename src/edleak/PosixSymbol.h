@@ -36,6 +36,8 @@ class PosixSymbol
 {
     public:
         static  malloc_t    malloc();
+        static  malloc_t    new_throw();
+        static  malloc_t    new_nothrow();
         static  calloc_t    calloc();
         static  realloc_t   realloc();
         static  free_t      free();

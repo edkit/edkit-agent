@@ -58,6 +58,39 @@ malloc_t PosixSymbol::malloc()
     return mallocSymbol;
 }
 
+malloc_t PosixSymbol::new_throw()
+{
+    static malloc_t mallocSymbol = NULL;
+
+    if(mallocSymbol == NULL)
+    {
+#ifdef HAVE_JEMALLOC
+        mallocSymbol = JEMALLOC_SYM(malloc);
+#else
+        mallocSymbol = (malloc_t) rtsym_resolve(CXX_SYM_NEW);
+#endif
+    }
+
+    return mallocSymbol;
+}
+
+malloc_t PosixSymbol::new_nothrow()
+{
+    static malloc_t mallocSymbol = NULL;
+
+    if(mallocSymbol == NULL)
+    {
+#ifdef HAVE_JEMALLOC
+        mallocSymbol = JEMALLOC_SYM(malloc);
+#else
+        mallocSymbol = (malloc_t) rtsym_resolve(CXX_SYM_NEW_NOTHROW);
+#endif
+    }
+
+    return mallocSymbol;
+}
+
+
 calloc_t PosixSymbol::calloc()
 {
     static calloc_t callocSymbol = NULL;
@@ -99,7 +132,7 @@ free_t PosixSymbol::free()
 #ifdef HAVE_JEMALLOC
         freeSymbol = JEMALLOC_SYM(free);
 #else
-        freeSymbol = (realloc_t) rtsym_resolve("free");
+        freeSymbol = (free_t) rtsym_resolve("free");
 #endif
     }
 

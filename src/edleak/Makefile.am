@@ -67,7 +67,7 @@ libedleak_la_LIBADD = \
     $(builddir)/libedleak-heap.la \
     $(builddir)/libedleak-preload.la \
     $(builddir)/libedleak-probe.la \
-    $(JSON_LIBS)
+    $(JSONC_LIBS)
 
 if HAVE_LIBGLIB
     libedleak_la_LIBADD += $(LIBGLIB_LIBS)
@@ -75,4 +75,8 @@ endif
 
 if HAVE_LIBUNWIND
     libedleak_la_LIBADD += $(LIBUNWIND_LIBS)
+endif
+
+if HAVE_JEMALLOC
+    libedleak_la_LIBADD += $(JEMALLOC_LIBS)
 endif

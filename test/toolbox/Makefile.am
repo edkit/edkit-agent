@@ -19,7 +19,7 @@ utest_edkit_toolbox_CXXFLAGS = -fPIC -fPIE
 utest_edkit_toolbox_CPPFLAGS = -D_GNU_SOURCE -I$(top_srcdir)/include/edkit/toolbox
 utest_edkit_toolbox_CPPFLAGS += $(CPPUTEST_CFLAGS)
 utest_edkit_toolbox_LDADD  = $(CPPUTEST_LIBS) $(top_srcdir)/src/toolbox/libedkit-toolbox.la
-utest_edkit_toolbox_LDADD += $(JSON_LIBS)
+utest_edkit_toolbox_LDADD += $(JSONC_LIBS)
 
 if HAVE_LIBUNWIND
     utest_edkit_toolbox_LDADD += $(LIBUNWIND_LIBS)

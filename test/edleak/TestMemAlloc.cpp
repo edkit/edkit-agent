@@ -43,10 +43,10 @@ TEST_GROUP(MemAllocTestGroup)
 
 TEST(MemAllocTestGroup, Build)
 {
-   MemAllocProbe  Probe;
+   MemAllocProbe  Probe(FakeAlloc_Malloc);
    MemAllocProbe  *p_Probe;
 
-   p_Probe = new MemAllocProbe();
+   p_Probe = new MemAllocProbe(FakeAlloc_Malloc);
 
    CHECK(p_Probe != NULL);
 
@@ -55,8 +55,7 @@ TEST(MemAllocTestGroup, Build)
 
 TEST(MemAllocTestGroup, Align)
 {
-   MemAllocProbe  Probe;
-   Probe.InitCheck(FakeAlloc_Malloc);
+   MemAllocProbe  Probe(FakeAlloc_Malloc);
 
    char *SysAddress = (char*)malloc(512);
    CHECK(SysAddress != NULL);
@@ -73,6 +72,3 @@ TEST(MemAllocTestGroup, Align)
    MemHeap::Instantiate()->Reset();
    free(SysAddress);
 }
-
-
-
