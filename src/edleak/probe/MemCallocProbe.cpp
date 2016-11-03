@@ -46,9 +46,9 @@ extern "C" {
 *  Constructor.
 *
 ******************************************************************************/
-MemCallocProbe::MemCallocProbe(void):
+MemCallocProbe::MemCallocProbe(calloc_t Allocator):
    MemProbe(),
-   AllocFunc(NULL)
+   AllocFunc(Allocator)
 {
    return;
 }
@@ -63,55 +63,6 @@ MemCallocProbe::MemCallocProbe(void):
 MemCallocProbe::~MemCallocProbe()
 {
    return;
-}
-
-
-/**
-* @date     2011/05/03
-*
-*  Probe initialization.
-*
-******************************************************************************/
-void MemCallocProbe::InitCheck(void)
-{
-   if(AllocFunc == NULL)
-   {
-#if defined(__GLIBC__) && !defined(__UCLIBC__) // uclibc also defines glibc.
-      /* dlsym calls calloc in GLIBC, so we get its internal name instead of
-       * resolving it dynamically */
-      AllocFunc = (calloc_t)__libc_calloc;
-#else
-      AllocFunc = (calloc_t)rtsym_resolve("calloc");
-#endif
-   }
-   return;
-}
-
-
-/**
-* @date     2012/01/02
-*
-*  Probe Passthrough : The original function is called direclty.
-*
-******************************************************************************/
-void* MemCallocProbe::PassThrough(size_t i_MembCount, size_t i_Size)
-{
-   uint8_t *Data = NULL;
-   calloc_t AllocFunc;
-
-#if defined(__GLIBC__) && !defined(__UCLIBC__) // uclibc also defines glibc.
-   /* dlsym calls calloc in GLIBC, so we get its internal name instead of
-    * resolving it dynamically */
-   AllocFunc = (calloc_t)__libc_calloc;
-#else
-   AllocFunc = (calloc_t)rtsym_resolve("calloc");
-#endif
-
-   if(AllocFunc != NULL)
-   {
-      Data = (uint8_t*)AllocFunc(i_MembCount, i_Size);
-   }
-   return(Data);
 }
 
 
@@ -161,4 +112,3 @@ void* MemCallocProbe::Calloc(size_t i_MembCount, size_t i_Size, const CallStack&
    }
    return(Data);
 }
-

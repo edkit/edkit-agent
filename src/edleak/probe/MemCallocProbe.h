@@ -40,11 +40,9 @@ class CallStack;
 class MemCallocProbe : MemProbe
 {
    public:
-                        MemCallocProbe(void);
+                        MemCallocProbe(calloc_t Allocator);
       virtual           ~MemCallocProbe(void);
 
-               void     InitCheck(void);
-      static   void*    PassThrough(size_t i_MembCount, size_t i_Size);
                void*    Calloc(size_t i_MembCount, size_t i_Size, const CallStack& Callers);
 
    private:

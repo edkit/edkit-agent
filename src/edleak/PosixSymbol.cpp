@@ -100,7 +100,13 @@ calloc_t PosixSymbol::calloc()
 #ifdef HAVE_JEMALLOC
         callocSymbol = JEMALLOC_SYM(calloc);
 #else
-        callocSymbol = (calloc_t) rtsym_resolve("calloc");
+    #if defined(__GLIBC__) && !defined(__UCLIBC__) // uclibc also defines glibc.
+        /* dlsym calls calloc in GLIBC, so we get its internal name instead of
+         * resolving it dynamically */
+        callocSymbol = (calloc_t)__libc_calloc;
+    #else
+        callocSymbol = (calloc_t)rtsym_resolve("calloc");
+    #endif
 #endif
     }
 
