@@ -41,6 +41,9 @@ class PosixSymbol
         static  calloc_t    calloc();
         static  realloc_t   realloc();
         static  free_t      free();
+        static  free_t      cfree();
+        static  free_t      delete_throw();
+        static  free_t      delete_nothrow();
         static  memalign_t  memalign();
 };
 

@@ -98,26 +98,26 @@ static MemReallocProbe& Preload_GetReallocProbe(void)
 
 static MemFreeProbe& Preload_GetFreeProbe(void)
 {
-   static   MemFreeProbe  Probe;
+   static   MemFreeProbe  Probe(PosixSymbol::free());
 
    return(Probe);
 }
 static MemFreeProbe& Preload_GetCFreeProbe(void)
 {
-   static   MemFreeProbe  Probe;
+   static   MemFreeProbe  Probe(PosixSymbol::cfree());
 
    return(Probe);
 }
 
 static MemFreeProbe& Preload_GetDeleteProbe(void)
 {
-   static   MemFreeProbe  Probe;
+   static   MemFreeProbe  Probe(PosixSymbol::delete_throw());
 
    return(Probe);
 }
 static MemFreeProbe& Preload_GetDeleteNoThrowProbe(void)
 {
-   static   MemFreeProbe  Probe;
+   static   MemFreeProbe  Probe(PosixSymbol::delete_nothrow());
 
    return(Probe);
 }
@@ -136,15 +136,10 @@ static enum PreloadState Preload_Init(void)
       Preload_GetNewNoThrowProbe();
       Preload_GetCallocProbe();
       Preload_GetReallocProbe();
-      MemFreeProbe      &FreeProbe           = Preload_GetFreeProbe();
-      MemFreeProbe      &CFreeProbe          = Preload_GetCFreeProbe();
-      MemFreeProbe      &DeleteProbe         = Preload_GetDeleteProbe();
-      MemFreeProbe      &DeleteNoThrowProbe  = Preload_GetDeleteNoThrowProbe();
-
-      FreeProbe.InitCheck();
-      CFreeProbe.InitCheck("cfree");
-      DeleteProbe.InitCheck(CXX_SYM_DELETE);
-      DeleteNoThrowProbe.InitCheck(CXX_SYM_DELETE_NOTHROW);
+      Preload_GetFreeProbe();
+      Preload_GetCFreeProbe();
+      Preload_GetDeleteProbe();
+      Preload_GetDeleteNoThrowProbe();
       State = STATE_STARTED;
    }
 
@@ -266,7 +261,7 @@ void free(void *Ptr)
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr);
+      PosixSymbol::free()(Ptr);
    }
 }
 
@@ -280,7 +275,7 @@ void cfree(void *Ptr)
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr);
+      PosixSymbol::cfree()(Ptr);
    }
 }
 
@@ -348,7 +343,7 @@ void operator delete(void* Ptr, const std::nothrow_t&)
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr, CXX_SYM_DELETE_NOTHROW);
+      PosixSymbol::delete_nothrow()(Ptr);
    }
 }
 
@@ -362,6 +357,6 @@ void operator delete(void* Ptr)
    }
    else
    {
-      MemFreeProbe::PassThrough(Ptr, CXX_SYM_DELETE);
+      PosixSymbol::delete_throw()(Ptr);
    }
 }

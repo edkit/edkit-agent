@@ -145,6 +145,55 @@ free_t PosixSymbol::free()
     return freeSymbol;
 }
 
+free_t PosixSymbol::cfree()
+{
+    static free_t freeSymbol = NULL;
+
+    if(freeSymbol == NULL)
+    {
+#ifdef HAVE_JEMALLOC
+        freeSymbol = JEMALLOC_SYM(free);
+#else
+        freeSymbol = (free_t) rtsym_resolve("cfree");
+#endif
+    }
+
+    return freeSymbol;
+}
+
+free_t PosixSymbol::delete_throw()
+{
+    static free_t freeSymbol = NULL;
+
+    if(freeSymbol == NULL)
+    {
+#ifdef HAVE_JEMALLOC
+        freeSymbol = JEMALLOC_SYM(free);
+#else
+        freeSymbol = (free_t) rtsym_resolve(CXX_SYM_DELETE);
+#endif
+    }
+
+    return freeSymbol;
+}
+
+free_t PosixSymbol::delete_nothrow()
+{
+    static free_t freeSymbol = NULL;
+
+    if(freeSymbol == NULL)
+    {
+#ifdef HAVE_JEMALLOC
+        freeSymbol = JEMALLOC_SYM(free);
+#else
+        freeSymbol = (free_t) rtsym_resolve(CXX_SYM_DELETE_NOTHROW);
+#endif
+    }
+
+    return freeSymbol;
+}
+
+
 memalign_t PosixSymbol::memalign()
 {
     static memalign_t memalignSymbol = NULL;

@@ -40,9 +40,9 @@
 *  Constructor.
 *
 ******************************************************************************/
-MemFreeProbe::MemFreeProbe(void):
+MemFreeProbe::MemFreeProbe(free_t Allocator):
    MemProbe(),
-   FreeFunc(NULL)
+   FreeFunc(Allocator)
 {
    return;
 }
@@ -57,51 +57,6 @@ MemFreeProbe::MemFreeProbe(void):
 MemFreeProbe::~MemFreeProbe()
 {
    return;
-}
-
-
-/**
-* @date     2011/05/02
-*
-*  Probe initialization.
-*
-* @param sz_FreeFunc (in): Name of the deallocation function. "free" is used if
-*                             NULL is provided here.
-*
-******************************************************************************/
-void MemFreeProbe::InitCheck(const char *sz_FreeFunc)
-{
-   if(FreeFunc == NULL)
-   {
-      if(sz_FreeFunc != NULL)
-         FreeFunc = (free_t) rtsym_resolve(sz_FreeFunc);
-      else
-         FreeFunc = (free_t) rtsym_resolve("free");
-   }
-   return;
-}
-
-
-/**
-* @date     2012/01/02
-*
-*  Probe Passthrough : The original function is called direclty.
-*
-******************************************************************************/
-void* MemFreeProbe::PassThrough(void *Data, const char *sz_FreeFunc)
-{
-   free_t FreeFunc;
-
-   if(sz_FreeFunc != NULL)
-      FreeFunc = (free_t) rtsym_resolve(sz_FreeFunc);
-   else
-      FreeFunc = (free_t) rtsym_resolve("free");
-
-   if(FreeFunc != NULL)
-   {
-      FreeFunc(Data);
-   }
-   return(Data);
 }
 
 
@@ -140,4 +95,3 @@ void* MemFreeProbe::Free(void *Data)
    }
    return(Data);
 }
-

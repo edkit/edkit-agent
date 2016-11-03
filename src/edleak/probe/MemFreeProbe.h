@@ -40,11 +40,9 @@
 class MemFreeProbe : MemProbe
 {
    public:
-                        MemFreeProbe(void);
+                        MemFreeProbe(free_t Allocator);
       virtual           ~MemFreeProbe(void);
 
-               void     InitCheck(const char *sz_FreeFunc = NULL);
-      static   void*    PassThrough(void *Data, const char *sz_FreeFunc = NULL);
                void*    Free(void *Data);
 
    private:
