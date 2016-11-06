@@ -45,6 +45,7 @@ class PosixSymbol
         static  free_t      delete_throw();
         static  free_t      delete_nothrow();
         static  memalign_t  memalign();
+        static  posix_memalign_t posix_memalign();
 };
 
 #endif /* end of include guard: __POSIX_SYMBOL_H */

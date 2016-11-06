@@ -215,3 +215,19 @@ memalign_t PosixSymbol::memalign()
 
     return memalignSymbol;
 }
+
+posix_memalign_t PosixSymbol::posix_memalign()
+{
+    static posix_memalign_t memalignSymbol = NULL;
+
+    if(memalignSymbol == NULL)
+    {
+#ifdef HAVE_JEMALLOC
+        memalignSymbol = JEMALLOC_SYM(posix_memalign);
+#else
+        memalignSymbol = (posix_memalign_t) rtsym_resolve("posix_memalign");
+#endif
+    }
+
+    return memalignSymbol;
+}
