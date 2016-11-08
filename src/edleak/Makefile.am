@@ -31,6 +31,7 @@ if HAVE_LIBGLIB
 endif
 
 libedleak_probe_la_SOURCES = \
+    probe/PosixMemAlignProbe.cpp \
     probe/MemAlignProbe.cpp \
     probe/MemAllocProbe.cpp \
     probe/MemCallocProbe.cpp \

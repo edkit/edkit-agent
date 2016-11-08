@@ -30,9 +30,11 @@
 *
 *****************************************************************************/
 #include <new>
+#include <errno.h>
 #include "PosixSymbol.h"
 #include "MemAllocProbe.h"
 #include "MemAlignProbe.h"
+#include "PosixMemAlignProbe.h"
 #include "MemCallocProbe.h"
 #include "MemReallocProbe.h"
 #include "MemFreeProbe.h"
@@ -42,6 +44,7 @@ extern "C" {
 #include <stdlib.h>
 #include <malloc.h>
 }
+
 
 enum PreloadState
 {
@@ -82,6 +85,13 @@ static MemAlignProbe& Preload_GetMemAlignProbe(void)
 
    return(Probe);
 }
+static PosixMemAlignProbe& Preload_GetPosixMemAlignProbe(void)
+{
+   static   PosixMemAlignProbe  Probe(PosixSymbol::posix_memalign());
+
+   return(Probe);
+}
+
 static MemCallocProbe& Preload_GetCallocProbe(void)
 {
    static   MemCallocProbe  Probe(PosixSymbol::calloc());
@@ -132,6 +142,7 @@ static enum PreloadState Preload_Init(void)
       State = STATE_STARTING;
       Preload_GetMallocProbe();
       Preload_GetMemAlignProbe();
+      Preload_GetPosixMemAlignProbe();
       Preload_GetNewProbe();
       Preload_GetNewNoThrowProbe();
       Preload_GetCallocProbe();
@@ -196,6 +207,32 @@ void *memalign(size_t i_Boundary, size_t i_Size)
    }
 
    return(Data);
+}
+
+int posix_memalign(void **Memptr, size_t i_Alignment, size_t i_Size)
+{
+   int i_Ret = 0;
+
+   if(Preload_Init() == STATE_STARTED)
+   {
+      PosixMemAlignProbe  &Probe = Preload_GetPosixMemAlignProbe();
+      ContextCallStackList *CallStackList = ContextCallStackList::Instantiate();
+      if(CallStackList == NULL)
+         return EINVAL;
+
+      CallStack Callers;
+      UnwindCaller(Callers);
+      if(CallStackList->HasItem(Callers.Get()[0]) == true)
+         Callers.Unwind();
+
+      i_Ret = Probe.MemAlign(Memptr, i_Alignment, i_Size, Callers);
+   }
+   else
+   {
+      i_Ret = PosixSymbol::posix_memalign()(Memptr, i_Alignment, i_Size);
+   }
+
+   return(i_Ret);
 }
 
 

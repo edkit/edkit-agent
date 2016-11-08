@@ -35,6 +35,7 @@
 #include <new>
 #include <unistd.h>
 #include <stdlib.h>
+#include <malloc.h>
 #ifdef HAVE_LIBGLIB
 #include <glib.h>
 #endif
@@ -53,6 +54,22 @@ static void *TrashNew = NULL;
 static gpointer GLibTrash = NULL;
 #endif
 
+void leak_calloc()
+{
+    Trash = calloc(1, 100);
+}
+
+void leak_posix_memalign()
+{
+    posix_memalign(&Trash, 8, 132);
+}
+
+void leak_memalign()
+{
+    Trash = memalign(16, 27);
+}
+
+
 void Leaker(unsigned int Depth)
 {
    static unsigned int Counter = 0;
@@ -66,9 +83,11 @@ void Leaker(unsigned int Depth)
       {
          case 0:
             Trash = malloc(10);
+            leak_posix_memalign();
             break;
          case 1:
-            Trash = calloc(1, 100);
+            leak_calloc();
+            leak_memalign();
             break;
          case 2:
             Trash = realloc(Trash, 1000);
