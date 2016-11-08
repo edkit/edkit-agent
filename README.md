@@ -39,9 +39,6 @@ The following environment variables can be used to configure edleak:
 
     - oaktools_httpd_port : The listening port of the embedded http server. The
     default value is 8080.
-    - edkit_fw_file : Sets the analysis filename. The default value is
-    "edleak.json".
-    - edkit_fw_period : Sets the slice dump period. The default value is 30s.
 
 edleak relies on dladdr to retrieve symbols name. If the target symbols names
 are not found by edleak, use the following flags in the compiler:
@@ -59,5 +56,3 @@ the filesystem, then Chromium must be started with the
 "allow-file-access-from-files" option:
 
    $> chromium-browser --allow-file-access-from-files
-
-
