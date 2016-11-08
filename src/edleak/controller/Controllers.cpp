@@ -36,10 +36,8 @@
 #include <pthread.h>
 
 #include "Controllers.h"
-#include "FileWriter.h"
 #include "WebService.h"
 
-static   FileWriter  *p_FileWriter = NULL;
 static   WebService  *p_WebService = NULL;
 
 static void AtforkPrepare(void);
@@ -71,21 +69,12 @@ void ControllersInit(void)
 
 void ControllersInstantiate(void)
 {
-   if(p_FileWriter == NULL)
-      p_FileWriter = new(std::nothrow) FileWriter();
-
    if(p_WebService == NULL)
       p_WebService = new(std::nothrow) WebService();
 }
 
 void ControllersEnd(void)
 {
-   if(p_FileWriter != NULL)
-   {
-       delete p_FileWriter;
-       p_FileWriter = NULL;
-   }
-
   if(p_WebService != NULL)
   {
       delete p_WebService;

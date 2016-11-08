@@ -13,7 +13,6 @@ lib_LTLIBRARIES = libedleak.la
 libedleak_controller_la_SOURCES = \
     controller/ContextUtils.cpp \
     controller/Controllers.cpp \
-    controller/FileWriter.cpp \
     controller/WebService.cpp \
     controller/WsMethodSlice.cpp \
     controller/WsMethodStackWatchAdd.cpp
