@@ -77,14 +77,14 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       for(i_AllocerIndex=0; i_AllocerIndex<Depth; i_AllocerIndex++)
       {
          CallerName = Stack.GetName(i_AllocerIndex);
-         if(CallerName != NULL)
+         if(CallerName == NULL)
+            break;
+
+         if(i_AllocerIndex>0)
          {
-            if(i_AllocerIndex>0)
-            {
-               *p_JsonAllocers << ",";
-            }
-            *p_JsonAllocers << "\"" <<  CallerName << "\"";
+            *p_JsonAllocers << ",";
          }
+         *p_JsonAllocers << "\"" <<  CallerName << "\"";
       }
       *p_JsonAllocers << "], ";
 
@@ -93,14 +93,14 @@ int32_t CU_GetSlice(String *p_JsonSlice, String *p_JsonAllocers)
       for(i_AllocerIndex=0; i_AllocerIndex<Depth; i_AllocerIndex++)
       {
          SoName = Stack.GetSoName(i_AllocerIndex);
-         if(SoName != NULL)
+         if(SoName == NULL)
+            break;
+
+         if(i_AllocerIndex>0)
          {
-            if(i_AllocerIndex>0)
-            {
-               *p_JsonAllocers << ",";
-            }
-            *p_JsonAllocers << "\"" <<  SoName << "\"";
+            *p_JsonAllocers << ",";
          }
+         *p_JsonAllocers << "\"" <<  SoName << "\"";
       }
       *p_JsonAllocers << "]}";
 

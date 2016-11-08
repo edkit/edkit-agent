@@ -264,41 +264,49 @@ void CallStack::ResolveNames(void)
    if(NamesAreResolved == true)
       return;
 
+   bool ResolvedSName = false;
+   bool ResolvedSoName = false;
    uint32_t Level;
    for(Level=0; Level<Depth; Level++)
    {
       if(Stack[Level] != NULL)
       {
          Dl_info s_info;
-         if( (dladdr(Stack[Level], &s_info) != 0) && (s_info.dli_sname != NULL) )
+         if(dladdr(Stack[Level], &s_info) != 0)
          {
-            int Status;
-            char* UnmangledName =
-               abi::__cxa_demangle(s_info.dli_sname, NULL, 0, &Status);
-            if(UnmangledName  != NULL)
+            if(s_info.dli_sname != NULL)
             {
-               snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
-                  Stack[Level], UnmangledName);
-               free(UnmangledName);
+               int Status;
+               char* UnmangledName =
+                  abi::__cxa_demangle(s_info.dli_sname, NULL, 0, &Status);
+               if(UnmangledName  != NULL)
+               {
+                  snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
+                     Stack[Level], UnmangledName);
+                  free(UnmangledName);
+               }
+               else
+               {
+                  snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
+                     Stack[Level], s_info.dli_sname);
+               }
+               ResolvedSName = true;
             }
-            else
-            {
-               snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
-                  Stack[Level], s_info.dli_sname);
-            }
+
             if(s_info.dli_fname != NULL)
             {
-               strncpy(SoNames[Level], s_info.dli_fname, ALLOCER_NAME_SIZE);
-            }
-            else
-            {
-               strncpy(SoNames[Level], "", ALLOCER_NAME_SIZE);
+               snprintf(SoNames[Level], ALLOCER_NAME_SIZE, "%p:%s",
+                   s_info.dli_fbase, s_info.dli_fname);
+               ResolvedSoName = true;
             }
          }
-         else
-         {
+
+         if(ResolvedSName == false)
             snprintf(StackNames[Level], ALLOCER_NAME_SIZE, "%p", Stack[Level]);
-         }
+
+         if(ResolvedSoName == false)
+            strncpy(SoNames[Level], "unknown", ALLOCER_NAME_SIZE);
+
          StackNames[Level][ALLOCER_NAME_SIZE-1] = '\0';
          SoNames[Level][ALLOCER_NAME_SIZE-1] = '\0';
       }
@@ -311,6 +319,7 @@ void CallStack::ResolveNames(void)
 * @date     2013/02/09
 *
 *  Returns the symbol name of the callstack at the specified level.
+* returns NULL when the end of the retrieved stack is reached.
 *
 ******************************************************************************/
 const char* CallStack::GetName(uint32_t Level)
@@ -326,6 +335,7 @@ const char* CallStack::GetName(uint32_t Level)
 
 /**
 *  Returns the shared object name of the callstack at the specified level.
+* returns NULL when the end of the retrieved stack is reached.
 */
 const char* CallStack::GetSoName(uint32_t Level)
 {
