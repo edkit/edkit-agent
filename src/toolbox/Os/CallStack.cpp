@@ -264,11 +264,13 @@ void CallStack::ResolveNames(void)
    if(NamesAreResolved == true)
       return;
 
-   bool ResolvedSName = false;
-   bool ResolvedSoName = false;
+   bool ResolvedSName;
+   bool ResolvedSoName;
    uint32_t Level;
    for(Level=0; Level<Depth; Level++)
    {
+      ResolvedSName = false;
+      ResolvedSoName = false;
       if(Stack[Level] != NULL)
       {
          Dl_info s_info;
